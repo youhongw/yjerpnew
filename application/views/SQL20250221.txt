@@ -1,0 +1,216 @@
+COMPANY	CREATOR	USR_GROUP	CREATE_DATE	MODIFIER	MODI_DATE	FLAG	CREATE_TIME	CREATE_AP
+	CREATE_PRID	MODI_TIME	MODI_AP	MODI_PRID	MA001	MA002	MA003	MA004	MA005
+	MA006	MA007	MA008	MA009	MA010	MA011	MA012	MA013	MA014	MA015	MA016	
+	MA017	MA018	MA019	MA020	MA021	MA022	MA023	MA024	MA025	MA026	MA027	MA028
+	MA029	MA030	MA031	MA032	MA033	MA034	MA035	MA036	MA037	MA038	MA039	MA040
+	MA041	MA042	MA043	MA044	MA045	MA046	MA047	MA048	MA049	MA050	MA051	MA052	MA053
+	MA054	MA055	MA056	MA057	MA058	MA059	MA060	MA061	MA062	MA063	MA064	MA065	MA066	MA067
+	MA068	MA069	MA070	MA071	MA072	MA073	MA074	MA075	MA076	MA077	MA078	MA079	MA080	MA081
+	MA082	MA083	MA084	MA085	MA086	MA087	MA088	MA089	MA090
+	MA091	MA092	MA093	MA094
+	MA095	MA096	MA097	MA098	MA099	MA100	MA101	MA102	MA103	MA104
+	MA105	MA106	MA107	MA108	MA109	MA110	MA111	MA112	MA113	MA114	MA115	MA116	MA117	MA118	MA119	MA120	MA121	MA122	MA123	MA124	MA125	MA126	MA127	MA132	MA133	UDF01	UDF02	UDF03	UDF04	UDF05	UDF06	UDF07	UDF08	UDF09	UDF10	MA134	MA135	MA136	MA137	MA139	MA140	MA141	MA142	MA143	MA144	MA145	MA146	MA147	MA148	MA149	MA150	MA151	MA152	MA153	MA154	MA155	MA156	MA157	MA158	MA159	MA160	MA161
+
+(COMPANY,CREATOR,USR_GROUP,CREATE_DATE,MODIFIER,MODI_DATE,FLAG,MA001,MA002,MA003,MA004,MA005,MA006,MA007,MA008,MA009,MA010
+,MA011,MA012,MA013,MA014,MA015,MA016,MA017,MA018,MA019,MA020
+,MA021,MA022,MA023,MA024,MA025,MA026,MA027,MA028,MA029,MA030
+,MA031,MA032,MA033,MA034,MA035,MA036,MA037,MA038,MA039,MA040
+,MA041,MA042,MA043,MA044,MA045,MA046,MA047,MA048,MA049,MA050
+,MA051,MA052,MA053,MA054,MA055,MA056,MA057,MA058,MA059,MA060
+,MA061,MA062,MA063,MA064,MA065,MA066,MA067,MA068,MA069,MA070
+,MA071,MA072,MA073,MA074,MA075,MA076,MA077,MA078,MA079,MA080
+,MA081,MA082,MA083,MA084,MA085,MA086,MA087,MA088,MA089,MA090
+,MA091,MA092,MA093,MA094) 
+
+=" insert into COPMA ( COMPANY,CREATOR,USR_GROUP,CREATE_DATE,MODIFIER,MODI_DATE,FLAG,
+			              MA001,MA002,MA003,
+						  MA004,MA005,MA006,MA007,MA008,MA009,MA010,MA011,
+						  MA012,MA013,MA014) 
+VALUES (N'"&$A3&"', N'"&$B3&"', N'"&$C3&"', N'"&$D3&"', N'"&$E3&"', N'"&$F3&"', N'"&$G3&"',  N'"&$I3&"'
+, N'"&$J3&"', N'"&$K3&"', N'"&$L3&"', N'"&trim($M3)&"', N'"&trim($N3)&"', N'"&$O3&"'
+, N'"&$P3&"', N'"&$Q3&"', N'"&$R3&"', N'"&$S3&"', N'"&$T3&"', N'"&$U3&"', N'"&$V3&"') ;"
+
+
+=" UPDATE  COPMA SET MA015=N'"&$W3&"', MA016=N'"&$X3&"', MA017=N'"&$Y3&"',MA018=N'"&$Z3&"', 
+MA019=N'"&$AA3&"', MA020=N'"&$AB3&"', MA021=N'"&$AC3&"', MA022=N'"&$AD3&"', MA023=N'"&$AE3&"', MA024=N'"&$AF3&"',
+MA025=N'"&$AG3&"',MA026=N'"&$AH3&"', MA027=N'"&$AI3&"', MA028=N'"&$AJ3&"', MA029=N'"&$AK3&"', MA030=N'"&$AL3&"'
+WHERE MA001=N'"&trim($I3)&"'   ;"
+
+=" UPDATE  COPMA SET MA031=N'"&$AM3&"', MA032=N'"&$AN3&"', MA033=N'"&$AO3&"',MA034=N'"&$AP3&"', 
+MA035=N'"&$AQ3&"', MA036=N'"&$AR3&"', MA037=N'"&$AS3&"', MA038=N'"&$AT3&"', MA039=N'"&$AU3&"', MA040=N'"&$AV3&"',
+MA041=N'"&$AW3&"',MA042=N'"&$AX3&"', MA043=N'"&$AY3&"', MA044=N'"&$AZ3&"', MA045=N'"&$BA3&"', MA046=N'"&$BB3&"'
+WHERE MA001=N'"&$I3&"'   ;"
+
+=" UPDATE  COPMA SET MA047=N'"&$BC3&"', MA048=N'"&$BD3&"', MA049=N'"&$BE3&"',MA050=N'"&$BF3&"', 
+MA051=N'"&$BG3&"', MA052=N'"&$BH3&"', MA053=N'"&$BI3&"', MA054=N'"&$BJ3&"', MA055=N'"&$BK3&"', MA056=N'"&$BL3&"',
+MA057=N'"&$BM3&"',MA058=N'"&$BN3&"', MA059=N'"&$BO3&"', MA060=N'"&$BP3&"', MA061=N'"&$BQ3&"', MA062=N'"&$BR3&"'
+WHERE MA001=N'"&$I3&"'   ;"
+
+=" UPDATE  COPMA SET MA063=N'"&$BS3&"', MA064=N'"&$BT3&"', MA065=N'"&$BU3&"',MA066=N'"&$BV3&"', 
+MA067=N'"&$BW3&"', MA068=N'"&$BX3&"', MA069=N'"&$BY3&"', MA070=N'"&$BZ3&"', MA071=N'"&$CA3&"', MA072=N'"&$CB3&"',
+MA073=N'"&$CC3&"',MA074=N'"&$CD3&"', MA075=N'"&$CE3&"', MA076=N'"&$CF3&"', MA077=N'"&$CG3&"', MA078=N'"&$CH3&"'
+WHERE MA001=N'"&$I3&"'   ;"
+
+=" UPDATE  COPMA SET MA079=N'"&$CI3&"', MA080=N'"&$CJ3&"', MA081=N'"&$CK3&"',MA082=N'"&$CL3&"', 
+MA083=N'"&$CM3&"', MA084=N'"&$CN3&"', MA085=N'"&$CO3&"', MA086=N'"&$CP3&"', MA087=N'"&$CQ3&"', MA088=N'"&$CR3&"',
+MA089=N'"&$CS3&"',MA090=N'"&$CT3&"', MA091=N'"&$CU3&"', MA092=N'"&$CV3&"', MA093=N'"&$CW3&"', MA094=N'"&$CX3&"'
+WHERE MA001=N'"&$I3&"'   ;"
+
+if (isset($_FILES['mb107']['name']) && !empty($_FILES['mb107']['name'])) {
+    $fileInfo = pathinfo($_FILES['mb107']['name']);
+    $filename = iconv("UTF-8", "big5", $fileInfo['basename']); // 上傳文件的名稱
+    $type = $_FILES['mb107']['type'];
+    $config['upload_path'] = $filePath;
+    $config['allowed_types'] = '*';
+    $config['max_size'] = 20480; // 20MB
+    $this->load->library('upload', $config);
+
+    if (!$this->upload->do_upload('mb107')) {
+        $error = array('error' => $this->upload->display_errors());
+        log_message('error', 'File upload failed: ' . print_r($error, true)); // 紀錄錯誤日誌
+        echo "檔案上傳失敗：" . $error['error']; // 顯示錯誤訊息
+    } else {
+        $upload_data = $this->upload->data();
+        $fullFilePath = $filePath . $filename; // 完整路徑
+        if (move_uploaded_file($_FILES['mb107']['tmp_name'], $fullFilePath)) {
+            $sql31f = "UPDATE invmb99pic SET mb107='$filename' WHERE mb000='$vmb000'";
+            $this->db->query($sql31f);
+            echo "檔案上傳成功！";
+        } else {
+            log_message('error', 'Failed to move uploaded file.');
+            echo "檔案移動失敗！";
+        }
+    }
+}
+
+; 確保只有一次加載 soap 模組
+extension=soap
+
+; 移除 register_globals 指令
+; register_globals = Off
+
+<form action="upload.php" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="MAX_FILE_SIZE" value="20480000"> <!-- 20MB -->
+    <input type="file" name="mb107">
+    <input type="submit" value="上傳">
+</form>
+
+if (isset($_FILES['mb107']['name']) && !empty($_FILES['mb107']['name'])) {
+    $fileInfo = pathinfo($_FILES['mb107']['name']);
+    $filename = iconv("UTF-8", "big5", $fileInfo['basename']); // 上傳文件的名稱
+    $type = $_FILES['mb107']['type'];
+    $config['upload_path'] = $filePath;
+    $config['allowed_types'] = '*';
+    $config['max_size'] = 20480; // 20MB
+    $this->load->library('upload', $config);
+
+    if (!$this->upload->do_upload('mb107')) {
+        $error = array('error' => $this->upload->display_errors());
+        log_message('error', 'File upload failed: ' . print_r($error, true)); // 紀錄錯誤日誌
+        echo "檔案上傳失敗：" . $error['error']; // 顯示錯誤訊息
+    } else {
+        $upload_data = $this->upload->data();
+        $fullFilePath = $filePath . $filename; // 完整路徑
+        if (move_uploaded_file($_FILES['mb107']['tmp_name'], $fullFilePath)) {
+            $sql31f = "UPDATE invmb99pic SET mb107='$filename' WHERE mb000='$vmb000'";
+            $this->db->query($sql31f);
+            echo "檔案上傳成功！";
+        } else {
+            log_message('error', 'Failed to move uploaded file.');
+            echo "檔案移動失敗！";
+        }
+    }
+}
+
+// 檢查 HTTP_HOST 是否存在
+if (isset($_SERVER['HTTP_HOST'])) {
+    $host = $_SERVER['HTTP_HOST'];
+    // 你的程式碼邏輯
+} else {
+    log_message('error', 'HTTP_HOST is not set.');
+    echo "HTTP_HOST 未設置！";
+}
+
+<?php
+class Upload extends CI_Controller {
+    
+    public function __construct() {
+        parent::__construct();
+        $this->load->helper(array('form', 'url'));
+        
+        // 確保上傳目錄存在且可寫入
+        if (!is_dir($filePath)) {
+            mkdir($filePath, 0777, true);
+        }
+    }
+
+    public function do_upload() {
+        // 檢查是否有文件上傳
+        if (isset($_FILES['mb107']['name']) && !empty($_FILES['mb107']['name'])) {
+            // 設定上傳配置
+            $config = array(
+                'upload_path' => $filePath,
+                'allowed_types' => '*',
+                'max_size' => 20480,  // 20MB (以 KB 為單位)
+                'remove_spaces' => TRUE,
+                'detect_mime' => TRUE,
+                'mod_mime_fix' => TRUE,
+                'overwrite' => TRUE
+            );
+
+            // 初始化上傳類
+            $this->load->library('upload');
+            $this->upload->initialize($config);
+
+            try {
+                // 進行上傳
+                if (!$this->upload->do_upload('mb107')) {
+                    $error = $this->upload->display_errors();
+                    
+                    // 記錄詳細錯誤信息
+                    log_message('error', 'File upload failed: ' . $error);
+                    log_message('error', 'FILE details: ' . print_r($_FILES, TRUE));
+                    
+                    // 檢查文件大小
+                    $filesize = isset($_FILES['mb107']['size']) ? $_FILES['mb107']['size'] : 0;
+                    log_message('error', 'Attempted file size: ' . $filesize . ' bytes');
+                    
+                    throw new Exception($error);
+                }
+
+                // 獲取上傳數據
+                $upload_data = $this->upload->data();
+                $filename = iconv("UTF-8", "big5", $upload_data['file_name']);
+                $fullFilePath = $filePath . $filename;
+
+                // 更新數據庫
+                $data = array(
+                    'mb107' => $filename
+                );
+                
+                $this->db->where('mb000', $vmb000);
+                $update_result = $this->db->update('invmb99pic', $data);
+
+                if ($update_result) {
+                    $response = array(
+                        'status' => 'success',
+                        'message' => '檔案上傳成功！'
+                    );
+                } else {
+                    throw new Exception('數據庫更新失敗');
+                }
+
+            } catch (Exception $e) {
+                $response = array(
+                    'status' => 'error',
+                    'message' => '檔案上傳失敗：' . $e->getMessage()
+                );
+                log_message('error', 'Upload exception: ' . $e->getMessage());
+            }
+
+            // 返回 JSON 響應
+            header('Content-Type: application/json');
+            echo json_encode($response, JSON_UNESCAPED_UNICODE);
+        }
+    }
+}

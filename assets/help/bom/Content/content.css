@@ -1,0 +1,30 @@
+li{
+		font-size:14px;
+		margin-left:2em;
+		padding-left:4px;
+	}
+	
+	.box{
+		width: 562px;
+		padding-left:38px;
+	}
+
+	.box2{
+		width: 524px;
+		padding-left:38px;
+	}
+	
+	.box3{
+		width: 486px;
+		padding-left:38px;
+	}
+	
+	.box4{
+		width: 448px;
+		padding-left:38px;
+	}
+	
+	.top{
+		font-size:18px;
+		color:blue;
+	}

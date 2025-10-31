@@ -1,0 +1,260 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video,input {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	vertical-align: baseline;
+	-webkit-font-smoothing: antialiased;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+
+input, button, textarea, select, optgroup, option {
+font-family: inherit;
+font-size: inherit;
+font-style: inherit;
+font-weight: inherit;
+background-color:transparent;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse:collapse;
+	border-spacing: 0;
+}	/* --first set-- */
+
+
+img{
+	width: auto;
+	height: auto;
+	max-width: 100%;
+	max-height: 100%;	
+}
+
+#h_contaniner
+{
+	background-repeat: no-repeat;
+	width:100%;
+	height:100%;
+	position: absolute;
+	background-attachment: fixed;
+	background-position: center;
+	background-size: cover;
+}
+
+
+
+/************登入口CSS主要設定**********/
+.h_text{text-shadow: -0.03125em 0 #ffffff, 0 0.03125em #ffffff,0.03125em 0 #ffffff, 0 -0.03125em #ffffff;}/*文字白色邊框*/
+
+
+.h_img_position{  
+	position: absolute;	
+	transform: translate(-50%, -50%);
+	-ms-transform: translate(-50%, -50%);
+}/*登入口logo擺放位置 */
+
+.h_login_bg{  
+    position: absolute;
+	transform: translate(-50%,-50%);
+    background:hsla(230, 0%, 50%, 0.16);
+    -moz-box-shadow: 2px 4px 4px  2px rgba(0, 0, 0, .5);
+	-webkit-box-shadow: 2px 4px 4px  2px rgba(0, 0, 0, .5);
+	box-shadow: 2px 4px 4px  2px rgba(0, 0, 0, .5);
+}
+
+.h_login_box{
+	text-align: center;	
+	margin-top:3%;
+	color: #034b63;
+	font-family:"Myriad pro", sans-serif;
+	stroke: #ffffff;
+	stroke-width:2em;
+}
+
+.h_login_box1{  
+    margin-top:3%;
+    color: #034b63;
+	font-family:"微軟正黑體",Arial, Helvetica, sans-serif;
+	font-weight:bolder;
+	stroke: #ffffff;
+	stroke-width:100em;
+}
+
+.h_heighttext_m > img{   
+	transform:translateY(25%);
+	margin-right:0.625em;
+}/*icon置中*/
+
+.h_heighttext_m span{   
+	margin-left:0.625em;
+}/**/
+
+.h_heighttext {  
+    font-size:1.5em;
+	height:1.5em;
+	width:70%;
+	background-color:#ffffff;
+}/*登入的input設定*/
+
+
+.h_linkin_b {
+	width:70%;
+	text-align: center;
+	height:1.5em;
+	line-height:1.5em;
+	font-size: 2em;
+	background-color: #85a50d;
+	font-family:"微軟正黑體", "細明體",Arial, Helvetica, sans-serif;
+	text-decoration: none;
+	color: #000000;
+	vertical-align:middle;
+}/*登入扭*/
+
+.h_login_verify{
+	border:2px solid;
+	background-color:F0F0F0;
+	color:#B8B8B8;
+	text-align:left;
+	color: #000000;
+	font-family:"微軟正黑體",Arial, Helvetica, sans-serif;
+	font-weight:bold;
+}  
+
+
+.h_img_position > img{
+    width:70%;
+}/*logo寬度*/
+
+
+
+
+/***********表格 CSS 主要設定***********/
+.aibrow:after {   
+    content: "";
+    display: table;
+    clear: both;
+}
+
+	
+.border{border-bottom:0.0625em dashed #cccccc; }/*底部設虛線*/
+
+	
+a{text-decoration: none;}
+
+
+ select{
+  	border: 0;
+	position: relative;
+	min-height: 16px;
+	line-height: 16px;
+	white-space: nowrap;
+	overflow: hidden;
+	background-color: #eee;
+  	background: transparent;
+}/*隱藏select格式*/
+
+
+/***********頁籤 CSS 主要設定***********/
+ul.tabs-nav {
+   margin: 0;
+   padding: 0;
+   position: relative;
+   text-align: left;
+}
+ul.tabs-nav li {
+   list-style: none;
+   display: inline-block;
+}
+a.tab-menu {
+   display: block;
+   background-color:#87b44c;
+   font-size: 12px;
+   font-family: Arial,Helvetica,sans-serif;
+   color: #fff;
+   padding: 12px 10px;
+   font-weight: bold;
+   text-decoration: none;
+   border: solid 1px #87b44c;
+   border-bottom: 0;
+   border-radius: 6px 6px 0 0;
+}
+a.tab-menu.tabs-active {
+   background-color: #fff;
+   text-shadow: 1px 1px 0px #ffffff;
+   border: 1px solid #87b44c;
+   color:#87b44c;
+   border-bottom: 0;
+}
+.tabs_container {
+   border: 1px solid #87b44c;
+   padding: 10px;
+   margin-top: -1px;
+   margin-right: 1.5em;
+   background-color: #fff;
+}
+.tabs-panel {
+   display: none;
+}
+
+a.tab-menu2 {
+   display: block;
+   background-color:#87b44c;
+   font-size: 12px;
+   font-family: Arial,Helvetica,sans-serif;
+   color: #fff;
+   padding: 12px 10px;
+   font-weight: bold;
+   text-decoration: none;
+   border: solid 1px #87b44c;
+   border-bottom: 0;
+   border-radius: 6px 6px 0 0;
+}
+a.tab-menu2.tabs-active2 {
+   background-color: #fff;
+   text-shadow: 1px 1px 0px #ffffff;
+   border: 1px solid #87b44c;
+   color:#87b44c;
+   border-bottom: 0;
+}
+.tabs_container2 {
+   border: 1px solid #87b44c;
+   padding: 10px;
+   margin-top: -1px;
+   margin-right: 1.5em;
+   background-color: #fff;
+}
+.tabs-panel2{
+   display: none;
+}/*頁籤設定*/
+
+
+
+
+

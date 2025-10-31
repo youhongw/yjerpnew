@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bravonia>
+  <class title="基本資料管理" id="1"></class>
+  <ad id="1" title="公司基本資料維護" sid="BASI01" pos="1"></ad>
+  <ad id="1" title="部門基本資料維護" sid="RJSI01" pos="2"></ad>
+  <ad id="1" title="員工基本資料維護" sid="PALA03" pos="3"></ad>
+  <ad id="1" title="所得稅資料維護" sid="PALA04" pos="4"></ad>
+  <ad id="1" title="傳票類別維護" sid="PACC01" pos="5"></ad>
+  <ad id="1" title="傳票公司維護" sid="PACD01" pos="6"></ad>
+  <ad id="1" title="列印類別維護" sid="PACE01" pos="7"></ad>
+  
+  <class title="津貼管理" id="2"></class>
+  <ad id="2" title="固定津貼維護" sid="PALB01" pos="1"></ad>
+  <ad id="2" title="變動津貼維護" sid="PALC01" pos="2"></ad>
+  
+  <class title="借支資料管理" id="3"></class>
+  <ad id="3" title="借支資料維護" sid="PALD01" pos="1"></ad>
+  
+  <class title="勞健保及出勤" id="4"></class>
+  <ad id="4" title="勞健保退休金維護" sid="PALE01" pos="1"></ad>
+  <ad id="4" title="出勤資料維護" sid="PALE02" pos="2"></ad>
+  <ad id="4" title="刷卡資料定義" sid="AMSB01" pos="3"></ad>
+  <ad id="4" title="刷卡資料轉入" sid="AMSD01" pos="4"></ad>
+  <ad id="4" title="刷卡資料維護" sid="AMSD02" pos="5"></ad>
+  <ad id="4" title="臨時卡維護" sid="AMSC04" pos="6"></ad>
+  <ad id="4" title="加班單建立" sid="AMSE07" pos="7"></ad>
+  <ad id="4" title="請假單建立" sid="AMSE08" pos="8"></ad>
+  <ad id="4" title="外勞國定假日" sid="AMSD09" pos="9"></ad>
+  <ad id="4" title="加班及請假轉入出勤" sid="AMSD0A" pos="10"></ad>
+  <ad id="4" title="刷卡月報表" sid="AMSD0B" pos="11"></ad> 
+  
+  <class title="計算薪資及報表" id="5"></class>
+  <ad id="5" title="薪資計算" sid="PALF01" pos="1"></ad>
+  <ad id="5" title="薪資查詢" sid="PALF09" pos="2"></ad>
+  <ad id="5" title="薪資條(中英文)不含外勞" sid="PALF03" pos="3"></ad>
+  <ad id="5" title="薪資冊" sid="PALF04" pos="4"></ad>
+  <ad id="5" title="切傳票表" sid="PALF05" pos="5"></ad>
+  <ad id="5" title="轉帳發放表" sid="PALF06" pos="6"></ad>
+  <ad id="5" title="年印領清冊計算" sid="PALF08" pos="7"></ad>
+  <ad id="5" title="外勞薪資條簽名(中英越文)" sid="PALF0A" pos="8"></ad>
+  <ad id="5" title="二代健保計算" sid="PALF0D" pos="9"></ad>
+  <ad id="5" title="切傳票表(新)" sid="PALF0E" pos="10"></ad>
+
+  <class title="系統管理" id="6"></class>
+  <ad id="6" title="系統參數設定" sid="SYST00" pos="1"></ad>
+  <ad id="6" title="使用者資料維護" sid="SYSI03" pos="2"></ad>
+  <ad id="6" title="群組資料維護" sid="SYSI04" pos="3"></ad>
+  <ad id="6" title="密碼修改" sid="SYSI05" pos="4"></ad>
+</bravonia>

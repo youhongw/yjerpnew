@@ -1,0 +1,1005 @@
+﻿erp 1080128
+
+ci214 升級 ci3110 修改項目
+
+框架設定:1.system/helpers  My_captcha_helper.php
+         2.application\config
+           development\config.php
+           $config['base_url'] = 'http://211.20.91.28/kaoacc/';
+           production\config.php
+           autoload.php
+           database.php   132.147.160.9
+           routers.php
+         assets/home/basic.css 
+http://211.20.91.28/hxerp/assets/home/hbgnew.jpg
+
+6.加一個table 3.1.10 ver
+drop  table  ci_sessions;
+CREATE TABLE IF NOT EXISTS `ci_sessions` (
+
+        `id` varchar(40) NOT NULL,
+        `ip_address` varchar(45) NOT NULL,
+        `timestamp` int(10) unsigned DEFAULT 0 NOT NULL,
+        `data` blob NOT NULL,
+        PRIMARY KEY (id),
+        KEY `ci_sessions_timestamp` (`timestamp`)
+);
+
+虛擬圖片
+假圖
+http://unsplash.it/400/400
+
+https://api.fnkr.net/testimg/300x200/
+====================================錯修改ok 1080522
+session_start(): Failed to decode session object. Session has been destroyed system/libraries/Session/Session.php 143
+
+ 
+
+php.ini里面
+
+session.auto_start=1
+
+即可解决
+
+web 自動列印
+chrome 做自動列印 chrome.exe" --kiosk-printing
+再設定預設印表機. 做捷徑即可
+"C:\Program Files\Google\Chrome\Application\chrome.exe" --kiosk-printing
+
+============================== puri07 80305 
+計算 box2 改 box
+moci01  2/14  modi noti11_upd noti09_upd asti02_upd asti03_upd moci02_upd 參考asti13_upd  可儲存
+                         asti11_modi asti12_modi 進階查詢不輸入錯
+
+1. models  admi10_model  2-3 個 explode(".html",$val)
+if (@$val!=null) {
+			$temp_url = explode(".html",$val);
+			$val = "";
+			foreach($temp_url as $k => $v){$val.=$v;}}
+
+admi05_sql  改 程式名_sql
+
+
+
+2.  admi05_sql  改 程式名_sql
+
+3.function construct_sql //重新下條件清除原session 1060805 admi01 改 程式名 admi01_model
+if ($func == "and_where" or $func == "or_where")   
+		    { unset($_SESSION['admi01']['search']);}
+		
+if ($this->uri->segment(3,0)=="clear_sql_term")
+		    { unset($_SESSION['admi01']['search']);}
+
+4.auto_print()   沒有列印單據要 /*  */ admi03_model
+
+進階查詢
+5.$seq5='';$seq51='';$seq7='';$seq71='';
+
+if (trim($this->input->post('find005'))!='' and ($this->input->post('find005'))!="()")
+		    {
+			 $seq5=$this->input->post('find005');
+		     $seq2="WHERE ".$seq5;
+		     $seq32=$seq5;
+		    }
+
+//if(@($_SESSION['asti14_sql_term']) and ($_SESSION['asti14_sql_term']!="()" ){$seq32 = $_SESSION['asti14_sql_term'];}
+
+if ((@$_SESSION['asti05_sql_term']) and ($_SESSION['asti05_sql_term']!="()" )){$seq32 = $_SESSION['asti05_sql_term'];}
+          
+
+6.invb06_model  puri11 計算 修改存檔改====參考 bomi02  可修改存檔==acpi03 付款單 bomi05,bomi06===== 1080206 測試
+$n = '15'; 改 250  'tb003' => $tb003, 
+
+
+
+
+$sql="select a.* from `invlc` as a where lc002='$vyymm'  ";
+	// $result = mysql_query($sql) or die_content("查詢資料失敗".mysql_error());
+	$query = $this->db->query($sql) ;
+   // while($row=mysql_fetch_assoc($result)){
+                $query = $this->db->query($sql) ;
+		foreach ($query->result() as $row) {
+
+陣列參考 bor02_model
+        // $result = mysql_query($sql);
+
+		$result = $this->db->query($sql);
+		//$temp_row = mysql_fetch_array($result);
+		//echo "<pre>";var_dump($temp_row);exit;
+		 foreach ($result->result_array() as $temp_row) {}
+
+//$result = mysql_query($sql);
+		$result = $this->db->query($sql) ;
+		// if($row = mysql_fetch_array($result))
+		if(!$result->result_array())
+			return 1;
+		else
+			return 0;
+
+//$temp_row = mysql_fetch_array($result);
+  // $temp_row['md001'] = $temp_row['mb001'];
+		foreach ($result->result_array() as $temp_row)
+          {
+			  $temp_row['md001'] = $temp_row['mb001'];
+		  }
+     
+$head_col = array('mc001','c_mb002','c_mb003','c_mb025','mc002','mc003','mc004');
+        	$ret_head=array();
+		foreach ($ret as  $value )
+          {
+		foreach($head_col as $val){
+			$ret_head[$val] = $value->$val;		
+		  }}
+		  
+		//foreach($head_col as $val){
+		//	$ret_head[$val] = $ret[0]->$val;
+		//}
+
+7.controls  admi10
+  110 session_start()
+ if (@session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+
+  admi05_sql  改 程式名_sql
+
+8. view admi05_add  單據性質
+
+單據性質
+<input type="hidden" name="mq008" class="mq008"  value="" />
+<input type="hidden" name="mq009" class="mq009"  value="" />
+
+列印 astr01 ok
+<script> alert("無資料可列印!"); url = '<?=base_url() ?>
+中文列印{  echo wordwrap($val->th005,75,"<br />\n",TRUE);}
+<?php echo addslashes($row->tg003);?>
+
+9.check_title_no()  puri03_funjds
+var tl010 = tl010.substr(0,4)+tl010.substr(5,2)+tl010.substr(8,2);
+
+10.auto_print puri07  自動列印
+$seg1 = $this->input->post('tc001');
+$this->puri07_model->auto_print($seg1);
+if(@$tmp[0]->mq016=="Y"){
+
+
+<script> alert("無資料可列印!"); url = '<?=base_url() ?>index.php/pur/puri07/printdetailc';location = url; </script> 
+
+11.日期
+preg_match_all('/\d/S',$this->input->post('ti003'), $matches);  //處理日期字串
+			 $ti003 = implode('',$matches[0]);
+12.品名有 " 自動加/
+<?php echo addslashes($row->mb002)
+
+12.年月
+
+13.LINUX WINDOWS 有大小寫之分
+
+
+檔名: Admi10  Admi10_model  第一個字改大寫 
+
+14. 表單外提交
+<button  form="commentForm" tabIndex="8" type='submit' accesskey="+"  name='submit' class="button" value='&nbsp;儲存F8&nbsp;'><span>儲 存Alt+s</span><img  src="<?php echo base_url()?>assets/image/png/save.png" /></button>
+
+<div onclick="block_none('div','userbutton');">
+		<div><img src="https://dev.aibooks.tw/a06_7/demo/images/sys_images/a_5.png"></div><div>使用者</div>
+	</div>
+
+15.CREATE TABLE 資料表名稱 (
+        欄位名稱 資料型別 欄位定義 COMMENT '欄位註解內容',
+        ...
+) COMMENT '資料表註解內容';
+
+SHOW FULL FIELDS FROM aierp.copml
+
+16.按鈕不在 form 裡可執行 form="name名稱"
+<button style= "cursor:pointer" form="commentForm" onfocus="$('#mc001').focus();" tabIndex="8" type='submit'  accesskey="s"  name='submit' class="button" value='&nbsp;儲存F8&nbsp;'><span>儲 存Alt+s&nbsp;</span><img src="<?php echo base_url()?>assets/image/png/save.png" /></button>&nbsp;&nbsp;
+
+17.@media 語法
+@media not screen and (max-width:300px), print and (orientation: landscape){
+      h1{
+          font-size:50px;
+          color:red;
+      }
+  }
+
+18.
+$this->db->query('SET SQL_BIG_SELECTS=1');   //連結太多table 加此行
+<a href="https://www.cse.unsw.edu.au/~en1811/python-docs/python-3.6.4-docs-pdf/tutorial.pdf" target="iframeObj">
+    把PDF檔載入到iframe中
+</a>
+<iframe src="" name="iframeObj" style="width:90vw;height:90vh;"></iframe>
+
+出貨單單號 自動編號, 客代
+onfocus="check_title_no();"  , 單別,日期,不可以onfocus 只能onchange
+資料庫用戶端版本: libmysql - 5.1.73
+PHP 擴充套件: mysqli說明文件 curl說明文件 mbstring說明文件
+PHP 版本： 7.2.7
+而使用FineReport的填報功能，只需要在web端進行填報即可講資料匯總到資料庫，避免了excel的傳來傳去；同時FR還支援離線緩存、多sheet填報、多級上報等功能。
+
+假圖片
+19.https://picsum.photos/300/200?random=321
+display: flex  = float
+flex-wrap : wrap 換行
+左圖右字
+display:flex
+flex-direction:column;
+justify-content:center
+
+service > h2 只作用於下一層的 h2
+img 
+四角變圓
+border-raduus:50%
+Transition 網頁動畫
+
+
+===============關鍵字排名
+<FONT style="DISPLAY: none"></FONT>
+MySQL Workbench
+
+自動查詢系統
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>自動查詢系統</title>
+
+</head>
+
+<body onload="srcp()">
+
+</body>
+</html>
+<script type="text/javascript">
+function srcp()
+{
+    window.open('http://192.168.1.10/bra_mange/auto_edm.php','_parent','');
+}
+</script>
+
+/assets/home/hbgnew.jpg
+<div class="hidden">
+	<svg style="height:10vh; width:3.84vw;" viewbox="0,0,100,100" preserveAspectRatio="xMinYMin slice">
+		<polygon points="0 0, 0 100,15 100, 32 50,15 0,0 0" style="fill:#ffffff; box-sizing: border-box;" />
+	</svg></div>
+========================
+第二批改 按檢查,出現錯誤訊息 參考 admi10
+
+A PHP Error was encountered
+Severity: Core Warning
+
+Message: PHP Startup:
+
+Filename: Unknown
+
+Line Number: 0
+
+Backtrace:
+增加了我在http.conf中的所有mem和cache設置，並將我的prefork設置為最低可能的值。
+ ....然後我玩SELinux來阻止一些apache模塊，因為我在SELinux下解鎖了它們。
+我之前從未遇到過這個問題。最後我編輯了我的php.ini文件並設置了output_buffering = Off。
+但是這些herp和derp都沒有幫助甚至遠程工作。唯一明確的解決方案是刪除APC。
+https://stackoverflow.com/questions/37694308/how-to-connect-codeigniter-with-mssql-sql-server
+
+$db['my_mssql']['hostname'] = 'Driver={SQL Server Native Client 11.0};Server=Host\Instance;Database=queue_sys;';
+
+database.php
+'hostname' => '127.0.0.1/SQlEXPRESS,1433', // it should be SQL TCP enabled and firewall permitted for SQL port, whether default or custom.
+'username' => 'your user name here',
+'password' => 'your pwd here',
+'database' => 'your db here',
+'dbdriver' => 'sqlsrv',
+
+odbc
+
+如果你的系統是 『64位元的作業系統』但是程式是『32位元』，雖然設定的方法一樣，但是是要開啟 C:\Windows\SysWOW64\odbcad32.exe 來設定『32位元的ODBC』，由於 32/64 ODBC設定的路徑不一樣，預設的路徑是設定『64位元的ODBC』，所以要注意這一點，並且也要注意 ODBC Driver 的版本。
+
+64 位元 ODBC 位置：C:\Windows\System32\odbcad32.exe
+32 位元 ODBC 位置：C:\Windows\SysWOW64\odbcad32.exe
+請針對「資料庫名稱」和「資料來源名稱」使用相同的值。JDBC 驅動程式中的限制條件要求採用此限制
+Detail steps for How to connect SQL Server with PHP in WampServer
+
+step 1)
+
+download the appropriate driver based on your php version, check using php_info() function, for me 5.6, so the appropriate driver is SQLSRV30, found in the following link https://www.microsoft.com/en-us/download/details.aspx?id=20098
+
+step 2) extract the drives in C:\wamp\bin\php\php5.6.19\ext focus on the following .dll file they should be there, otherwise we can't connect with SQL, these are
+
+php_sqlsrv_56_nts.dll and php_sqlsrv_56_ts.dll
+
+step 3) enable the drives in php.ini as follow, which is found in C:\wamp\bin\apache\apache2.4.18\bin as follow
+
+extension=php_sqlsrv_56_ts.dll extension=php_sqlsrv_56_nts.dll
+
+step 4) go to DB_driver.php line 96 found in C:\wamp\www\public\system\database\DB_driver.php please replace the mysqli by sqlsrv
+
+public $dbdriver = ' mysqli  '; 
+ public $dbdriver = 'sqlsrv'; 
+step 5) last and most important part, go to CI database config in database.php file which's found in C:\wamp\www\public\application\config\database.php adjust the params accordingly...
+
+$db['default'] = array(
+
+'dsn' => '',
+'hostname' => 'ip address for sql server,port', // it should be SQL TCP enabled and firewall permitted for SQL port, whether default or custom.
+'username' => 'your user name here',
+'password' => 'your pwd here',
+'database' => 'your db here',
+'dbdriver' => 'sqlsrv',
+1.views add upd see 
+增加最後一行 include
+
+
+
+
+
+
+
+6.加一個table
+drop  table  ci_sessions;
+CREATE TABLE IF NOT EXISTS `ci_sessions` (
+
+        `id` varchar(40) NOT NULL,
+        `ip_address` varchar(45) NOT NULL,
+        `timestamp` int(10) unsigned DEFAULT 0 NOT NULL,
+        `data` blob NOT NULL,
+        PRIMARY KEY (id),
+        KEY `ci_sessions_timestamp` (`timestamp`)
+);
+
+
+
+
+
+
+
+
+A PHP Error was encountered
+Severity: Core Warning
+
+Message: PHP Startup:
+
+Filename: Unknown
+
+Line Number: 0
+
+Backtrace:
+看過超多新手都遇到一些光怪陸離的狀況。
+然後絕大多數找不到bug或是bug被忽略其實都是php.ini的設定的問題。
+所以我這邊也指出幾個「必要」去改的設定。
+但所謂的「必要」也只是讓你了解這幾個設定，實際上要on還是off或其他的值請你自行斟酌。
+
+display_errors
+
+display_errors = On
+是否在程式出error時顯示，開On的話，當程式遇到問題就會顯示錯誤的原因
+開Off的話，你可能會得到Internal 500的畫面。
+
+error_reporting
+
+error_reporting = E_ALL & ~E_NOTICE
+報錯時，顯示的錯誤級別設定
+如果你想什麼鬼碗糕都看到，可以設成E_ALL
+
+output_buffering
+
+output_buffering = Off
+輸出暫存，跟html的header有關的東西。
+一堆session_start error或是header() error都跟這個設定有關。
+很多時候很多人說為什麼我在本機寫的code都沒error
+一到server就出錯？
+那是因為你在php的程式碼前就做了輸出(例如echo或是秀了其他的html code)
+然後可能你的output_buffering是設On或是4096
+結果伺服器卻是設定off
+我建議自己開發就設置Off吧！
+自己先避掉header的問題。
+
+date.timezone
+
+date.timezone = asia/taipei
+不要一直問為什麼你的時間永遠比人家慢8個小時……
+你不指定時區是亞洲/台北就註定你在台灣就是比人家慢8個小時………
+對！如果你主機是給日本人用自己知道啊！
+
+register_globals
+
+#register_globals = ...
+如果你看到這個東西，請你先升級你的php版本吧！
+如果你不升級，請你把他設成off吧。
+不然$_POST跟 $_GET還有$_REQUEST會很開心的………直接注入你的變數找碴。
+
+以上就是幾個比較重要的必須了解的設定。
+其他還有很多就自己細細研究
+but……不要問我：php.ini在那裡？
+
+<?php
+phpinfo();
+他會告訴你在那裡。
+========================= biz........
+1080104 bootstrap
+https://picsum.photos/200/40?random=1
+display: flex  = float
+flex-wrap : wrap 換行
+左圖右字
+display:flex
+flex-direction:column;
+justify-content:center
+
+service > h2 只作用於下一層的 h2
+img 
+四角變圓
+border-raduus:50%
+Transition 網頁動畫
+
+=========
+/application/controllers/biz/biz03.php
+
+/application/models/sf_model.php刪除更改為
+/application/models/basic_model.php
+
+
+/application/views/biz/biz03_list.php 
+/application/views/biz/biz03_search.php  
+/application/views/biz/biz03_view.php
+ 
+ 
+/system/core/Controller.php 
+/system/core/Model.php 
+--------------------------
+原sf_model.php刪除更改為basic_model.php
+加入 列表/查詢
+實際需依照需求加入
+
+=============== 1080116
+原VIEWS/biz/bizi03
+
+https://dev.aibooks.tw/a06/js/webset.js
+<script type="text/javascript" src="{base_url}js/Judgment_format.js"></script> 
+改為
+<script type="text/javascript" src="{base_url}js/webset.js"></script> 
+
+./js/Judgment_format1.js-->刪除
+./js/webset.js  --->新增
+
+修正序號自動排列
+
+webset.js
+---------------------------------------------------------------------
+
+
+	//onblur="checkID(this)"
+	function mobilephonechange(data)
+	{
+		re = /^09[0-9]{8}$/;
+		if (!re.test(data.value))
+			alert("你的手機格式不對！");
+	}
+	function phonechange(data)
+	{
+		re = /^[0-9]{2}[0-9]{8}$/;
+		if (!re.test(data.value))
+			alert("你的電話格式不對！");
+	}
+	function frequencychange(data)
+	{
+		re = /^[0-9]{0,3}$/;
+		if (!re.test(data.value))
+			alert("變更次數只能輸入3碼！");
+	}
+	function poeplechange(data)
+	{
+		re = /^[0-9]{0,4}$/;
+		if (!re.test(data.value))
+			alert("只能輸入4碼數值！");
+	}
+
+
+	function countychange(data)
+	{
+		re = /^[A-Za-z]{1}$/;
+		if (!re.test(data.value))
+			alert("只能輸入縣市房屋稅籍！");
+	}function townshipchange(data)
+	{
+		re = /^[0-9]{0,2}$/;
+		if (!re.test(data.value))
+			alert("只能輸入鄉鎮房屋稅籍！");
+	}function villagechange(data)
+	{
+		re = /^[0-9]{1}$/;
+		if (!re.test(data.value))
+			alert("只能輸入村里別房屋稅籍！");
+	}
+
+
+
+
+
+	function numbershareschange(data)
+	{
+		re = /^[0-9]{0,9}.[0-9]{0,2}$/;
+		if (!re.test(data.value))
+			alert("只能輸入10碼數值！");
+	}
+
+	function exchangeratechange(data)
+	{
+		re = /^[0-9]{0,4}.[0-9]{0,3}$/;
+		if (!re.test(data.value))
+			alert("只能輸入10碼數值！");
+	}
+
+	function yearchange(data)
+	{
+		re = /^[0-9]{4,4}$/;
+		if (!re.test(data.value))
+			alert("輸入西元年！");
+	}
+	function PrecheckNumberingchange(data)
+	{
+		re = /^[0-9]{0,9}$/;
+		if (!re.test(data.value))
+			alert("只能輸入9碼數值！");
+	}
+	function moneychange(data)
+	{
+		re = /^[0-9]{0,12}[.]{0,1}[0-9]{0,3}$/;
+		if (!re.test(data.value))
+			alert("只能輸入正確金額！");
+	}
+	function money8change(data)
+	{
+		re = /^[0-9]{0,8}$/;
+		if (!re.test(data.value))
+			alert("只能輸入正確金額！");
+	}
+	function uniformnumberchange(data)
+	{
+		re = /^[0-9]{6,20}$/;
+		if (!re.test(data.value))
+			alert("只能輸入正確統一編號！");
+	}
+
+
+
+	function datechange(data)
+	{
+		re = /^[0-9]{4}[0-1]{1}[0-9]{1}[0-3]{1}[0-9]{1}$/;
+		if (re.test(data.value))
+		{
+			if (!isExistDate(data.value.slice(0,4)+'/'+data.value.slice(4,6)+'/'+data.value.slice(6,8)))
+			{
+				alert("請輸入正確日期！");
+			}
+		}
+		else
+		{
+			alert("請輸入正確日期！");
+		}
+	}
+	function checkID(data)
+	{
+		re = /^[A-Z][1-2]{1}\d{8}$/;
+		if (!re.test(data.value))
+			alert("你的身份證號碼格式不對！");
+	}
+
+
+	function emailchange(data)
+	{
+		//re = /^([\w]+)(.[\w]+)*@([\w]+)(.[\w]{2,3}){1,2}$/;
+		re = /^[A-Za-z0-9]{1,50}@[A-Za-z0-9]{1,50}.[A-Za-z]{3}$/;
+		if (!re.test(data.value))
+			alert("你的E-MAIL碼格式不對！");
+	}
+
+	function isExistDate(dateStr) { // yyyy/mm/dd
+	  var dateObj = dateStr.split('/');
+	  var limitInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+
+	  var theYear = parseInt(dateObj[0]);
+	  var theMonth = parseInt(dateObj[1]);
+	  var theDay = parseInt(dateObj[2]);
+	  if (theDay==00 || theDay>31)
+	  {
+		return false;
+	  }
+	  if (theMonth==00 || theMonth>12)
+	  {
+		return false;
+	  }
+	  var isLeap = new Date(theYear, 1, 29).getDate() === 29; // 是否為閏年?
+
+	  if(isLeap) { // 若為閏年，最大日期限制改為 29
+		limitInMonth[1] = 29;
+	  }
+
+	  // 比對該日是否超過每個月份最大日期限制
+	  return theDay <= limitInMonth[theMonth - 1]
+	}
+
+
+
+
+
+ 
+	function sequence_list(id)
+	{
+	
+		for(i=0;i<100;i++)
+		{
+			//$('div:[id="'+id+'"]:eq('+i+')').html(i+1);
+			$("div[id='"+id+"']").eq(i).html(i+1);
+		}
+	}
+
+
+
+	function del_all(obj,value)
+	{
+		if (confirm("你確定要刪除該資料!!"))
+		{
+			ajax_get(obj,'id='+value,loreload);
+		}
+	}
+	function reforming()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			history.go(-1);
+			//alert(http_request.responseText);
+		}
+	}
+	function showmsg()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			alert(http_request.responseText);
+			
+		}
+	}
+ 
+	function changereload()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			location.replace(http_request.responseText) ;
+		}
+	}
+	function loreload()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			location.reload();
+		}
+	}
+
+
+  
+
+
+	function change_township(obj,data)
+	{
+		changid=data;
+		$("#"+data+" option").remove();
+		$("#"+data).append('<option selected="selected" value="0">請選擇...</option>');
+
+		ajax_get('gettownship','key='+obj.value,show_area);
+	}
+	
+	function change_showtab(obj,data,data1)
+	{
+		preset_showtab=data;
+		ajax_get('getshowtab','showtab='+data+'&fun='+data1,show_tab);
+	}
+	
+	function show_tab()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			document.getElementById('headingbutton').innerHTML=http_request.responseText;
+		}
+		
+	}
+
+	
+
+
+	
+	
+	function show_area()
+	{
+		if(http_request.readyState==4 && http_request.status==200)
+		{
+			$("#"+changid).append(http_request.responseText);
+		}
+	}
+	
+	
+	
+	
+	
+	$(function(){
+	
+		var _showTab = 0;
+		
+		
+		if (typeof(preset_showtab)!= 'undefined')
+		{
+			_showTab=preset_showtab;
+		}
+		$('.abgne_tab').each(function(){
+			var $tab = $(this);
+			var $defaultLi = $('ul.tabs li', $tab).eq(_showTab).addClass('active');
+			$($defaultLi.find('a').attr('href')).siblings().hide();
+			$('ul.tabs li', $tab).click(function() {
+				var $this = $(this),
+					_clickTab = $this.find('a').attr('href');
+				$this.addClass('active').siblings('.active').removeClass('active');
+				$(_clickTab).stop(false, true).fadeIn().siblings().hide();
+				return false;
+			}).find('a').focus(function(){
+				this.blur();
+			});
+		});
+	});
+
+
+	function openshow(data)
+	{
+		$.blockUI({ 	   
+			css: { 	   
+			top: '20%', 	   
+			left: '25%', 	   
+			height: '480px', 	   
+			width: '640px', 	   
+			overflow:'hidden', 	   
+			'-webkit-border-radius': '10px', 	   
+			'-moz-border-radius': '10px', 	   
+			'-khtml-border-radius': '10px', 	   
+			'border-radius': '10px', 	   
+			}, 	   
+			message: $('#'+data), 	   
+		}); 	
+		$('.confirm').click($.unblockUI); 	
+	}
+
+	var http_request=false;
+	function ajax_get(mfun,data,fun)
+	{
+		http_request=false;
+		if(window.XMLHttpRequest)
+		{
+			http_request=new XMLHttpRequest();
+			if(http_request.overrideMimeType)
+			{
+				http_request.overrideMimeType('text/xml');
+			}
+		}
+		else if(window.ActiveXObject)
+		{
+			try
+			{
+				http_request=new ActiveXObject("Msxml2.XMLHTTP");
+			}
+			catch(e)
+			{
+				try
+				{
+				http_request=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				catch (e)
+				{
+				}
+			}
+		}
+		if(!http_request)
+		{
+			alert('Giving up :( Cannot create a XMLHTTP instance');
+			return false;
+		}
+		http_request.onreadystatechange=fun;
+		http_request.open('POST',base_url+'index.php/'+base_urfun+'/'+mfun+'?'+data,true);
+		http_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;");  //**重要一定要加上
+		http_request.send(data);
+	}
+	
+
+=============
+新架構說明
+工商
+
+
+
+/application/controllers/biz/biz03.php
+/application/views/biz/biz03.php
+
+
+/application/models/biz/bizi01_model.php----->目前沒再用(要用也是可以)
+/application/models/sf_model.php
+/system/core/Controller.php
+
+
+/application/views/main_foot_v.php
+  
+/application/views/main_headbrow_v.php
+/application/views/main_menu_v.php
+  
+目前CSS全拉掉等待CSS套上去
+
+常用函式  
+sf_model.php 
+search($tab(資料表)='',$limit='', $offset='', $sort_by='', $sort_order='',$where='',$all=false(分頁尋找)) 
+insertf()
+del_detai()
+updatef(修改變數資料)
+query ($sql='',$msg=false,$msg2=false,$all=false)(SQL,回傳值,筆數,總筆數)
+
+
+Controller.php 
+
+emptyvar()清空數值及設定 
+
+changevar($value1,$value2=null,$preset_column(是否預設一行)=false)
+可同$this->load->vars用法
+或
+$this->changevar('bizmp',$result);//$result可陣列(陣列如下)
+{foreach  bizmp}
+{ bizmp.mp001} --{ bizmp.mp004}
+{/foreach  bizmp}
+---------------------------
+$result 非鄭列
+ { bizmp }
+-------------------------------
+
+
+
+$this->process_msg();//設定URL資訊
+$this->sf_page_show($result['all_rows'])//給總數量產生 分頁按鈕
+$this->sf_smod("設定","view");//頁面初始設定
+
+JS不給傳所以給聯結
+https://dev.aibooks.tw/a06/js/Judgment_format.js
+https://dev.aibooks.tw/a06/js/jquery.blockUI.js
+https://dev.aibooks.tw/a06/js/jquery-3.3.1.min.js
+
+如有不懂在詢問
+1/10
+Subject: 報表_大約寫法
+ 
+        
+/application/views/process_print.php 
+/uploadfiles\report\biz\AC01\AC01_p.php//報表檔位置
+ 
+ ----------------------------------------------------------------------------------------
+public function showreport()
+        {
+                $offmc_id='';
+                $data=explode("_",$this->id);
+                $this->id=$data[0];
+                $result= $this->basic_model->query('select * from bizmb  where mb001='.$data[1],true,true,true); 
+                $this->data['process_print']="../..".$result['rows']['0']['mb005'].$result['rows']['0']['mb003']."/".$result['rows']['0']['mb003']."_p";//報表檔位置
+                $this->load->vars($this->data);
+                $this->load->view('process_print');
+/*
+資料處理看要哪些資料
+*/
+                
+                $this->emptyvar();
+        }
+ 
+=======================
+ 多筆
+國內轉讓股東明細
+ 
+views
+-----------------------------------------------------------------------------------------------------------------------
+                                        <!--  投審會送件申請-國內轉讓股東明細 -->
+                                        <div id="tab18" class="tab_content">
+                                                <table class="form14">     <!-- 表格 -->
+                                                        <div style="width:100%; overflow-x: auto;  ">
+                                                                <tr>
+                                                                        <td>
+                                                                                <table style="width:100%;"  id="order_product" class="list1">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                                <td width="3%" rowspan="2"></td>                  
+                                                                                                <td width="5%" class="center" rowspan="2">編號</td>
+                                                                                                <td width="30%" class="left" rowspan="2">國內轉讓股東名稱</td>  
+                                                                                                <td width="12%" class="center"><input type='radio' tabIndex="38" id="" onKeyPress="keyFunction()" name=""  value="1" size="1"   />　有限公司或其他</td>  
+                                                                                                <td width="20%" class="center" colspan="2"><input type='radio' tabIndex="38" id="" onKeyPress="keyFunction()" name=""  value="1" size="1"   />　股份有限公司</td>
+                                                                                                <td width="10%" class="right" rowspan="2">成交金額</td>
+                                                                                                <td width="20%" class="left" rowspan="2">受讓人姓名</td>
+                                                                                        </tr>
+                                                                                        <tr> 
+                                                                                                <td width="12%" class="right">轉讓出資額(元)</td>  
+                                                                                                <td width="10%" class="right">轉讓股數</td>
+                                                                                                <td width="10%" class="right">每股成交金額(元)</td>
+                                                                                        </tr>
+                                                                                        </thead>                                                                                   
+                                                                                        <tfoot id='bizms'>
+                                                                                        </tfoot>                                                                                    
+                                                                                        {foreach bizms}
+                                                                                        <tfoot id="bizms{bizms.ms001}">
+                                                                                        <tr>
+                                                                                                <td  class="center"><img  onclick="delbizms({bizms.ms001})" src="{base_url}assets/image/delete2.png" title="刪除資料" /></td>       
+                                                                                                <td  class="center"><div id="sequence_bizms"></div></td>            
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms003" onKeyPress="keyFunction()"  name=""   value="{bizms.ms003}"    type="text"  onChange="updbizms(this,{bizms.ms001})"  /></td>
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms004" onKeyPress="keyFunction()" onblur="moneychange(this)"  name=""   value="{bizms.ms004}"    type="text"  onChange="updbizms(this,{bizms.ms001})"/></td>
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms005" onKeyPress="keyFunction()" onblur="numbershareschange(this)" name=""   value="{bizms.ms005}"    type="text"  onChange="updbizms(this,{bizms.ms001})"/></td>
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms006" onKeyPress="keyFunction()" onblur="moneychange(this)" name=""   value="{bizms.ms006}"    type="text"  onChange="updbizms(this,{bizms.ms001})"/></td>
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms007" onKeyPress="keyFunction()" onblur="moneychange(this)" name=""   value="{bizms.ms007}"    type="text"  onChange="updbizms(this,{bizms.ms001})"/></td>
+                                                                                                <td  class="left" ><input  tabIndex="31" id="ms008" onKeyPress="keyFunction()"  name=""   value="{bizms.ms008}"    type="text"  onChange="updbizms(this,{bizms.ms001})"/></td>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                        {/foreach bizms}
+                                                                                        
+                                                                                        <tfoot id='bizmsadd'>
+                                                                                        <tr>
+                                                                                                <td class="center" valign="top"><img src="{base_url}assets/image/add.png" title="增加" style="cursor: `;" onclick="add_bizms_process()" /></td>
+                                                                                                <td class="left" colspan="7"></td>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                </table>
+                                                                        </td>
+                                                                </tr>
+                                                        </div>
+                                                </table>
+                                        </div>
+ 
+ 
+<script>
+        function add_bizms_process(obj)
+        {
+                ajax_get('addbizms','ms002={mq001}&ms003=請新增轉讓股東名稱&ms007=0&ms008=請新增受讓人姓名',add_bizms);  
+        }
+        function add_bizms()
+        {      
+                if(http_request.readyState==4 && http_request.status==200)
+                {
+                        $("#bizmsadd").before('<tfoot id="bizms'+http_request.responseText+'"><tr><td  class="center"><img  onclick="delbizms('+http_request.responseText+')" src="{base_url}assets/image/delete2.png" title="刪除資料" /></td><td  class="center"><div id="sequence_bizms"></div></td><td  class="left" ><input  tabIndex="31" id="ms003" onKeyPress="keyFunction()"  name=""   value="請新增轉讓股東名稱"    type="text"  onChange="updbizms(this,'+http_request.responseText+')"  /></td><td  class="left" ><input  tabIndex="31" id="ms004" onKeyPress="keyFunction()"  onblur="moneychange(this)"  name=""   value=""    type="text"  onChange="updbizms(this,'+http_request.responseText+')"/></td><td  class="left" ><input  tabIndex="31" id="ms005" onKeyPress="keyFunction()"  onblur="numbershareschange(this)"  name=""   value=""    type="text"  onChange="updbizms(this,'+http_request.responseText+')"/></td><td  class="left" ><input  tabIndex="31" id="ms006" onKeyPress="keyFunction()"  onblur="moneychange(this)"  name=""   value=""    type="text"  onChange="updbizms(this,'+http_request.responseText+')"/></td><td  class="left" ><input  tabIndex="31" id="ms007" onKeyPress="keyFunction()"  onblur="moneychange(this)"  name=""   value="0"    type="text"  onChange="updbizms(this,'+http_request.responseText+')"/></td><td  class="left" ><input  tabIndex="31" id="ms008" onKeyPress="keyFunction()"  name=""   value="請新增受讓人姓名"    type="text"  onChange="updbizms(this,'+http_request.responseText+')"/></td></tr></tfoot>        ');
+                        sequence_list('sequence_bizms');
+                }
+        }
+        function updbizms(obj,key)
+        {
+                ajax_get('updbizms',"ms001="+key+'&'+obj.id+'='+obj.value);
+        }
+        function delbizms(data)
+        {
+                ajax_get('delbizms',"ms001="+data);
+                $("#bizms"+data).remove();
+                sequence_list('sequence_bizms');
+        }
+</script>
+ 
+ 
+-----------------------------------------------------------------------------------------------------------------------
+controllers
+ 
+ 
+        public function addbizms()
+        {
+        
+                $this->basic_model->fundb="bizms";//資料表名稱
+                if($_POST!=null)
+                {
+                        $this->basic_model->insertf();
+                        $result=$this->basic_model->get_id('ms001');
+                        echo $result['rows'][0]['ms001'];
+                }
+        }
+ 
+        public function updbizms()
+        {
+                $this->basic_model->fundb="bizms";//資料表名稱
+                $this->key_id='ms001';
+                $this->basic_model->updatef($_POST);
+        }
+        
+ 
+        public function delbizms()
+        {
+                $this->basic_model->fundb="bizms";//資料表名稱
+                $this->basic_model->del_detail();
+        }
+        

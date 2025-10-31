@@ -1,0 +1,133 @@
+.TitleName{
+    font-family:Times New Roman,標楷體;
+    padding:1px;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing: 3px;
+    border:0px solid black;
+    text-align:center;
+}
+.TitleName2{
+    font-family:Times New Roman,標楷體;
+    padding:1px;
+    font-size:15px;
+    font-weight:bold;
+    letter-spacing: 1px;
+    border:0px solid black;
+    text-align:center;
+}
+.TitleName3{
+    padding:5px 5px 0 5px;
+    border-bottom:2px solid black;
+    text-align:center;
+}
+.TitleName3 div{
+    font-family:Times New Roman,標楷體;
+    font-size:15px;
+    font-weight:bold;
+    padding:2px;
+}
+
+tr {
+    height:12px;
+}
+td {
+    border:0px solid red;
+    height:12px;
+}
+div {
+    font-family:Times New Roman,新細明體;
+}
+tbody div{
+    /*font-size:14px;*/
+    font-size:12px; 
+    -webkit-transform:scale(1);
+    display:inline-block;
+}
+
+/* 資產負債表-橫式- CSS */
+.ra_thead_tr_th_1 {
+    width:390px;
+}
+.ra_thead_tr_th_1 div{
+    width:380px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:1px;
+    border-bottom:2px solid black;
+}
+.ra_thead_tr_th_2 {
+    width:110px;
+}
+.ra_thead_tr_th_2 div{
+    width:100px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:1px;
+    border-bottom:2px solid black;
+}
+.ra_thead_tr_th_3 {
+    width:60px;
+}
+.ra_thead_tr_th_3 div{
+    width:50px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:1px;
+    border-bottom:2px solid black;
+}
+.ra_tbody_tr_1 {
+    height:12px;
+}
+.ra_tbody_td_1 {
+    height:12px;
+    border-bottom:1px dashed #999;
+}
+.ra_tbody_td_1 div {
+    text-align:left;
+    font-family:Times New Roman,新細明體;
+    width:380px;
+    margin-left:10px;
+    padding:1px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.ra_tbody_td_2 {
+    height:12px;
+    text-align:right;
+}
+.ra_tbody_td_2 div {
+    font-family:Times New Roman;
+    padding:1px 5px 1px 1px;
+    text-align:right;
+}
+/* 資產負債表-橫式- CSS */
+
+/*
+.TitleName3{
+    font-size:8px; 
+    -webkit-transform:scale(0.66);
+    display:inline-block;
+}
+scale(0.91) 裡面的數值是以 chrome 
+最小字型 12px 去計算轉換倍率，例如：9px 為
+9/12 = 0.75 這樣。
+*/
+
+@page { 
+    margin-top: 1cm;
+    margin-right: 1cm;
+    margin-bottom:1cm;
+    margin-left: 1cm;
+    size: landscape; 
+    /*
+    //size: A4 portrait;
+    size:landscape;
+    -webkit-transform: rotate(-90deg); -moz-transform:rotate(-90deg);
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    */
+};

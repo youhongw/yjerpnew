@@ -1,0 +1,12 @@
+# Use PHP5 Single php.ini as default
+RewriteEngine on
+
+# Use PHP5.3 Single php.ini as default
+# Changed PHP handler from application/x-httpd-php54s to application/x-httpd-phpbetas on Tue Jan 12 21:18:48 MST 2016.
+AddHandler application/x-httpd-phpbetas .php
+
+<IfModule mod_rewrite.c>
+RewriteBase /
+RewriteCond $1 !^(index\.php|images|assets|robots\.txt|$)
+RewriteRule ^(.*)$ /syd/index.php/$1 [L,QSA] 
+</IfModule>

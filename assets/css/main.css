@@ -1,0 +1,447 @@
+@charset "utf-8";
+/* CSS Document */
+body
+{
+	margin:0;
+	font-size:15px;
+	font-family:Verdana,Arial,Helvetica,sans-serif,微軟正黑體,'Microsoft JhengHei',新細明體,PMingLiU,細明體;
+}
+
+a
+{
+	text-decoration:none;
+	color:#09C;
+}
+
+a:hover
+{
+	text-decoration:underline;
+}
+
+/*上方置頂子選單*/
+/*.menu_s
+{
+	position:absolute;
+	background:#000;
+	display:none;
+	padding:5px;
+	margin-left:auto;
+	margin-right:auto;
+	left:0;
+	right:0;
+}*/
+
+
+/*置頂主選單*/
+.mainmenu
+{
+	position:fixed;
+	top:0;
+	left:0;
+	z-index:9999;
+	width:100%;
+}
+
+/*主選單底部漸層*/
+.bgw
+{
+	background:-webkit-gradient(linear, left top, left bottom, from(#333), to(#FFF));
+    background: -moz-linear-gradient(top, #333, #FFF);
+    filter: progid: DXImageTransform.Microsoft.gradient(GradientType=0,startColorstr='#333333', endColorstr='#FFFFFF');
+    background: -o-linear-gradient(top, #333333, #EEEEEE);
+	height:6px;
+}
+
+/*置頂子選單*/
+.submenu
+{
+	position:fixed;
+	top:40px;
+	left:0;
+	z-index:9999;
+	width:100%;
+	filter:alpha(opacity=80);
+	-moz-opacity:0.8;
+	opacity:0.8;
+	display:none;
+}
+
+/*子選單顏色*/
+.menu tr td a
+{
+	color:#FFF;
+}
+
+.menu tr td a a:hover
+{
+	text-decoration:none;
+}
+
+/*LOGIN登入盒*/
+.lgdiv
+{
+	width:360px; 
+	background:#FFF; 
+	text-align:left;
+	padding:10px; 
+	border:2px #CCC double; 
+	border-radius:5px;
+	-moz-box-shadow:4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+	-webkit-box-shadow:4px 4px 12px -2px rgba(20%,20%,40%,0.5);
+}
+
+
+
+/*按鈕-->黑色圓角5px*/
+.bbt1
+{
+	background:#000;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->黑色圓角50%*/
+.bbt2
+{
+	background:#000;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->黑色無圓角*/
+.bbt3
+{
+	background:#000;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->桃紅圓角5px*/
+.fbt1
+{
+	background:#F39;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->桃紅圓角50%*/
+.fbt2
+{
+	background:#F39;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->桃紅無圓角*/
+.fbt3
+{
+	background:#F39;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->灰圓角5px*/
+.cbt1
+{
+	background:#999;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->灰圓角50%*/
+.cbt2
+{
+	background:#999;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->灰無圓角*/
+.cbt3
+{
+	background:#999;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->桃紅無圓角*/
+.fbt3
+{
+	background:#F39;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->藍圓角5px*/
+.lbt1
+{
+	background:#09C;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->藍圓角50%*/
+.lbt2
+{
+	background:#09C;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->藍無圓角*/
+.lbt3
+{
+	background:#09C;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->紅圓角5px*/
+.rbt1
+{
+	background:#F03;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->紅圓角50%*/
+.rbt2
+{
+	background:#F03;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->紅無圓角*/
+.rbt3
+{
+	background:#F03;
+	color:#FFF;
+	border:none;
+}
+/*按鈕-->綠圓角5px*/
+.gbt1
+{
+	background:#099;
+	color:#FFF;
+	border:none;
+	border-radius:5px;
+}
+/*按鈕-->綠圓角50%*/
+.gbt2
+{
+	background:#099;
+	color:#FFF;
+	border:none;
+	border-radius:50%;
+}
+/*按鈕-->綠無圓角*/
+.gbt3
+{
+	background:#099;
+	color:#FFF;
+	border:none;
+}
+
+/*ajax提示訊息*/
+.toptip
+{
+	position:fixed;
+	top:60px;
+	width:360px;
+	padding:10px;
+	background:#000;
+	display:none;
+	z-index:100;
+	color:#FFF;
+	filter:alpha(opacity=80);
+	-moz-opacity:0.8;
+	opacity:0.8;
+	right:30px;
+}
+
+/*loading提示訊息*/
+.loading
+{
+	position:fixed;
+	text-align:center;
+	top:150px;
+	width:100px;
+	background:#FFF;
+	border-radius:10px;
+	z-index:100;
+	filter:alpha(opacity=90);
+	-moz-opacity:0.9;
+	opacity:0.9;
+	left:50%;
+	margin-left:-50px;
+}
+
+/*進度條*/
+.loading2{ 
+ background:#00fcff;
+ height:5px;
+ position:fixed; 
+ top:40px;
+ z-index:99999;
+} 
+
+/*主欄位td背景藍色字白色*/
+.btd
+{
+	background:#09C;
+	color:#FFF;
+	height:40px;
+}
+
+/*relative Div 讓下方Div絕對定位用*/
+.reldiv
+{
+	position:relative;
+	width:80%;
+	text-align:left;
+}
+/*Div 停駐在原位*/
+.abodiv
+{
+	position:absolute;
+	z-index:200px;
+}
+/*Div 固定上方，menu的下方*/
+.fixdiv
+{
+	position:fixed;
+	top:40px;
+}
+
+/*新增表單div固定在新增按鈕下方*/
+.addiv
+{
+	position:absolute;
+	top:0x;
+	z-index:100;
+	background:#FFF;
+	border:2px #666 double;
+	border-top:none;
+	border-radius:5x;
+	padding:10px;
+	text-align:left;
+	display:none;
+}
+
+/*CLOSE按鈕*/
+.cls a
+{
+	color:#03C;
+}
+
+
+/*列表的Table*/
+.list_table tr td
+{
+	border-bottom:1px #CCC double;
+}
+/*tr隔一行加背景色*/
+.trbg
+{
+	background:#FFC;
+}
+
+/*關鍵字推薦div*/
+.kwdiv
+{
+	position:absolute;
+	top:65px;
+	left:105px;
+	z-index:200;
+	background:#FFF;
+	border:1px #000 double;
+	border-top:none;
+	padding:5px;
+	display:none;
+}
+
+.kwdata
+{
+	border:1px #FFF double;
+	width:60px;
+}
+/*****************/
+
+/*桃紅a的文字*/
+.btx
+{
+	color:#000;
+	font-size:24px;
+}
+
+.btx:hover
+{
+	color:#000;
+	font-size:24px;
+}
+
+.ctx
+{
+	color:#999;
+	font-size:16px;
+}
+
+.ctx:hover
+{
+	color:#F39;
+	cursor:pointer;
+	font-size:24px;
+}
+
+/**按鈕被選取***/
+.bt_focus
+{
+	background:#000;
+	color:#FFF;
+	border:1px #000 double;
+	border-bottom:none;
+	height:50px;
+	width:120px;
+}
+/**按鈕沒有被選取***/
+.bt_blur
+{
+	background:#FFF;
+	color:#000;
+	border:1px #000 double;
+	border-bottom:none;
+	height:50px;
+	width:120px;
+}
+
+/**頁面顯示***/
+.dv_show
+{
+	border:1px #000 double;
+	border-top:none;
+	width:78%;
+	text-align:left;
+	padding:1%;
+	overflow:auto;
+}
+/**頁面隱藏***/
+.dv_hide
+{
+	border:1px #000 double;
+	border-top:none;
+	display:none;
+	width:78%;
+	text-align:left;
+	padding:1%;
+	overflow:auto;
+}
+
+/**右下角程式執行時間**/
+#prg_time
+{
+	padding:5px;
+	background:#000;
+	position:fixed;
+	bottom:10px;
+	right:10px;
+	filter:alpha(opacity=90);
+	-moz-opacity:0.9;
+	opacity:0.9;
+	color:#FFF;
+}

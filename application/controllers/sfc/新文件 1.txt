@@ -1,0 +1,31 @@
+<?php
+// 假設 $result1 是一個包含多個陣列的陣列
+// 例如: $result1 = [['td001' => '11304', 'td008' => '0', 'TC048' => '...', 'pg002' => '1'], ...];
+
+for ($i = 0; $i < count($result1); $i++) {
+    foreach ($result1[$i] as $key => $value) {
+        // 新增的判斷邏輯: 如果鍵是 'td001' 且值是 '11304'
+        if ($key == 'td001' && $value == '11304') {
+            // 將同一個陣列項目 (使用索引 $i) 中的 'td008' 值設定為 1000
+            $result1[$i]['td008'] = 1000;
+        }
+
+        // 原始程式碼的邏輯
+        if ($key == 'TC048' or $key == 'TC049' or $key == 'TC050' or $key == 'TC201') {
+            // $result1[$i][$key] = iconv("big-5", "utf-8", $value);
+            $result1[$i][$key] = mb_convert_encoding(trim($value), "utf-8", "big-5");
+        } else if ($key == 'pg002') {
+            if (trim($value) == '1') {
+                $result1[$i][$key] = '手動';
+            } else if (trim($value) == '') {
+                $result1[$i][$key] = '';
+            } else {
+                $result1[$i][$key] = '自動';
+            }
+        }
+    }
+}
+
+// 您可以在這裡列印 $result1 來檢查結果
+// print_r($result1);
+?>

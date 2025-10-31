@@ -1,0 +1,128 @@
+html {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background: #FFFFFF;
+	margin: 0;
+	padding: 0;
+}
+body, td, th {
+	font-family: 細明體, Verdana, Arial, Helvetica, sans-serif;
+	-webkit-text-size-adjust:none;
+	color: #000000;
+}
+p {
+	margin:0cm;
+}
+.store {
+	width: 100%;
+	margin-bottom: 0px;
+	border-collapse:collapse;
+	border: 0px;
+}
+.store1 {
+	width: 100%;
+	font-size: 6pt;
+	margin-bottom: 0px;
+	border-collapse:collapse;
+	border: 0px;
+}
+.logo {
+	color: #000000;
+	text-align: center;
+	font-size: 9pt;
+}
+.logo1 {
+	color: #000000;
+	text-align: center;
+	font-size: 14pt;
+}
+.title {
+	color: #000000;
+	text-align: center;
+	font-size: 14pt;
+	font-weight: bold;
+	padding-bottom: 5px;
+	margin-top: 0px;
+	margin-bottom: 15px;
+	border-bottom: 1px solid #000000;
+	font-family: 細明體, Verdana, Arial, Helvetica, sans-serif;
+}
+
+.heading td {
+	background: #E7EFEF;
+	padding: 5px;
+}
+.company {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 10pt;
+	margin-bottom: 0px;
+	border: 0px;
+}
+.order {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 9pt;
+	margin-bottom: 0px;
+	border: 0px;
+}
+.order td {
+	font-size: 9pt;
+}
+.address {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 9pt;
+	margin-bottom: 0px;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+.address td {
+	font-size: 9pt;
+}
+.product {
+	width: 100%;
+	font-size: 10pt;
+	margin-bottom: 0px;
+	border-collapse: collapse;
+	border-top: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-left: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+.product td {
+	padding: 5px;
+}
+.option {
+	width: 100%;
+	font-size: 9pt;
+	border-collapse: collapse;
+	margin-bottom: 0px;
+	border: 0px;
+}
+
+.comment {
+	width: 100%;
+	font-size: 9pt;
+	margin-bottom: 0px;
+	border-collapse: collapse;
+}
+
+.sign {
+	font-size: 9pt;
+	text-align: right;
+	margin-top: 10px;
+	border-collapse: collapse;
+}
+.footer {
+	width: 100%;
+	font-size: 9pt;
+	margin-top: 10px;
+	border-collapse: collapse;
+	border-top: 1px solid #000000;
+}
+

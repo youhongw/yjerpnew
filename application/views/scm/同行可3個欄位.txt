@@ -1,0 +1,230 @@
+<div class="row chart-row">
+    <div class="col-md-4">
+        <form class="form-inline" role="form">
+            <div class="input-group">
+                <label for="dtp_input1" class="control-label">开始时间</label>
+                <div id="start" class="input-group date form_date" data-date=""
+                    data-date-format="MM-dd-yyyy" data-link-field="dtp_input1"
+                    data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" type="text" value=""
+                        readonly> <span class="input-group-addon"><span
+                        class="glyphicon glyphicon-remove"></span></span> <span
+                        class="input-group-addon"><span
+                        class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <input type="hidden" id="dtp_input1" value="" />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+        <form class="form-inline" role="form">
+            <div class="input-group">
+                <label for="dtp_input2" class="control-label">结束时间</label>
+                <div id="end" class="input-group date form_date" data-date=""
+                    data-date-format="MM-dd-yyyy" data-link-field="dtp_input2"
+                    data-link-format="yyyy-mm-dd">
+                    <input class="form-control" size="16" type="text" value=""
+                        readonly> <span class="input-group-addon"><span
+                        class="glyphicon glyphicon-remove"></span></span> <span
+                        class="input-group-addon"><span
+                        class="glyphicon glyphicon-calendar"></span></span>
+                </div>
+                <input type="hidden" id="dtp_input2" value="" /><br />
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2">
+        <div class="form-inline">
+            <button class="btn btn-primary" onClick="search()">查询</button>
+        </div>
+    </div>
+</div>
+————————————————
+版权声明：本文为CSDN博主「大大kc」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/rxt2012kc/java/article/details/70142431
+<form id="searchForm" class="col-md-12 col-md-offset-1 form-horizontal" role="form">
+    <div class="form-group">
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="statisticalTypeEnum" class="control-label col-md-4">统计类型</label>
+                <div class="col-md-8">
+                    <select id="statisticalTypeEnum" name="statisticalTypeEnum" class="selectpicker f-left"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="orderSourceFlagEnum" class="control-label col-md-4">订单类型</label>
+                <div class="col-md-8">
+                    <select id="orderSourceFlagEnum" name="orderSourceFlagEnum" class="selectpicker f-left" style="width:100%;"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="startDate" class="control-label col-md-4">日期1</label>
+                <div class="col-md-8">
+                    <input id="startDate" class="date-height laydate-icon f-left" name="firstDate"
+                           οnclick="laydate({elem: '#startDate'})">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="endDate" class="control-label col-md-4">日期2</label>
+                <div class="col-md-8">
+                    <input id="endDate" class="date-height laydate-icon f-left" name="secondDate"
+                           οnclick="laydate({elem: '#endDate'})">
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="form-group">
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="channelEnum" class="control-label col-md-4">渠 道</label>
+                <div class="col-md-8">
+                    <select id="channelEnum" name="channelEnum" class="selectpicker f-left" style="width:100%;"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="platformEnum" class="control-label col-md-4">平 台</label>
+                <div class="col-md-8">
+                    <select id="platformEnum" name="platformEnum" class="selectpicker f-left"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="vendorEnum" class="control-label col-md-4">供应商</label>
+                <div class="col-md-8">
+                    <select id="vendorEnum" name="vendorEnum" class="selectpicker f-left"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="carriers" class="control-label col-md-4">航 司</label>
+                <div class="col-md-8">
+                    <select id="carriers" name="carriers" class="form-control selectpicker f-left" multiple
+                            data-actions-box="true" data-size="10"></select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+
+        <div class="col-md-2">
+            <div class="row">
+                <label for="xProductEnum" class="control-label col-md-4">X产品</label>
+                <div class="col-md-8">
+                    <select id="xProductEnum" name="xProductEnum" class="selectpicker f-left"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+        </div>
+
+        <div class="col-md-2">
+        </div>
+
+        <div class="col-md-2">
+            <div class="row">
+                <label class="control-label col-md-4"> </label>
+                <div class="col-md-8">
+                    <button id="submitbutton" class="submit-button btn btn-default" type="button">查询</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</form>
+————————————————
+版权声明：本文为CSDN博主「大白能」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/qq_28988969/java/article/details/81778437
+<div style="height:30px;display: inline-block;margin-bottom: 0;vertical-align: middle;"></div>
+class="form-inline" 
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>jQuery UI Autocomplete - Default functionality</title>
+  <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+  <link rel="stylesheet" href="/resources/demos/style.css">
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    var availableTags = [
+      "ActionScript",
+      "AppleScript",
+      "Asp",
+      "BASIC",
+      "C",
+      "C++",
+      "Clojure",
+      "COBOL",
+      "ColdFusion",
+      "Erlang",
+      "Fortran",
+      "Groovy",
+      "Haskell",
+      "Java",
+      "JavaScript",
+      "Lisp",
+      "Perl",
+      "PHP",
+      "Python",
+      "Ruby",
+      "Scala",
+      "Scheme"
+    ];
+    $( "#tags" ).autocomplete({
+      source: availableTags
+    });
+  } );
+  </script>
+</head>
+<body>
+ 
+<div class="ui-widget">
+  <label for="tags">Tags: </label>
+  <input id="tags">
+</div>
+ 
+ 
+</body>
+</html>
+
+<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/index.css"/>
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/main.css" />  
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/jquery.fancybox.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/basic/chrome.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/sts/style.css" />
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/css/jquery-ui.min.css">
+		<link rel="stylesheet" type="text/css" href="https://www.smartbooksbank.com/per/fontawesome/fontawesome/css/all.css">
+		
+		<script type="text/javascript" src="https://www.smartbooksbank.com/per/js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="https://www.smartbooksbank.com/per/js/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="https://www.smartbooksbank.com/per/js/jquery.blockUI.js"></script>
+		<script type="text/javascript" src="https://www.smartbooksbank.com/per/js/webset.js"></script> 
+		<script type="text/javascript" src="https://www.smartbooksbank.com/per/js/aaa.js"></script> 
+		<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
+        <script type="text/javascript" src="https://www.smartbooksbank.com/per/js/jquery.fancybox.js"></script>
+		

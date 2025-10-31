@@ -1,0 +1,47 @@
+.tree_menu {
+	MARGIN: 5px auto; TEXT-ALIGN: left;FONT-SIZE: 13px;padding-left: 10px;
+}
+.tree_menu a{color:#215DA9;}
+.tree_menu a:hover{ color:#ff6600;}
+.tree_menu div{padding-bottom: 2px;}
+.tree_menu .LinkTable IMG {
+	PADDING-RIGHT: 5px; PADDING-LEFT: 5px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px
+}
+.tree_menu_show{display:block;}
+
+/*---------------------flash-----------------*/
+#Photo{width:500px; height:499px; background:url(../images/in_bg_09.png) no-repeat;position:relative}
+/* #Photo-Mackup{ width:1020px; height:250px; background: url(../images/markup_bg_03.png) no-repeat;} */
+#abgne_fade_pic a{position:absolute;display:block;width:500px; height:499px;	z-index: 1px;}
+#abgne_fade_pic a.ad {position: absolute;讓圖片疊在一起 } 
+#abgne_fade_pic .ad img{ width:500px; height:499px;/*-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px*/; z-index: -2px;  }
+#abgne_fade_pic .control { display:none}
+#abgne_fade_pic .control a {display:inline-block;height: 10px;width: 10px; text-indent:-9999px;padding: 5px;*display:inline;zoom:1;
+                            -webkit-border-radius: 6px;  -moz-border-radius: 6px;border-radius: 6px;background: #c0c0c0; margin:0px 2px}
+#abgne_fade_pic .control a.on {	 background: #404040; }
+
+#abgne_fade_pic .NUMBER{ position:absolute; bottom:300px; left:510px;  z-index:10; display:block; width:auto; height:20px; line-height:20px;}
+#abgne_fade_pic .NUMBER ul{  margin:0 auto; text-align:center; margin:0 auto;}
+#abgne_fade_pic .NUMBER li{/*  border:1px solid red; */display:block; width:20px; height:20px; float:left; text-align:center; font:Verdana, Arial; font-weight:bold;color:#D5D6E6; margin:0 2px;  font-size:12px;  }
+#abgne_fade_pic .NUMBER li a{/* border:1px solid red; */display:block;width:20px; height:20px;  text-decoration:none; color:#D5D6E6;background:url(../images/number_dot_11.png) no-repeat;   }
+#abgne_fade_pic .NUMBER li a:hover{display:block; color:#D5D6E6;background:url(../images/number_dot_on.png) no-repeat; }
+#abgne_fade_pic .NUMBER li span{ visibility:hidden;}
+#abgne_fade_pic .NUMBER li a.on{display:block; color:#333;background:#0f69ff; background:url(../images/number_dot_on.png) no-repeat;}
+
+.Banner-Photo{width:381px;height:225px;position:relative;display:block; margin-right:0px; margin-top:22px;}
+/* #Banner{width:760px;height:182px;position:relative} */
+.Banner-Photo #abgne_fade_pic a{position:absolute;display:block;width:381px; height:225px;z-index: 1px;}
+.Banner-Photo #abgne_fade_pic a.ad {position:absolute;讓圖片疊在一起 } 
+.Banner-Photo #abgne_fade_pic .ad img{ width:381px; height:225px;/*-webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px*/; z-index: -2px;  }
+.Banner-Photo #abgne_fade_pic .control { display:none}
+.Banner-Photo #abgne_fade_pic .control a {display:inline-block;height: 10px;width: 10px; text-indent:-9999px;padding: 5px;*display:inline;zoom:1;
+                            -webkit-border-radius: 6px;  -moz-border-radius: 6px;border-radius: 6px;background: #c0c0c0; margin:0px 2px}
+.Banner-Photo #abgne_fade_pic .control a.on {	 background: #404040; }
+
+.Banner-Photo #abgne_fade_pic .NUMBER{ position:absolute; bottom:20px; left:310px;  z-index:10; display:block; width:auto; height:20px; line-height:20px;}
+.Banner-Photo #abgne_fade_pic .NUMBER ul{  margin:0 auto; text-align:center; margin:0 auto;}
+.Banner-Photo #abgne_fade_pic .NUMBER li{ /* border:1px solid red; */display:block; width:20px; height:20px; float:left; text-align:center; font:Verdana, Arial; font-weight:bold;color:#D5D6E6; margin:0 2px;  font-size:12px;  }
+.Banner-Photo #abgne_fade_pic .NUMBER li a{/* border:1px solid red; */display:block;  text-decoration:none; color:#D5D6E6;background:url(../images/number_dot_11.png) no-repeat;   }
+.Banner-Photo #abgne_fade_pic .NUMBER li a:hover{display:block; color:#D5D6E6;background:url(../images/number_dot_on.png) no-repeat; }
+.Banner-Photo #abgne_fade_pic .NUMBER li span{ visibility:hidden;}
+.Banner-Photo #abgne_fade_pic .NUMBER li a.on{display:block; color:#333;/* background:#0f69ff;  */background:url(../images/number_dot_on.png) no-repeat;}

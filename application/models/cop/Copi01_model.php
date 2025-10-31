@@ -1,0 +1,1143 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Copi01_model extends CI_Model {
+	
+	function __construct()
+        {
+          parent::__construct();      //重載ci底層程式 自動執行父類別
+        }	
+		
+	//查詢 table 表所有資料  
+	function selbrowse($num,$offset)   
+        {            
+	      $this->db->select('ma001, ma002, ma003, ma004, ma005, ma006,ma008,ma009,ma011,ma013, create_date');
+          $this->db->from('copma');
+          //$this->db->order_by('id', 'DESC');                //排序  單欄
+	      $this->db->order_by('ma001 desc, ma002 desc');    //排序  單欄以上 asc 由小至大 desc預設由大至小
+	      $this->db->limit($num,$offset);   // 每頁15筆
+	      $ret['rows']=$this->db->get()->result();
+	      $this->db->select('COUNT(*) as count');    //查詢總筆數
+	      $this->db->from('copma');
+          $query = $this->db->get();
+	      $tmp = $query->result();
+	      $ret['num_rows'] = $tmp[0]->count;
+	      return $ret;	
+        }
+		
+	//欄位表頭排序流覽資料
+	function search($limit, $offset, $sort_by, $sort_order)     //欄位表頭排序流覽資料
+	    { 
+	     $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	     $sort_columns = array('ma001', 'ma002', 'ma003', 'ma004', 'ma005', 'ma006','ma008','ma009','ma011','ma013','ma201','ma202','create_date');
+	     $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'ma001';  //檢查排序欄位是否在 table 內
+	     $query = $this->db->select('ma001, ma002, ma003, ma004, ma005, ma006, ma008, ma009, ma011, ma013,ma201,ma202,create_date')
+	                       ->from('copma')
+		                   ->order_by($sort_by, $sort_order)
+		                   ->limit($limit, $offset);
+	     $ret['rows'] = $query->get()->result();
+	
+	     $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                       ->from('copma');
+	     $num = $query->get()->result();		
+	     $ret['num_rows'] = $num[0]->count;		
+	     return $ret;
+	    }
+	//Talence Editor 2017.03.21
+	/***新增純粹以sql做查詢的方法construct_sql
+	 *	
+	 *
+	 ***/
+	//建構SQL字串
+	function construct_sql($limit = 15, $offset = 0, $func = "")
+	{
+		$this->session->set_userdata('copi01_search',"display_search/".$offset);
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+		if ($func == "and_where" or $func == "or_where")   
+		    { unset($_SESSION['copi01']['search']);}
+		
+        if ($this->uri->segment(3,0)=="clear_sql_term")
+		    { unset($_SESSION['copi01']['search']);}
+
+		if(is_array($this->input->get())){
+			extract($this->input->get());
+			if (@$val!=null) {
+			$temp_url = explode(".html",$val);
+			$val = "";
+			foreach($temp_url as $k => $v){$val.=$v;}}
+		}
+		$default_where = "";//在這裡塞入一些預設條件，如不顯示離職員工等等
+		$default_order = "ma001 asc";//在這裡塞入一些預設排序
+		
+		/* where 處理區域 */
+		if($default_where){
+			$where = "(".$default_where.")";
+		}else{
+			$where = "";
+		}
+		
+		if(isset($_SESSION['copi01']['search']['where'])){
+			if($where){$where .= " and ";}
+			$where .= $_SESSION['copi01']['search']['where'];
+		}
+		
+		if($this->input->post('find005')){
+			if($where){$where .= " and ";}
+			$where .= $this->input->post('find005');
+		}
+		
+		if($func == "and_where" && @strlen($key)+@strlen($val)!=0){
+			if($where){$where .= " and ";}
+			$key_ary = explode(",",$key);
+			$val_ary = explode(",",$val);
+			$value = "";
+			foreach($key_ary as $key => $val){
+				if($value != ""){$value .= " and ";}
+				$value .= $val." like '%".$val_ary[$key]."%' ";
+			}
+			$where .= "(".$value.")";
+		}
+		
+		if($func == "or_where" && @strlen($key)+@strlen($val)!=0){
+			if($where){$where .= " or ";}
+			$key_ary = explode(",",$key);
+			$val_ary = explode(",",$val);
+			$value = "";
+			foreach($key_ary as $key => $val){
+				if($value != ""){$value .= " and ";}
+				$value .= $val." like '%".$val_ary[$key]."%' ";
+			}
+			$where .= "(".$value.")";
+		}
+		
+		if($where == ""){$where=false;}
+		/* where end */
+		
+		/* order 處理區域 */
+		if($this->input->post('find007')){
+			$order = $this->input->post('find007');
+		}else{
+			$order = "";
+		}
+		
+		if($func == "order" && @strlen($val)!=0){
+			$value = $val;
+			$order = $value;
+		}else{
+			$order = "";
+		}
+		
+		if(isset($_SESSION['copi01']['search']['order'])){
+			if($order){$order .= " , ";}
+			$order .= $_SESSION['copi01']['search']['order'];
+		}
+		
+		if(!isset($_SESSION['copi01']['search']['order']) && $default_order){
+			if($order){$order .= " , ";}
+			$order .= $default_order;
+		}
+		/* order end */
+		
+		/* Data SQL 部門,業務,幣別,付款條件*/
+		$query = $this->db->select('ma001, ma002,ma003,ma010,ma025, ma015,b.me002 as ma015disp,ma016,c.mv002 as ma016disp,ma014,d.mf002 as ma014disp,ma030,ma031,e.na003 as ma031disp,ma038, a.create_date')
+			->from('copma as a')
+			->join('cmsme as b', 'a.ma015 = b.me001','left')
+			->join('cmsmv as c', 'a.ma016 = c.mv001 ','left')
+			->join('cmsmf as d', 'a.ma014 = d.mf001','left')
+			->join('cmsna as e', 'a.ma031 = e.na002 and e.na001 = "1" ','left')
+			->order_by($order);
+		if($where){
+			$query->where($where);
+		}
+		$ret['data'] = $query->get()->result();
+		//建構暫存view
+		//$this->construct_view($ret['data']);
+		
+		$query = $this->db->select('ma001, ma002,ma003,ma010,ma025, ma015,b.me002 as ma015disp,ma016,c.mv002 as ma016disp,ma014,d.mf002 as ma014disp,ma030,ma031,e.na003 as ma031disp,ma038, a.create_date')
+			->from('copma as a')
+			->join('cmsme as b', 'a.ma015 = b.me001','left')
+			->join('cmsmv as c', 'a.ma016 = c.mv001 ','left')
+			->join('cmsmf as d', 'a.ma014 = d.mf001','left')
+			->join('cmsna as e', 'a.ma031 = e.na002 and e.na001 = "1" ','left')
+			->order_by($order)
+			->limit($limit, $offset);
+		if($where){
+			$query->where($where);
+		}
+		$ret['data'] = $query->get()->result();
+		//儲存sql
+		$_SESSION['copi01']['search']['sql'] = $this->db->last_query();
+		
+		/* Num SQL*/
+		$query = $this->db->select('COUNT(*) as total_num')
+			->from('copma');
+		if($where){
+			$query->where($where);
+		}
+		$ret['num'] = $query->get()->result();
+		$ret['num'] = $ret['num'][0]->total_num;
+		
+		//儲存where與order
+		$_SESSION['copi01']['search']['where'] = $where;
+		$_SESSION['copi01']['search']['order'] = $order;
+		$_SESSION['copi01']['search']['offset'] = $offset;
+		
+		return $ret;
+	}	
+	//查詢一筆 修改用   
+	function selone($seg1)    
+       {
+		$this->db->select('a.*,r.mf002 as ma014disp, s.me002 as ma015disp,t.mv002 as ma016disp,b.mr003 as ma017disp,c.mr003 as ma018disp
+		                     , d.mr003 as ma019disp, e.na003 as ma031disp,w.mo006 as ma046disp, f.ma003 as ma047disp, g.ma002 as ma054disp, h.ma002 as ma055disp
+							 , i.ma002 as ma056disp, j.ma002 as ma057disp, k.ma002 as ma058disp, l.ma002 as ma065disp, m.ma003 as ma074disp
+							 ,x.mo006 as ma069disp,w.mo006 as ma070disp, n.mr003 as ma076disp, o.mr003 as ma077disp, p.mr003 as ma078disp, q.mv002 as ma085disp,z.ml002 as ma202disp');
+        $this->db->from('copma as a');
+	//	$this->db->where('ma001', $this->uri->segment(4)); 
+		$this->db->join('cmsmf as r', 'a.ma014 = r.mf001','left');
+		$this->db->join('cmsme as s', 'a.ma015 = s.me001','left');
+	    $this->db->join('cmsmv as t', 'a.ma016 = t.mv001 ','left');
+		$this->db->join('cmsmr as b', 'a.ma017 = b.mr002 and b.mr001 = "1" ','left');
+		$this->db->join('cmsmr as c', 'a.ma018 = c.mr002 and c.mr001 = "3" ','left');
+		$this->db->join('cmsmr as d', 'a.ma019 = d.mr002 and d.mr001 = "4" ','left');
+		$this->db->join('cmsna as e', 'a.ma031 = e.na002 and e.na001 = "1" ','left');
+		$this->db->join('cmsmo as w', 'a.ma046 = w.mo001','left');
+		$this->db->join('actma as f', 'a.ma047 = f.ma001','left');
+		$this->db->join('purma as g', 'a.ma054 = g.ma001','left');
+		$this->db->join('purma as h', 'a.ma055 = g.ma001','left');
+		$this->db->join('copma as i', 'a.ma056 = i.ma001','left');
+		$this->db->join('purma as j', 'a.ma057 = j.ma001','left');
+		$this->db->join('purma as k', 'a.ma058 = k.ma001','left');
+		$this->db->join('copma as l', 'a.ma065 = l.ma001','left');
+		$this->db->join('cmsmo as x', 'a.ma069 = x.mo001','left');
+		$this->db->join('cmsmo as y', 'a.ma070 = y.mo001','left');
+		$this->db->join('actma as m', 'a.ma074 = m.ma001','left');
+		$this->db->join('cmsmr as n', 'a.ma076 = n.mr002 and n.mr001 = "2" ','left');
+		$this->db->join('cmsmr as o', 'a.ma077 = o.mr002 and o.mr001 = "5" ','left');
+		$this->db->join('cmsmr as p', 'a.ma078 = p.mr002 and p.mr001 = "6" ','left');
+		$this->db->join('cmsmv as q', 'a.ma085 = q.mv001 ','left');
+		$this->db->join('copml as z', 'a.ma202 = z.ml001 ','left');
+		$this->db->where('a.ma001', $this->uri->segment(4)); 
+		$this->db->query('SET SQL_BIG_SELECTS=1');   //連結太多table 加此行
+		$query = $this->db->get();
+			
+	    if ($query->num_rows() > 0) 
+		 {
+		   $result = $query->result();
+		   return $result;   
+		 }
+	    }
+		
+	 //ajax 查詢一筆 廠商代號   
+	 function ajaxkey($seg1)    
+       { 	              
+	    $this->db->set('ma001', $this->uri->segment(4));
+	    $this->db->where('ma001', $this->uri->segment(4));	
+	    $query = $this->db->get('copma');
+			
+	    if ($query->num_rows() > 0) 
+		 {
+		   $res = $query->result();
+		   foreach ($query->result() as $row)
+          {
+               $result=$row->ma001;
+          }
+		   return $result;   
+		 }
+	  }
+	  
+	//ajax 查詢一筆  通路 1  
+	function ajaxcmsq15a1($seg1)    
+        { 
+	     // $this->db->set('ma002', $this->uri->segment(4));
+	      $this->db->where('mr001', '1');
+          $this->db->where('mr002', $this->uri->segment(4));		  
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		   return $result;   
+		   } 
+	    }
+		
+	//ajax 查詢一筆  型態 2  
+	function ajaxcmsq15a2($seg1)    
+        { 
+	     // $this->db->set('ma002', $this->uri->segment(4));
+	      $this->db->where('mr001', '2');
+          $this->db->where('mr002', $this->uri->segment(4));		  
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		   return $result;   
+		   } 
+	    }
+		
+	//ajax 查詢一筆  地區 3  
+	function ajaxcmsq15a3($seg1)    
+        { 
+	     // $this->db->set('ma002', $this->uri->segment(4));
+	      $this->db->where('mr001', '3');
+          $this->db->where('mr002', $this->uri->segment(4));		  
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		   return $result;   
+		   } 
+	    }
+	//ajax 查詢一筆  國家 4  
+	function ajaxcmsq15a4($seg1)    
+        { 	              
+	      $this->db->where('mr001', '4');
+	      $this->db->where('mr002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		     return $result;   
+		  }
+	    }
+		
+	//ajax 查詢一筆  線別 5  
+	function ajaxcmsq15a5($seg1)    
+        { 	              
+	      $this->db->where('mr001', '5');
+	      $this->db->where('mr002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		     return $result;   
+		  }
+	    }
+     //ajax 查詢一筆  其他 6  
+	function ajaxcmsq15a6($seg1)    
+        { 	              
+	      $this->db->where('mr001', '6');
+	      $this->db->where('mr002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		     return $result;   
+		  }
+	    }
+		
+	//ajax 查詢 廠商分類 9  
+	function ajaxcmsq15a9($seg1)    
+        { 	              
+	      $this->db->where('mr001', '9');
+	      $this->db->where('mr002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmr');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mr003;
+              }
+		    return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 業務人員  
+	function ajaxcmsq09a3($seg1)    
+        { 	              
+	      $this->db->set('mk002', $this->uri->segment(4));
+	      $this->db->where('mk002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmkv3');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mv002;
+              }
+		       return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 收款業務人員  
+	function ajaxcmsq09a31($seg1)    
+        { 	              
+	      $this->db->set('mk002', $this->uri->segment(4));
+	      $this->db->where('mk002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmkv3');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mv002;
+              }
+		       return $result;   
+		   }
+	    }	
+	//ajax 查詢一筆 採購人員  
+	function ajaxcmsq09a4($seg1)    
+        { 	              
+	      $this->db->set('mk002', $this->uri->segment(4));
+	      $this->db->where('mk002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmkv4');
+			
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mv002;
+              }
+		       return $result;   
+		   }
+	    }	
+	//ajax 查詢一筆  付款條件(採購1)	
+	function ajaxcmsq21a1($seg1)    
+        { 	              
+	     // $this->db->set('ma001', $this->uri->segment(4));
+		  $this->db->where('na001', '1');
+	      $this->db->where('na002', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsna');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->na003;
+              }
+		   return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 交易幣別	
+	function ajaxcmsq06a($seg1)    
+        { 
+	      $this->db->where('mf001', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsmf');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->mf002;
+              }
+		      return $result;   
+		   }
+	    }
+		
+		//ajax 查詢一筆 客戶類別	
+	function ajaxcopq04a($seg1)    
+        { 
+	      $this->db->where('ml001', $this->uri->segment(4));	
+	      $query = $this->db->get('copml');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ml002;
+              }
+		      return $result;   
+		   }
+	    }
+	//ajax 查詢一筆應收帳款
+	function ajaxactq03a1($seg1)    
+        { 	              
+	     // $this->db->set('ma001', $this->uri->segment(4));
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('actma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma003;
+              }
+		       return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 應收票據
+	function ajaxactq03a2($seg1)    
+        { 
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('actma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma003;
+              }
+		     return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 應付票據	
+	function ajaxactq03a3($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('actma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma003;
+              }
+		   return $result;   
+		   }
+	    }
+		
+	//ajax 查詢一筆 海關廠商	
+	function ajaxpurq01a1($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('purma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma002;
+              }
+		   return $result;   
+		   }
+	    }	
+		
+	//ajax 查詢一筆 空運廠商	
+	function ajaxpurq01a2($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('purma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma002;
+              }
+		   return $result;   
+		   }
+	    }	
+     //ajax 查詢一筆 報關廠商	
+	function ajaxpurq01a3($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('purma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma002;
+              }
+		   return $result;   
+		   }
+	    }			
+     
+	  //ajax 查詢一筆 驗貨廠商	
+	function ajaxpurq01a4($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('purma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma002;
+              }
+		   return $result;   
+		   }
+	    }			
+		
+		
+	//ajax 查詢一筆 代理商客戶	
+	function ajaxcopq01a($seg1)    
+        {
+	      $this->db->where('ma001', $this->uri->segment(4));	
+	      $query = $this->db->get('copma');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->ma002;
+              }
+		   return $result;   
+		   }
+	    }	
+		
+	 //ajax 查詢一筆 部門	
+	function ajaxcmsq05a($seg1)    
+        {
+	      $this->db->where('me001', $this->uri->segment(4));	
+	      $query = $this->db->get('cmsme');
+	      if ($query->num_rows() > 0) 
+		   {
+		     $res = $query->result();
+		     foreach ($query->result() as $row)
+              {
+               $result=$row->me002;
+              }
+		   return $result;   
+		   }
+	    }
+
+		
+	//進階查詢 
+	function findf($limit, $offset, $sort_by, $sort_order)     
+        {            		
+	     //$seq5='';$seq51='';$seq7='';$seq71='';		  
+	      $seq11 = "SELECT COUNT(*) as count  FROM `copma` ";
+	      $seq1 = "ma001, ma002, ma003, ma004, ma005, ma006,ma007,ma08,ma009,ma011,ma013, create_date FROM `copma` ";
+          $seq2 = "WHERE `create_date` >=' ' ";
+	      $seq32 = "`create_date` >='' ";
+          $seq33 = 'ma001 desc' ;
+          $seq9 = " ORDER BY ma001 " ;
+	      $seq91=" limit ";
+	      $seq92=", ";
+	      $seq5= "`create_date` >='' ";
+		  //$seq5=$this->session->userdata('find05');
+	      //$seq7=$this->session->userdata('find07');
+          $seq7="ma001 ";
+          if (trim($this->input->post('find005'))!='')
+		    {
+			  $seq5=$this->input->post('find005');
+		      $seq2="WHERE ".$seq5;
+		      $seq32=$seq5;
+		    }
+	    if ($seq5!='') {$seq2="WHERE ".$seq5;$seq32=$seq5;}
+			  
+	    if (trim($this->input->post('find007'))!='') 
+	        {
+		      $seq7=$this->input->post('find007');				   
+		      $seq9=" ORDER BY ".$seq7;
+		      $seq33=$seq7;
+		    }
+        if ($seq7!='') {$seq9=" ORDER BY ".$seq7;$seq33=$seq7;}
+		 //下一頁不會亂跳
+		if(@$_SESSION['admi05_sql_term']){$seq32 = $_SESSION['admi05_sql_term'];}
+		if(@$_SESSION['admi05_sql_sort']){$seq33 = $_SESSION['admi05_sql_sort'];}
+         $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	     $sort_columns = array('ma001', 'ma002', 'ma003', 'ma004', 'ma005', 'ma006','ma007','ma008','ma009','ma011','ma013','ma201','ma202','create_date');
+	     $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'ma001';  //檢查排序欄位是否在 table 內
+	     $query = $this->db->select('ma001, ma002, ma003, ma004, ma005, ma006,ma007,ma008,ma009,ma011,ma013,ma201,ma202, create_date')
+	                       ->from('copma')
+		                   ->where($seq32)
+			               ->order_by($seq33)
+			              //->order_by($sort_by, $sort_order)
+			              ->limit($limit, $offset);
+	     $ret['rows'] = $query->get()->result();
+		
+	     $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                       ->from('copma')
+		                   ->where($seq32);
+	     $num = $query->get()->result();		
+	     $ret['num_rows'] = $num[0]->count;		
+	     return $ret;
+        }
+		
+	//篩選多筆    
+	function filterf1($limit, $offset , $sort_by  , $sort_order)           
+	    {    
+	      $seq4 = urldecode(urldecode($this->uri->segment(6))); 	 //解決亂碼          
+          $sort_by = $this->uri->segment(4);			
+          $sort_order = $this->uri->segment(5);	
+	      $offset=$this->uri->segment(8,0);
+	      $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	      $sort_columns = array('ma001', 'ma002', 'ma003', 'ma004', 'ma005', 'ma006','ma008','ma009','ma011','ma013','ma201','ma202','create_date');
+          $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'ma001';  //檢查排序欄位是否為 table
+			
+	      $this->db->select('ma001, ma002, ma003, ma004, ma005, ma006,ma008,ma009,ma011,ma013,ma201,ma202, create_date');
+	      $this->db->from('copma');
+	      $this->db->like($sort_by, $seq4, 'after');
+	      $this->db->order_by($sort_by, $sort_order);
+	      //$this->db->order_by('ma001 asc, ma002 asc');
+	      $this->db->limit($limit, $offset);   // 每頁15筆
+	      $query = $this->db->get();    
+	      $ret['rows'] = $query->result();
+						
+	      $this->db->select('COUNT(*) as count');    // 計算筆數	
+	      $this->db->from('copma');
+	      $this->db->like($sort_by, $seq4, 'after');	
+	      $query = $this->db->get();
+	      $tmp = $query->result();		
+	      $ret['num_rows'] = $tmp[0]->count;			
+	      return $ret;					 
+        }
+		
+	//查新增資料是否重複  
+	function selone1($seg1)    
+        {
+	      $this->db->set('ma001', $this->input->post('ma001')); 
+	      $this->db->where('ma001', $this->input->post('ma001'));
+	      $query = $this->db->get('copma');
+	      return $query->num_rows() ;
+	    }  	 
+		
+	//新增一筆	
+	function insertf()    
+        {
+			if ($this->input->post('ma020')>'0') {$vma020=substr($this->input->post('ma020'),0,4).substr($this->input->post('ma020'),5,2).substr($this->input->post('ma020'),8,2);} else {$vma020='';}
+			if ($this->input->post('ma021')>'0') {$vma021=substr($this->input->post('ma021'),0,4).substr($this->input->post('ma021'),5,2).substr($this->input->post('ma021'),8,2);} else {$vma021='';}
+			if ($this->input->post('ma022')>'0') {$vma022=substr($this->input->post('ma022'),0,4).substr($this->input->post('ma022'),5,2).substr($this->input->post('ma022'),8,2);} else {$vma022='';}
+	        if ($this->input->post('ma068')>'0') {$vma068=substr($this->input->post('ma068'),0,4).substr($this->input->post('ma068'),5,2).substr($this->input->post('ma068'),8,2);} else {$vma068='';}
+		 $data = array( 
+	             'company' => $this->session->userdata('syscompany'),
+	             'creator' => $this->session->userdata('manager'),
+		         'usr_group' => 'A100',
+		         'create_date' =>date("Ymd"),
+		         'modifier' => '',
+		         'modi_date' => '',
+		         'flag' => 0,
+                 'ma001' => $this->input->post('ma001'),
+		         'ma002' => $this->input->post('ma002'),
+		         'ma003' => $this->input->post('ma003'),
+		         'ma004' => $this->input->post('ma004'),
+		         'ma005' => $this->input->post('ma005'),
+		         'ma006' => $this->input->post('ma006'),
+                 'ma007' => $this->input->post('ma007'),
+                 'ma008' => $this->input->post('ma008'),
+                 'ma009' => $this->input->post('ma009'),
+                 'ma009' => $this->input->post('ma009'),		
+                 'ma011' => $this->input->post('ma011'),		
+                 'ma012' => $this->input->post('ma012'),		
+                 'ma013' => $this->input->post('ma013'),		
+                 'ma014' => $this->input->post('cmsq06a'),		
+                 'ma015' => $this->input->post('cmsq05a'),		
+                 'ma016' => $this->input->post('cmsq09a3'),		
+                 'ma017' => $this->input->post('cmsq15a1'),		
+                 'ma018' => $this->input->post('cmsq15a3'),		
+                 'ma019' => $this->input->post('cmsq15a4'),		
+                 'ma020' => $vma020,	
+                 'ma021' => $vma021,	
+                 'ma022' => $vma022,	
+                 'ma023' => $this->input->post('ma023'),	
+                 'ma024' => $this->input->post('ma024'),	
+                 'ma025' => $this->input->post('ma025'),	
+                 'ma026' => $this->input->post('ma026'),	
+                 'ma027' => $this->input->post('ma027'),	
+                 'ma028' => $this->input->post('ma028'),	
+                 'ma029' => $this->input->post('ma029'),	
+                 'ma030' => $this->input->post('ma030'),
+                 'ma031' => $this->input->post('cmsq21a1'),	
+                 'ma032' => $this->input->post('ma032'),	
+                 'ma033' => $this->input->post('ma033'),	
+                 'ma034' => $this->input->post('ma034'),	
+                 'ma035' => $this->input->post('ma035'),	
+                 'ma036' => $this->input->post('ma036'),	
+                 'ma037' => $this->input->post('ma037'),	
+                 'ma038' => $this->input->post('ma038'),	
+                 'ma039' => $this->input->post('ma039'),		
+                 'ma040' => $this->input->post('ma040'),
+                 'ma041' => $this->input->post('ma041'),	
+                 'ma042' => $this->input->post('ma042'),	
+                 'ma043' => $this->input->post('ma043'),	
+                 'ma044' => $this->input->post('ma044'),	
+                 'ma045' => $this->input->post('ma045'),	
+                 'ma046' => $this->input->post('cmsq16a'),	
+                 'ma047' => $this->input->post('actq03a1'),	
+                 'ma048' => $this->input->post('ma048'),	
+                 'ma049' => $this->input->post('ma049'),		
+                 'ma050' => $this->input->post('ma050'),
+                 'ma051' => $this->input->post('ma051'),	
+                 'ma052' => $this->input->post('ma052'),	
+                 'ma053' => $this->input->post('ma053'),	
+                 'ma054' => $this->input->post('purq01a1'),	
+                 'ma055' => $this->input->post('purq01a2'),
+                 'ma056' => $this->input->post('copq01a1'),
+                 'ma057' => $this->input->post('purq01a3'),
+                 'ma058' => $this->input->post('purq01a4'),
+                 'ma059' => $this->input->post('ma059'),
+                 'ma060' => $this->input->post('ma060'),                
+                 'ma061' => $this->input->post('ma061'),	
+                 'ma062' => $this->input->post('ma062'),	
+                 'ma063' => $this->input->post('ma063'),	
+                 'ma064' => $this->input->post('ma064'),	
+                 'ma065' => $this->input->post('copq01a'),
+                 'ma066' => $this->input->post('ma066'),
+                 'ma067' => $this->input->post('ma067'),
+                 'ma068' => $vma068,
+                 'ma069' => $this->input->post('cmsq16a1'),
+                 'ma070' => $this->input->post('cmsq16a2'),
+                 'ma071' => $this->input->post('ma071'),	
+                 'ma072' => $this->input->post('ma072'),	
+                 'ma073' => $this->input->post('ma073'),	
+                 'ma074' => $this->input->post('actq03a2'),	
+                 'ma075' => $this->input->post('ma075'),
+                 'ma076' => $this->input->post('cmsq15a2'),
+                 'ma077' => $this->input->post('cmsq15a5'),
+                 'ma078' => $this->input->post('cmsq15a6'),
+                 'ma079' => $this->input->post('ma079'),
+                 'ma080' => $this->input->post('ma080'),
+                 'ma081' => $this->input->post('ma081'),	
+                 'ma082' => $this->input->post('ma082'),	
+                 'ma083' => $this->input->post('ma083'),	
+                 'ma084' => $this->input->post('ma084'),	
+                 'ma085' => $this->input->post('cmsq09a31'),
+                 'ma086' => $this->input->post('ma086'),
+                 'ma087' => $this->input->post('ma087'),
+                 'ma088' => $this->input->post('ma088'),
+                 'ma089' => $this->input->post('ma089'),
+                 'ma090' => $this->input->post('ma090'),
+                 'ma091' => $this->input->post('ma091'),	
+                 'ma092' => $this->input->post('ma092'),	
+                 'ma093' => $this->input->post('ma093'),	
+                 'ma094' => $this->input->post('ma094'),					 
+                 'ma200' => $this->input->post('ma200'),
+				 'ma201' => $this->input->post('ma201'),
+				 'ma202' => $this->input->post('copq04a')
+                );
+         
+	      $exist = $this->copi01_model->selone1($this->input->post('ma001'));
+	      if ($exist)
+	         {
+		      return 'exist';
+		     } 
+            return  $this->db->insert('copma', $data);
+        }
+		
+	//查複製資料是否重複	 
+    function selone2($seg1)    
+          { 	
+	        $this->db->set('ma001', $this->input->post('ma001c'));
+	        $this->db->where('ma001', $this->input->post('ma001c')); 
+	        $query = $this->db->get('copma');
+	        return $query->num_rows() ; 
+	      }
+	//複製一筆	
+    function copyf()           
+          {
+	        $this->db->set('ma001', $this->input->post('ma001o'));
+	        $this->db->where('ma001', $this->input->post('ma001o'));
+	        $query = $this->db->get('copma');
+	        $exist = $query->num_rows();
+            if (!$exist)
+	          {
+		       return 'exist';
+	          }         		
+            if ($query->num_rows() != 1) { return 'exist'; }
+		    if ($query->num_rows() == 1) 
+		       {
+			     $result = $query->result();
+			     foreach($result as $row):
+                $ma002=$row->ma002;$ma003=$row->ma003;$ma004=$row->ma004;$ma005=$row->ma005;$ma006=$row->ma006;$ma007=$row->ma007;$ma008=$row->ma008;$ma009=$row->ma009;$ma009=$row->ma009;
+				$ma011=$row->ma011;$ma012=$row->ma012;$ma013=$row->ma013;$ma014=$row->ma014;$ma015=$row->ma015;$ma016=$row->ma016;$ma017=$row->ma017;$ma018=$row->ma018;$ma019=$row->ma019;$ma020=$row->ma020;
+				$ma021=$row->ma021;$ma022=$row->ma022;$ma023=$row->ma023;$ma024=$row->ma024;$ma025=$row->ma025;$ma026=$row->ma026;$ma027=$row->ma027;$ma028=$row->ma028;$ma029=$row->ma029;$ma030=$row->ma030;		 
+                $ma031=$row->ma031;$ma032=$row->ma032;$ma033=$row->ma033;$ma034=$row->ma034;$ma035=$row->ma035;$ma036=$row->ma036;$ma037=$row->ma037;$ma038=$row->ma038;$ma039=$row->ma039;$ma040=$row->ma040;
+				$ma041=$row->ma041;$ma042=$row->ma042;$ma043=$row->ma043;$ma044=$row->ma044;$ma045=$row->ma045;$ma046=$row->ma046;$ma047=$row->ma047;$ma048=$row->ma048;$ma049=$row->ma049;$ma050=$row->ma050;
+				$ma051=$row->ma051;$ma052=$row->ma052;$ma053=$row->ma053;$ma054=$row->ma054;$ma055=$row->ma055;$ma056=$row->ma056;$ma057=$row->ma057;$ma058=$row->ma058;$ma059=$row->ma059;$ma060=$row->ma060;
+	            $ma061=$row->ma061;$ma062=$row->ma062;$ma063=$row->ma063;$ma064=$row->ma064;$ma065=$row->ma065;$ma066=$row->ma066;$ma067=$row->ma067;$ma068=$row->ma068;$ma069=$row->ma069;$ma070=$row->ma070;		
+			    $ma071=$row->ma071;$ma072=$row->ma072;$ma073=$row->ma073;$ma074=$row->ma074;$ma075=$row->ma075;$ma076=$row->ma076;$ma077=$row->ma077;$ma078=$row->ma078;$ma079=$row->ma079;$ma080=$row->ma080;	
+				$ma081=$row->ma081;$ma082=$row->ma082;$ma083=$row->ma083;$ma084=$row->ma084;$ma085=$row->ma085;$ma086=$row->ma086;$ma087=$row->ma087;$ma088=$row->ma088;$ma089=$row->ma089;$ma090=$row->ma090;	
+			    $ma091=$row->ma091;$ma092=$row->ma092;$ma093=$row->ma093;$ma094=$row->ma094;$ma200=$row->ma200;$ma201=$row->ma201;$ma202=$row->ma202;
+			endforeach;
+		       }   
+		  
+            $seq3=$this->input->post('ma001c');    //主鍵一筆
+	        $data = array( 
+	               'company' => $this->session->userdata('syscompany'),
+	               'creator' => $this->session->userdata('manager'),
+		           'usr_group' => 'A100',
+		           'create_date' =>date("Ymd"),
+		           'modifier' => ' ',
+		           'modi_date' => ' ',
+		           'flag' => 0,
+                 
+		           'ma001' => $seq3,'ma002' => $ma002,'ma003' => $ma003,'ma004' => $ma004,'ma005' => $ma005,'ma006' => $ma006,'ma007' => $ma007,'ma008' => $ma008,'ma009' => $ma009,'ma009' => $ma009,
+		           'ma011' => $ma011,'ma012' => $ma012,'ma013' => $ma013,'ma014' => $ma014,'ma015' => $ma015,'ma016' => $ma016,'ma017' => $ma017,'ma018' => $ma018,'ma019' => $ma019,'ma020' => $ma020,
+		           'ma021' => $ma021,'ma022' => $ma022,'ma023' => $ma023,'ma024' => $ma024,'ma025' => $ma025,'ma026' => $ma026,'ma027' => $ma027,'ma028' => $ma028,'ma029' => $ma029,'ma030' => $ma030,
+				   'ma031' => $ma031,'ma032' => $ma032,'ma033' => $ma033,'ma034' => $ma034,'ma035' => $ma035,'ma036' => $ma036,'ma037' => $ma037,'ma038' => $ma038,'ma039' => $ma039,'ma040' => $ma040,
+				   'ma041' => $ma041,'ma042' => $ma042,'ma043' => $ma043,'ma044' => $ma044,'ma045' => $ma045,'ma046' => $ma046,'ma047' => $ma047,'ma048' => $ma048,'ma049' => $ma049,'ma050' => $ma050,
+				   'ma051' => $ma051,'ma052' => $ma052,'ma053' => $ma053,'ma054' => $ma054,'ma055' => $ma055,'ma056' => $ma056,'ma057' => $ma057,'ma058' => $ma058,'ma059' => $ma059,'ma060' => $ma060,
+				   'ma061' => $ma061,'ma062' => $ma062,'ma063' => $ma063,'ma044' => $ma064,'ma065' => $ma065,'ma066' => $ma066,'ma067' => $ma067,'ma048' => $ma068,'ma069' => $ma069,'ma070' => $ma070,
+				   'ma071' => $ma071,'ma072' => $ma072,'ma073' => $ma073,'ma074' => $ma074,'ma075' => $ma075,'ma076' => $ma076,'ma077' => $ma077,'ma078' => $ma078,'ma079' => $ma079,'ma080' => $ma080,
+				   'ma081' => $ma081,'ma082' => $ma082,'ma083' => $ma083,'ma084' => $ma084,'ma085' => $ma085,'ma086' => $ma086,'ma087' => $ma087,'ma088' => $ma088,'ma089' => $ma089,'ma090' => $ma090,
+                   'ma091' => $ma091,'ma092' => $ma092,'ma093' => $ma093,'ma094' => $ma094,'ma200' => $ma200,'ma201' => $ma201,'ma202' => $ma202
+				   );
+            $exist = $this->copi01_model->selone2($this->input->post('ma001c'));
+		    if ($exist)
+		      {
+			    return 'exist';
+		      }         
+            return $this->db->insert('copma', $data);      //複製一筆  
+        }	
+		
+	//轉excel檔	 
+	function excelnewf()           
+        {			
+	      $seq1=$this->input->post('ma001o');    
+	      $seq2=$this->input->post('ma001c');
+	      $sql = " SELECT ma001,ma002,ma006,ma008,ma009,ma005,mv001,mv002,ma027,a.create_date FROM copma as a left join cmsmv as b on ma016=mv001 
+		  WHERE ma001 >= '$seq1'  AND ma001 <= '$seq2' ORDER BY ma001 "; 
+          $query = $this->db->query($sql);
+	      return $query->result_array();
+        }
+		
+	//印明細表	
+	function printfd()           
+        {
+	      $seq1=$this->input->post('ma001o');    //查詢一筆以上
+	      $seq2=$this->input->post('ma001c');
+		  $seq3=$this->input->post('ma002o');    //查詢一筆以上
+	      $seq4=$this->input->post('ma002c');
+		  $seq5=$this->input->post('ma003o');    //查詢一筆以上
+	      $seq6=$this->input->post('ma003c');
+	      $sql = " SELECT * FROM copma WHERE ma001 >= '$seq1'  AND ma001 <= '$seq2' and ma201 >= '$seq3'  AND ma201 <= '$seq4' and ma202 >= '$seq5'  AND ma202 <= '$seq6' order by ma001 "; 
+          $query = $this->db->query($sql);
+	      $ret['rows'] = $query->result();
+          $seq32 = "ma001 >= '$seq1'  AND ma001 <= '$seq2'  ";	
+	      $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+		                ->from('copma')
+		                ->where($seq32);
+	      $num = $query->get()->result();		
+	      $ret['num_rows'] = $num[0]->count;		
+	      return $ret;
+        }
+		
+	//更改一筆	 
+	function updatef()   
+        {
+			
+			if ($this->input->post('ma020')>'0') {$vma020=substr($this->input->post('ma020'),0,4).substr($this->input->post('ma020'),5,2).substr($this->input->post('ma020'),8,2);} else {$vma020='';}
+			if ($this->input->post('ma021')>'0') {$vma021=substr($this->input->post('ma021'),0,4).substr($this->input->post('ma021'),5,2).substr($this->input->post('ma021'),8,2);} else {$vma021='';}
+			if ($this->input->post('ma022')>'0') {$vma022=substr($this->input->post('ma022'),0,4).substr($this->input->post('ma022'),5,2).substr($this->input->post('ma022'),8,2);} else {$vma022='';}
+	        if ($this->input->post('ma068')>'0') {$vma068=substr($this->input->post('ma068'),0,4).substr($this->input->post('ma068'),5,2).substr($this->input->post('ma068'),8,2);} else {$vma068='';}
+            $data = array(			
+		          'modifier' => $this->session->userdata('manager'),
+		          'modi_date' => date("Ymd"),
+		          'flag' => $this->input->post('flag')+1,
+		          'ma002' => $this->input->post('ma002'),'ma003' => $this->input->post('ma003'),'ma004' => $this->input->post('ma004'),
+		          'ma005' => $this->input->post('ma005'),'ma006' => $this->input->post('ma006'),'ma007' => $this->input->post('ma007'),
+                  'ma008' => $this->input->post('ma008'),'ma009' => $this->input->post('ma009'),'ma010' => $this->input->post('ma010'),
+                  'ma011' => $this->input->post('ma011'),'ma012' => $this->input->post('ma012'),'ma013' => $this->input->post('ma013'),
+                  'ma014' => $this->input->post('cmsq06a'),'ma015' => $this->input->post('cmsq05a'),'ma016' => $this->input->post('cmsq09a3'),
+                  'ma017' => $this->input->post('cmsq15a1'),'ma018' => $this->input->post('cmsq15a3'),'ma019' => $this->input->post('cmsq15a4'),
+                  'ma020' => $vma020,
+				  'ma021' => $vma021,
+				  'ma022' => $vma022,
+                  'ma023' => $this->input->post('ma023'),'ma024' => $this->input->post('ma024'),'ma025' => $this->input->post('ma025'),
+                  'ma026' => $this->input->post('ma026'),'ma027' => $this->input->post('ma027'),'ma028' => $this->input->post('ma028'),	
+                  'ma029' => $this->input->post('ma029'),'ma030' => $this->input->post('ma030'),'ma031' => $this->input->post('cmsq21a1'),	
+                  'ma032' => $this->input->post('ma032'),'ma033' => $this->input->post('ma033'),'ma034' => $this->input->post('ma034'),
+                  'ma035' => $this->input->post('ma035'),'ma036' => $this->input->post('ma036'),'ma037' => $this->input->post('ma037'),
+                  'ma038' => $this->input->post('ma038'),'ma039' => $this->input->post('ma039'),'ma040' => $this->input->post('ma040'),
+                  'ma041' => $this->input->post('ma041'),'ma042' => $this->input->post('ma042'),'ma043' => $this->input->post('ma043'),
+                  'ma044' => $this->input->post('ma044'),'ma045' => $this->input->post('ma045'),'ma046' => $this->input->post('cmsq16a'),	
+                  'ma047' => $this->input->post('actq03a1'),'ma048' => $this->input->post('ma048'),'ma049' => $this->input->post('ma049'),
+                  'ma050' => $this->input->post('ma050'),'ma051' => $this->input->post('ma051'),'ma052' => $this->input->post('ma052'),
+                  'ma053' => $this->input->post('ma053'),'ma054' => $this->input->post('purq01a1'),'ma055' => $this->input->post('purq01a2'),
+				  'ma056' => $this->input->post('copq01a1'),'ma057' => $this->input->post('purq01a3'),'ma058' => $this->input->post('purq01a4'),
+				  'ma059' => $this->input->post('ma059'),'ma060' => $this->input->post('ma060'),'ma061' => $this->input->post('ma061'),
+				  'ma062' => $this->input->post('ma062'),'ma063' => $this->input->post('ma063'),'ma064' => $this->input->post('ma064'),'ma065' => $this->input->post('copq01a'),
+				  'ma066' => $this->input->post('ma066'),'ma067' => $this->input->post('ma067'),'ma068' =>  $vma068,
+				  'ma069' => $this->input->post('cmsq16a1'),'ma070' => $this->input->post('cmsq16a2'),'ma071' => $this->input->post('ma071'),
+				  'ma072' => $this->input->post('ma072'),'ma073' => $this->input->post('ma073'),'ma074' => $this->input->post('actq03a2'),
+				  'ma075' => $this->input->post('ma075'),'ma076' => $this->input->post('cmsq15a2'),'ma077' => $this->input->post('cmsq15a5'),
+			      'ma078' => $this->input->post('cmsq15a6'),'ma079' => $this->input->post('ma079'),'ma080' => $this->input->post('ma080'),
+				  'ma081' => $this->input->post('ma081'),'ma082' => $this->input->post('ma082'),'ma083' => $this->input->post('ma083'),
+				  'ma084' => $this->input->post('ma084'),'ma085' => $this->input->post('cmsq09a31'),'ma086' => $this->input->post('ma086'),
+				  'ma087' => $this->input->post('ma087'),'ma088' => $this->input->post('ma088'),'ma089' => $this->input->post('ma089'),
+				  'ma090' => $this->input->post('ma090'),'ma091' => $this->input->post('ma091'),'ma092' => $this->input->post('ma092'),
+				  'ma093' => $this->input->post('ma093'),'ma094' => $this->input->post('ma094'),
+                  'ma200' => $this->input->post('ma200'),
+				 'ma201' => $this->input->post('ma201'),
+				 'ma202' => $this->input->post('copq04a')
+                );
+            $this->db->where('ma001', $this->input->post('ma001'));
+            $this->db->update('copma',$data);                   //更改一筆
+            if ($this->db->affected_rows() > 0)
+              {
+                 return TRUE;
+              }
+                 return FALSE;
+        }
+		
+	//刪除一筆	
+	function deletef($seg1)      
+        { 
+	      $this->db->where('ma001', $this->uri->segment(4));
+          $this->db->delete('copma'); 
+	      if ($this->db->affected_rows() > 0)
+              {
+                return TRUE;
+              }
+                return FALSE;					
+        }	
+		
+	//選取刪除多筆   
+	function delmutif()    
+        {           
+          $seq[] = array('','','','','','','','','','','','','','','');
+          $x=0;	
+          $seq1=' ';
+          $seq2=' ';			
+	    if (!empty($_POST['selected'])) 
+	        {
+              foreach($_POST['selected'] as $check) 
+		        {
+			      $seq[$x] = $check; 
+		    	  //list($seq1, $seq2) = explode("/", $seq[$x]);
+				    list($seq1) = explode("/", $seq[$x]);
+		    	    $seq1;
+		    	  //$seq2;
+				  
+			        $this->db->where('ma001', $seq1);
+			      //$this->db->where('ma002', $seq2);
+                    $this->db->delete('copma'); 
+	            }
+            }
+	    if ($this->db->affected_rows() > 0)
+            {
+              return TRUE;
+            }
+              return FALSE;					
+        }
+	//選取列印多筆   
+	function printmutif()    
+        {           
+          $seq[] = array('','','','','','','','','','','','','','','');
+          $x=0;	
+          $seq1=' ';
+          $seq2=' ';		
+           $this->db->where('ma001 >=', '0');
+		   $this->db->delete('copmap'); 	
+          	   
+	    if (!empty($_POST['selected'])) 
+	        {				
+              foreach($_POST['selected'] as $check) 
+		        {
+			      $seq[$x] = $check; 
+		    	  //list($seq1, $seq2) = explode("/", $seq[$x]);
+				    list($seq1) = explode("/", $seq[$x]);
+					
+		    	    $seq1;
+				//	var_dump($seq1);exit;
+		    	  $sql02 ="insert into copmap select * from copma where ma001='$seq1' ";   
+	              $this->db->query($sql02);
+	            }
+            }
+	     $sql = " SELECT * FROM copmap WHERE 1=1 order by ma001 "; 
+          $query = $this->db->query($sql);
+	      $ret['rows'] = $query->result();
+	      $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+		                ->from('copmap');
+	      $num = $query->get()->result();		
+	      $ret['num_rows'] = $num[0]->count;		
+	      return $ret;		
+        }
+	/*==以下AJAX處理區域==*/
+	 function ajaxcopi01($seg1)    //ajax 查詢一筆 顯示用 客戶6
+          { 	              
+	    $this->db->set('ma001', $this->uri->segment(4));
+	    $this->db->where('ma001', $this->uri->segment(4));	
+	    $query = $this->db->get('copma');
+			
+	    if ($query->num_rows() > 0) 
+		 {
+		   $res = $query->result();
+		   foreach ($query->result() as $row)
+          {
+               $result=$row->ma002;
+            }
+		   return $result;   
+		 }
+	  }
+	//ajax 下拉視窗查詢類 google 下拉 明細 品號1,品名2,部門代號15,業務人員16,交易幣別14,價格條件30,付款條件31,課稅別38
+	function lookup1($keyword){     
+      $this->db->select('ma001, ma002, ma015,b.me002,b.me002 as ma015disp,ma016,c.mv002,c.mv002 as ma016disp,ma014,d.mf002,d.mf002 as ma014disp,ma030,ma031,e.na003,e.na003 as ma031disp,ma038');
+			 $this->db->from('copma as a');
+			 $this->db->join('cmsme as b', 'a.ma015 = b.me001','left');
+			 $this->db->join('cmsmv as c', 'a.ma016 = c.mv001 ','left');
+			 $this->db->join('cmsmf as d', 'a.ma014 = d.mf001','left');
+			 $this->db->join('cmsna as e', 'a.ma031 = e.na002 and e.na001 = "1" ','left');  
+      $this->db->like('ma001',urldecode(urldecode($this->uri->segment(4))),'after');
+	  $this->db->or_like('ma002',urldecode(urldecode($this->uri->segment(4))), 'after');
+      $this->db->limit('10');		
+      $query = $this->db->get(); 
+      return $query->result();
+    }  	
+	function lookup2($keyword){  
+      $ma001=urldecode(urldecode($this->uri->segment(4)));	
+   //   $this->db->select('ma001, ma002, ma015,ma016,ma014,ma030,ma031,ma038');
+	//  $this->db->from('copma');  
+	  $this->db->select('ma001, ma002, ma015,b.me002 as ma015disp,ma016,c.mv002 as ma016disp,ma014,d.mf002 as ma014disp,ma030,ma031,e.na003 as ma031disp,ma038');
+			 $this->db->from('copma as a');
+			 $this->db->join('cmsme as b', 'a.ma015 = b.me001','left');
+			 $this->db->join('cmsmv as c', 'a.ma016 = c.mv001 ','left');
+			 $this->db->join('cmsmf as d', 'a.ma014 = d.mf001','left');
+			 $this->db->join('cmsna as e', 'a.ma031 = e.na002 and e.na001 = "1" ','left');
+      $this->db->where('ma001',$ma001);
+      $query = $this->db->get(); 
+      return $query->result();
+    }  	
+	function lookupb($keyword){     
+      $this->db->select('ma001, ma002, ma003, ma010, ma038, ma025');
+			 $this->db->from('copma as a');
+      $this->db->like('ma001',urldecode(urldecode($this->uri->segment(4))),'after');
+	  $this->db->or_like('ma002',urldecode(urldecode($this->uri->segment(4))), 'after');
+      $this->db->limit('10');		
+      $query = $this->db->get(); 
+      return $query->result();
+    } 
+	//ajax 下拉視窗查詢類 google 下拉 明細 客戶
+	function lookup_old($select_col=array(),$search_col=array(),$keyword=array(),$limit=10){
+		$sel_col = "";
+		foreach($select_col as $val){
+			if($sel_col){$sel_col.=",";}
+			$sel_col .= $val;
+		}
+		if($sel_col == ""){$sel_col = "*";}
+		$this->db->select($sel_col)->from('copma');
+		foreach($search_col as $key => $val){
+			if($key == "and"){
+				$this->db->like($val,$keyword[$val],'after');
+			}elseif($key == "or"){
+				$this->db->or_like($val,$keyword[$val], 'after');
+			}
+		}
+		$this->db->limit($limit);
+		$query = $this->db->get();
+		return $query->result();
+    }
+}
+/* End of file model.php */
+/* Location: ./application/model/model.php */
+/* Location: ./application/controllers/puri01.php */
+?>

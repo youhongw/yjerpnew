@@ -1,0 +1,915 @@
+/******© Copyright of aibooks All Rights Reserved 
+			鯨動智能科技 版權所有******/
+@media only screen and (min-width: 1681px) {
+	
+.nav_font_size{font-size:1em;}
+
+.content{
+	width: 100%;
+	clear: both;
+	border-spacing: 0;
+	display: contents;
+}	
+/*******************登入口設定*******************/
+.h_login_bg {
+    width:33em;
+}/*登入口框架擺放位置*/
+ 
+.header div span{
+	font-size: 1.1em;	
+}
+
+.inline_jump_color>div>div:nth-child(odd){
+	min-width: 20%;
+    max-width: 25%;
+    width: 20%;
+}/******** 輸入欄位背景色 ********/
+
+.hidden_one{
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+
+}
+	
+
+@media only screen and (min-width: 1281px) and (max-width: 1680px){
+ #container
+ {
+  width:1680px !important;
+ }
+ #footer
+ {
+  width:1680px !important;
+ }
+ #header .div1
+ {
+  min-width:1281px !important;
+ }
+ 
+#h_contaniner{
+	background:url('https://www.aibooks.tw/per/images/sys_images/aib1680.jpg')center center fixed no-repeat;
+}
+.header>div:first-child {width: 17%;}
+.header div small {width:75%;}
+
+#left{    
+	max-width: 25.2em;
+    width: 21.2%;
+	font-size:0.875em;
+}
+
+nav{font-size:1em;}
+
+.h_login_bg{
+	width:30em;
+	height:33em;
+}/*登入頁面背景框架*/
+.h_img_position{  
+	width:20%;
+}/*登入口logo擺放位置 */
+.h_login_box{font-size:1.5em;}
+.terms_font{font-size:0.75em;}
+.heading>div>h1{
+	font-size:1.1em;
+}
+/*.header div small{
+	max-width : 600px;
+	width:100%;
+}*/
+.heading>div:nth-child(2){
+	font-size:0.875em;
+}
+.form{
+	width:82%;
+}
+.left{ 
+	width: 48%; 
+}
+.left>div>img{ 
+	width: 90%; 
+}
+.right{
+	width:52%;
+}/***** right block setting end *****/
+
+.data_right{
+	width:76%; 
+}
+
+.tag{font-size:0.8rem;}
+.table,.shr_tabledata,.shr_tablelist{font-size:0.875em;} 
+.hidden_one{
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.list_table{font-size:0.75rem;}
+.list_table>div>div>input{font-size:0.75rem;}
+.table_list{font-size:0.75rem;}
+.table_list>div>div>input{line-height:1.5em;}
+.shrorder{ font-size:0.75em;}
+/*.fta_main_box {height: 40em; }*/
+.fta_main{ transform: scale(0.8);}
+}
+
+@media only screen and (min-width: 768px) and (max-width: 1280px){
+ #container
+ {
+  width:1280px !important;
+ }
+ #footer
+ {
+  width:1280px !important;
+ }
+ #header .div1
+ {
+  min-width:768px !important;
+ }
+ 
+#h_contaniner{
+	background:url('https://www.aibooks.tw/per/images/sys_images/aib1024.jpg')center center fixed no-repeat;
+}
+#content{
+	max-height:47.5em;
+	height:38.5em;
+}
+
+h2{text-align:center;}
+.h_login_bg{
+	width:27em;
+	height:31em;
+}/*登入頁面背景框架*/
+.h_img_position{  
+	width:20%;
+}/*登入口logo擺放位置 */
+.h_login_bg_width {
+    width: 80%;
+    margin: 0 auto;
+}
+.h_heighttext_m2>div>div:nth-child(odd)>img {
+    margin-left: 0em;
+}
+.terms_font{font-size:0.7em;}
+select.aibbutton,div.aibbutton,a.aibbutton{
+	font-size: 0.93em;
+}/*登入button*/
+
+.header>div:first-child {width: 17.6%;}
+#left{
+	width:31%;
+}
+nav{font-size: 0.87rem;}
+nav div {font-size: 0.875rem;}
+.one{
+	font-size: 2vmin;
+}
+.header div small{
+	width: 50%;
+	font-size:13px;
+}
+.header>div:nth-child(5) {
+    padding-right: 0;
+}
+
+.header>div>div{
+	margin:0.5em;
+}
+.header >div>div>div{
+	font-size:0.2em;
+	margin:0px;
+}
+.header>div>div>div>img,.header >div>div>div>a>img{
+	height:3vmin;
+}
+.heading>div:nth-child(1){
+	font-size:0.625em;
+}
+.heading>div>img, .sts_heading>div>img {
+    width: 2em;
+}
+.heading>div>h1, .sts_heading>div>h1,.table,.table_list,.shr_table{
+    font-size: 0.87rem;
+}
+.heading>div:nth-child(2){
+	font-size:0.875em;
+}
+.heading>div>h1{
+	font-size:1rem;
+}
+.footering>div>img {
+    width: 6.25em;
+}
+.footering>div>p{
+	height:2em;
+	line-height:2em;
+	font-size:0.5em;
+}/*************頁尾的設定***************/
+.footering>div:nth-child(3)>div>a>img{
+	width:2em;
+}/*************頁尾的設定***************/
+.tag{font-size:0.6rem;}
+.nav_font_size{font-size:0.875em;}
+.table{font-size:0.875em;} 
+.hidden_one{
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.list_table{font-size:0.5rem;}
+.list_table>div>div>input{font-size:0.5rem;}
+.table_list{font-size:0.625rem;}
+.border_mg>div:nth-child(odd){
+	width:18%;
+	padding-left:2em;
+	margin-right:2em;
+}/******** 輸入欄位背景色 ********/
+.shr_left,.shr_right,.left_check,.right_check{
+	width: 100%;
+}
+
+.term{width:50%;}
+.include_term{width:33.33%;}
+
+.jump_color>div>div:nth-child(odd) {
+    width: calc(20%);
+}
+
+.aibwidth,.aiblist,.aiblist,.aibpd_name_font_size{
+	font-size:0.625em;
+}
+.shrorder{width:150%; font-size:0.625em;}
+.shrorder td div { line-height: 1;}
+
+.fta_main_box {height: 37em; }
+.fta_main{ transform: scale(0.6);}
+}
+
+@media only screen and (max-width: 767px){
+
+#container
+ {
+  width:767px !important;
+ }
+ #footer
+ {
+  width:767px !important;
+ }
+ #header .div1
+ {
+  min-width:320px !important;
+ }
+select {
+	width:8em;
+}
+#h_contaniner{  
+    background-repeat: no-repeat;
+	width:100%;
+	height:100%;
+	background:url('https://www.aibooks.tw/per/images/sys_images/hsbg.jpg') center center fixed no-repeat ;
+	position: absolute;
+	background-attachment: fixed;
+	background-position: center;
+	background-size: cover;
+}/***登入口背景格式 ***/
+
+
+.h_img_position{
+	width: 6em;
+}
+.registered_databox { max-width: 88%;}
+/***登入口邊框設定格式 ***/
+.h_login_bg{  
+	width:95%;
+}
+.login_sec_width {
+    margin:0em; 
+}
+.h_login_bg_width {
+    width: 85%;
+}
+.registered_data {
+    width: 95%;
+}
+.h_login_box, h1.h_login_box {
+   font-size:1.5em;
+}
+.h_login_title{
+	height:4.5em;
+	font-size:0.9em;
+}/***登入口英文字體大小設定 ***/
+.h_heighttext_m{font-size:1em;}
+.h_heighttext_m2>div{height:2.8em;}
+.h_heighttext_m2>div>div{font-size:0.83em;}/***h_heighttext_m2字體大小設定***/
+.h_heighttext_m1>div{height:1.65em;}
+.h_heighttext{ line-height: 1.8;}
+select.aibbutton,div.aibbutton,a.aibbutton{
+	width: 100%;
+    height: 2.5em;
+}/*登入button*/ 
+.h_linkin_b ,button.h_linkin_b{
+	height: 1.5em;
+    font-size: 1.35em;
+}/*登入扭*/ 
+
+/*login*/
+.login-nav li a{font-size:16px; line-height: 3.5;}
+.login-content {padding: 15px 20px 10px;}
+.login-content input[type="text"],.login-content input[type="email"], .login-content input[type="password"]{line-height: 1.5;}
+
+
+#content{
+	height:auto;
+	margin:0px;
+	border:none;
+	padding-top:30vmin;
+	border-radius: 0;
+	display:block;
+}
+
+#left {
+	max-width:100%;
+    width: 100%;
+	position: sticky;
+	padding: 0em; 
+	font-size:4vmin;
+	margin:0;
+	border-radius: 0;
+	box-shadow: none!important;
+}
+div#right>:nth-child(2) {
+	margin: 0;
+	padding:0;
+	/*padding:15px;*/
+}
+nav{
+	box-shadow: none;
+	position: sticky;
+}
+#right{
+	margin-left: 0em;
+	margin-top: 0em;
+    padding: 0px;
+	left:0px; 
+	border-radius: 0;
+}
+
+h2{text-align:center;}
+
+.header{
+	background:#7db533;
+	display:inline-table;
+	box-shadow:none;
+}
+.one{
+	color:#ffffff;
+	width:75%
+}
+.header>div{
+	display:inline-block ;
+	text-align:center;
+}
+.header>div>div{
+	display: block;
+}
+.header>div>div>div{
+    font-size: 2.5vmin;
+}
+.header>div>h1{
+	font-size: 4.5vmin;
+    color: #ffffff;
+    line-height: 15vmin;
+	padding:2px;
+}
+.header>div:nth-child(1){
+	width:19%;
+	padding:2px;
+	text-align:center;
+}
+.header>div:nth-child(1):active{
+	position:relative;
+	top:1px;
+}
+.header>div:nth-child(1)>img{
+	padding-left: 0px; 
+	width: 40%;
+	height: auto;
+	top: 0px;
+}
+.header>div:nth-child(2){
+	width:81%;
+	padding-right:17.5vmin;
+}
+.header>div:nth-child(3){
+	width:100%;
+	font-size: 2vmin;
+	height:4em;
+	line-height:4em;
+	background-color: #f5f6e6;
+	color:#858585;
+	font-weight:bolder;
+}
+.header>div>small{
+	color:#858585;
+	font-size:0.8rem;
+}
+.header>div:last-child {
+    position: initial;
+	display: flex;
+    white-space: nowrap;
+    background-color: #ededed;
+}
+.header>div:last-child>div{
+	width:20%;
+}
+.header>div:nth-child(4)>div:hover{
+	background-color:#e7f59d;
+}
+.header>div>div>div>img,.header>div>div>div>a>img{
+	height: 12vmin;
+	margin:5px 0;
+}
+.header>div>div>div>img:hover,.header>div>div>div>a>img:hover{
+	background:transparent;	
+	box-shadow: transparent;
+	transform:none;
+}
+
+.header>div>div{
+	margin:0em;
+}
+
+.heading ,.sts_heading{
+	height:auto !important;
+	display: block;
+    white-space: nowrap; 
+    padding: 0;
+	margin:0;
+	overflow-x: scroll;
+	overflow:-moz-scrollbars-none;
+	border-bottom:none;
+	position: inherit;
+}
+.heading>div ,.sts_heading>div{
+	height:3.3em !important;
+    align-items: normal;
+	display: block;
+}
+.heading>div:nth-child(1),.sts_heading>div:nth-child(1){
+	display: none;
+}
+.heading>div:nth-child(2),.sts_heading>div:nth-child(2){
+	width:100%;
+}
+.heading::-webkit-scrollbar,.sts_heading::-webkit-scrollbar{
+	display:none;
+}
+
+.userbutton, .userbutton_1 {
+    top: 29%;
+    left: 50%;
+    transform: translate(-50%,0);
+    z-index: 9999;
+}
+.table_show {font-size: 0.625em;}
+.table_show img{width: 5% !important;}
+a.tab-menu2{margin:0;}
+.include_list{min-width:100%; padding:0;}
+.include div{
+	width: 100%;    
+    float: unset;
+    display: flex;
+    align-items: center;
+}
+.term,.include_term{width:50%; border-bottom:1px solid #a1d163;}
+/*.include_term{width:50%;}*/
+.term select,.include_term select{width:14em;}
+.include input[type="text"],.term input[type="text"],.include_term input[type="text"]{width:8em !important;;}
+/************************************************2020 01 10 add memberdatebase rwd css ***********************************************/
+.memberdatabox{max-width:100%; margin:0; height:auto;}
+.memberdatabox aside{ display:block;}
+.memberdatabox dt,.memberdatabox dd,.memberdatabase_address_width{width:100% !important; display:block; margin:0;}
+/************************************************2020 01 10 add memberdatebase rwd css end ***********************************************/
+
+/************************************************2020 01 10 add elf rwd css ***********************************************/
+.elfbox{display: block; height: auto; margin:0;}
+.elfnav {padding:1.5em 0.35em; margin: 0;}
+.elfnav center img{width:50%;}
+.elfmenu li a{padding: 10px;}
+.elfmenu li a aside {width:95%;}
+.elfmenu li a aside img {height:60px;}
+.elfbankbox {padding: 0; height:auto;}
+.elfbankaddress li { width: 96%; padding-top: 1em;}
+.backbtn a {margin: 0 0 0 75%;}
+.fancybox-content{height:100% !important;}
+/*.fancybox-button, .fancybox-button:visited, .fancybox-button:link { display: none;}*/
+.fta_main {width:100%; margin: 0;}
+
+/************************************************2020 01 10 add memberdatebase rwd css end***********************************************/
+
+/************************************************2020 02 07 add shr rwd css ***********************************************/
+.shrcontent{ overflow-x: auto; }
+.shrorder{ width: 300%; }
+
+/*-名片會員-*/
+.smartbooks_business_card{background: #ffffff; padding: 1.875em 10px;}
+.smartbooks_business_box {width:100%;}
+.smartbooks_business_box dt{padding:0.625em; width:30%;}
+
+
+.content>.left>div{
+	width:auto;
+	margin-left:0px; 
+	border:1px solid #cccccc;
+	padding: 0 0 5px 0;
+}
+.left,.right,.data_left,.field_left,.data_right,.field_right,.aibdataleft,.shr_data1,.shr_data2,.shr_data3{
+	float:none;
+	margin: 0em;
+	padding: 0em;
+	width: 100%;
+}/***** left & right block setting end *****/
+.shr_left_half,.shr_right_half,.shr_Annualsalary_data,.shr_Annualsalary_years,.shr_Annualsalary_remarks,.box_list,.box_left,.box_right{
+	float:none;
+	display:block;
+	width: 100% !important;
+}/***** shr_left_half & shr_right_half block setting end *****/
+.box_right {padding:0;}
+.data_left{
+	min-height:auto;
+}
+.left>.img_width,.data_left>.img_width,.field_left>.img_width{ 
+	width:100%;
+	margin: 0px;
+	left:0px;
+	
+}/***** left block setting end *****/
+
+.footer{
+	display: block;
+	margin: 0px;
+	background-color: #ffffff;
+}
+.footer>.right_tw{
+	width: auto;
+	float:left;
+}
+.footering {
+	display:none;
+}
+.data_height{
+	height:auto;
+}
+
+.tag,.sts_tag,.sts_tagtw{
+	height:auto !important;
+	width: 33.33% !important;
+	margin:0px !important;
+	padding:0px !important;
+	font-size:0.93em !important;
+	border-radius: 0 !important;
+	text-align:center;
+}
+.tag:hover,.sts_tag:hover,.sts_tagtw:hover{
+	transform:none;
+	filter:none;
+}
+.tag:last-child ,.sts_tag:last-child,.sts_tagtw:last-child{
+    border-right: none;
+}
+.title{
+    padding-left: 1em;
+}
+.list{ 
+	margin: 0px;
+}
+.list_side {
+    font-size:0.625em;
+}
+.list_side>select{
+    width:27%;
+}
+.table_jump_color>div>div:last-child{
+	border-bottom: none; 
+}
+.table{position: initial; margin:10px auto;}
+.table,.table>div,.table>div>div,.shr_tabledata,.shr_tabledata>div,.shr_tabledata>div>div{ 
+	display: block !important;
+	max-width:100%;
+	background-color: #ffffff;
+}
+.table>div:first-child,.shr_tabledata>div:first-child{ 
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.table>div,.shr_tablelist>div{
+	height:auto;
+	border: 1px solid #87B44C; 
+	margin-top:1.25em;
+	text-overflow: ellipsis;
+}
+.table>div:nth-child(2), .shr_tablelist>div:nth-child(2){
+    margin-top: 0em; 
+}
+.table>div>div,.table>div>div:before,.shr_tabledata>div>div,.shr_tabledata>div>div:before{ 
+	height:2.5em;
+	display: flex !important;
+	width:100% !important;
+    align-items: center;
+    justify-content: center;
+	font-size: 4vmin;
+}
+.shr_tabledata>div>div,.shr_tabledata>div>div:before{
+	font-size: 3vmin;
+}
+.table>div>div,.shr_tabledata>div>div{ 
+	border-collapse: separate;
+	position: relative;
+	padding-left: 50%; 
+	border-bottom: 1px solid #a1d163; 
+}
+.table>div>div{border-right: 0; }
+.table>div>div:before ,.shr_tabledata>div>div:before{
+	position: absolute;
+	content: attr(data-th) "  ";
+	background-color:rgb(135, 180, 76);
+	color:#ffffff;
+	top: 1px;
+	left: 0px;
+	width: 50% !important;  
+	white-space: nowrap;
+}
+.table>div>div:first-child:before{
+	top: 0px;
+}
+.table>div>div>input{
+	text-align:center;
+	height:1.5em;
+	box-sizing: border-box;
+}
+.table>div>div>button{
+	transform: translateY(50%);
+	text-align:center;
+	height:1.5em;
+}
+.table>div>div>div{
+	display: block;
+}
+.table>div>div>div>input{
+	margin-right:0px;
+	display:none;
+}
+#show_window>.table>div>div:before { 
+	left: 3px;
+}
+.icon{box-sizing: border-box;}
+.select{transform: translateY(50%);height:1.5em;box-sizing: border-box;}
+.banner_tag {
+	background-color:transparent;
+	border: none;
+}
+.banner>.tag{
+    width: 80px;
+    height: 5vh;
+	line-height: 5vh;
+	margin:0.5em;
+}
+.progress-bar{
+  margin:12em auto 1.25em auto;
+}
+.table_list,.table_data{ margin: 0; padding: 0 30px; width:auto;}
+.table_list,.table_list>div,.table_list>div>div
+,.ibr_table,.ibr_table>div,.ibr_table>div>div
+,.table_data,.table_data>div,.table_data>div>div{ 
+	display: block; 
+	padding:0px;
+}
+.table_list>div>div{
+	height:2.5em;
+	border-bottom:0.0625em solid #a1d163;
+}
+.table_data>div>div{
+	height:2.5em;
+}
+.table_list>div>div:before,.table_data>div>div:before{
+	content: '';
+	height: 100%;
+	display: inline-block;
+	vertical-align: middle;
+ }
+
+.table_list>div>div:nth-child(odd){
+	width:50% !important;
+	float:left;
+	text-align:left;
+	display: flex;
+    align-items: center;
+	background-color: #f5f6e6;
+	padding-left:1em;
+	border-right: 1px solid #a1d163; 
+}
+.table_list>div>div:nth-child(even){
+	width:50% !important;
+	float:left;
+	white-space: nowrap;
+	padding-left:1em;
+}
+.table_data>div>div:nth-child(odd){
+	width:27%;
+	float:left;
+	text-align:left;
+	display: flex;
+    align-items: center;
+	padding-left:1em;
+}
+.table_data>div>div:nth-child(even){
+	width:73%;
+	float:left;
+	white-space: nowrap;
+	padding-left:1em;
+	text-align:center;
+}
+.table_list>div>div>input[type='text']{
+    width:70%;
+}
+.table_data>div>div>input[type='text']{
+	width:100%;
+	border:1px solid #cccccc;
+	background:#ffffff;
+	line-height:2em;
+}
+.registered_width>div>div:nth-child(even){border-bottom:none;}
+.list_table>div>div {
+    padding-left:1em;
+}
+
+.table_img{
+	width:10vmin;
+	margin:0px 5px;
+}
+/*.list>div,.list_box>div,.aiblist>div{
+	display: block;
+    height: auto;
+}*/
+
+.form,.shr_recruit{
+	width:100%;
+	border: none;
+	background-color: #fff;
+	overflow-x: visible;
+	overflow-y: hidden;
+	border-radius: 0px;
+	margin:0;
+}
+.fieldset{
+	border-radius:0em;
+	padding:0px;
+}
+.form,.fieldset>div{
+	width: 100%;
+	margin:0em;
+}
+
+.left_check,.right_check,.shr_left,.shr_right,.aibjob75,.aibjob75_left,.aibjob75_right,.aibdataright,.shr_specialleave>div{
+	width: 100% !important;
+}/***** left block setting end *****/
+.shr_specialleave{
+	display:table;
+}
+.aibjob75,.aibjob75_left,.aibjob75_right{
+	padding: 0;
+	margin:0;
+}/***** 職缺頁面rwd *****/
+table{
+	border-left:none;
+	border-right:none;
+}/*****用來計算資料明細的TABLE******/
+
+.tabs_container {
+    padding: 0px;
+}
+a.tab-menu {
+   padding: 2vmin 2.5vmin;
+   border-radius:  0;
+}
+.hidden{ 
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.hidden_border{
+	border:none;
+}/***隱藏底線***/
+.pagination {
+    margin: 1.25em;
+    text-align: center;
+    font-size: 1em;
+	position: relative;
+    bottom: 0;
+    right: 0;
+}
+.border_mg>div:nth-child(odd){
+	width:50%;
+	padding-left:1em;
+	margin-right:1em;
+}
+/******** 輸入欄位背景色 ********/
+
+/*hrBox*/
+.shr_content{padding:1.25em;}
+.hrBox,.hrList,.hrList .hrItem,.hrList .hrItem div{display:block; max-width:100%; width:100% !important; margin:0;}
+.hrList .hrItem div {padding:0.5em;}
+.hrBox{padding:0.75em;}
+.item-content{padding:1.25em;}
+.anchor-bar{margin-top:1.25em;}
+.anchor-bar li a {font-size:1em;}
+.hrItem{}
+
+
+/*fta main menu css */
+.fta_main li {width: 31.3%;}
+.fta_main li a {width: 7em;}	
+
+.aibrow_14>div>div,.aibrow_36>div>div,.aibrow_19>div>div,.aibrow_10>div>div,.aibrow_15>div>div,
+.aibook35>div>div:nth-child{width:50%;}
+.shr_fieldset,.shr_right_padding{padding: 0em;}
+.shr_fieldset>legend{text-align:center;}
+
+.form_registered{
+	width: 95%;
+    padding: 0;
+    border: none;
+    margin: 0 auto;
+}
+.input-container {
+  width: 100%;
+  position: relative;
+  margin: 5px;
+}
+.shr_width300,.shr_width110{width:100%;}
+.b_swipe>.tag {
+    width: 15vmin;
+}
+.border>div{border-bottom:none; }
+.list_bgcolor{padding-left:1em;}
+
+.registered{
+	background: hsla(0,0%,95.3%) !important;
+	margin:0;
+	padding:10px 0;
+}
+.registered_color,.registered>div>div:nth-child(odd){
+	background: hsla(0,0%,95.3%) !important;
+}
+
+.table_group div{display:inline-flex; min-width:50%;}
+
+.shr_display{
+	position: relative;
+	top: 0px;
+	left: 0px;
+}
+.shr_top_label{
+	width:50%;
+    display: block;
+	font-size: 1em;
+	font-weight: normal;
+	margin-bottom: 0;
+}
+
+/*shrlabel*/
+.memberdatabaseimgebox {margin-bottom:.75em;}
+.job-status,.member-status {
+    padding: 1em 1.5em;
+}	
+.job-status .line > .title, .member-status .line > .title {
+    width: 100%;
+	padding:0;
+	padding-left:0;
+}
+.btn-pos-r {
+    height: 2.5em;
+}
+
+aside.memberdata,aside.memberdata dt, aside.memberdata dd {width:100%!important; padding:0; display:block;}
+
+#right::-webkit-scrollbar{
+    display: none;
+	width: 0 !important;
+}
+section{
+	display:block;
+	width:100%;
+}
+
+}
+.display{
+	position: absolute;
+	top: -9999px;
+	left: -9999px;
+}
+.nodisplay{display:none;}
+
+

@@ -1,0 +1,75 @@
+html {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background: #FFFFFF;
+	margin: 0;
+	padding: 0;
+}
+body, td, th {
+	font-family: 細明體, Verdana, Arial, Helvetica, sans-serif;
+	-webkit-text-size-adjust:none;
+	color: #000000;
+}
+p {
+	margin:0cm;
+}
+
+.store {
+	width: 100%;
+	margin-bottom: 0px;
+	border-collapse:collapse;
+	border: 0px;
+	font-size: 12pt;
+	font-family: 細明體, Verdana, Arial, Helvetica, sans-serif;
+}
+.thead {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 10pt;
+}
+.thead td {
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-top: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+
+.thead .left {
+	text-align: left;
+	padding: 2px;
+}
+.thead .right {
+	text-align: right;
+	padding: 2px;
+}
+.thead .center {
+	text-align: center;
+	padding: 2px;
+}
+
+.list {
+	border-collapse: collapse;
+	width: 100%;
+	font-size: 10pt;
+}
+.list td {
+	border-left: 1px solid #000000;
+	border-right: 1px solid #000000;
+	border-top: 0px solid #000000;
+	border-bottom: 1px solid #000000;
+}
+
+.list .left {
+	text-align: left;
+	padding: 2px;
+}
+.list .right {
+	text-align: right;
+	padding: 2px;
+}
+.list .center {
+	text-align: center;
+	padding: 2px;
+}

@@ -1,0 +1,131 @@
+<div id="container"> <!-- div-1 -->
+  <div id="header"> <!-- div-2 -->
+    <div class="div1">
+      <div class="div2"><a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main"><?php echo $systitle ?></a></div>
+        <div class="div3">
+	     <img src="<?php echo base_url()?>assets/image/user.png" style="position: relative; top: 6px;" />&nbsp;<span><?php echo $username ?></span> 已登錄 　
+	     <img src="<?php echo base_url()?>assets/image/category.png" style="position: relative; top: 3px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main">回主目錄</a>　
+	     <img src="<?php echo base_url()?>assets/image/exit.png" style="position: relative; top: 5px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php">退出系統</a>
+	    </div>
+    </div>
+	
+<div id="content"> <!-- div-3 -->
+ <div class="box"> <!-- div-4 -->
+    <div class="heading">
+      <h1><img src="<?php echo base_url()?>assets/image/order.png" alt="" /> 外勞薪資條中英文 - 列印明細表</h1>
+    </div>
+	
+	<div class="content"> <!-- div-5 -->
+	<form  class="cmxform" id="commentForm"  name="form" action="<?php echo base_url()?>index.php/pal/palr45/printa"  method="post"  enctype="multipart/form-data" > 
+	<!--<div id="htabs" class="htabs14"><span>列印項目-明細表</span></div>-->
+	<div id="tab-general"> <!-- div-6 -->
+	<?php
+  	  
+	  if(!isset($palq01a)) { $palq01a=''; } else {  $palq01a=$this->input->post('palq01a'); }
+	  if(!isset($palq01adisp)) { $palq01adisp=''; } else {  $palq01adisp=$this->input->post('palq01adisp'); }
+	  if(!isset($palq01a1)) { $palq01a1='zzzzz'; } else {  $palq01a1=$this->input->post('palq01a1'); }
+	  if(!isset($palq01a1disp)) { $palq01a1disp=''; } else {  $palq01a1disp=$this->input->post('palq01a1disp'); }
+	  
+	  if(!isset($dateo)) { $dateo=date("Y/m"); }
+	  if(!isset($datec)) { $datec=date("Y/m/d"); }
+	  if(!isset($dateo1)) { $dateo1=''; }
+	  if(!isset($datec1)) { $datec1=date("Y/m/d"); }
+	  $ta001o=$this->input->post('ta001o');
+	  $ta001c=$this->input->post('ta001c');
+	  
+	  $ta002o=$this->input->post('ta002o');
+	  $ta002c=$this->input->post('ta002c');
+	  if(!isset($td016)) { $td016='N'; }  else {  $td016=$this->input->post('td016'); }
+	  $te009p='1';
+	?>
+       
+	<table class="form14">   <!-- 表格 -->
+       <tr>
+	    <td class="start14a" width="12%">起始員工代號：</td>
+        <td class="normal14a" width="38%">
+		 <input tabIndex="1" id="ta001" onKeyPress="keyFunction()" type="text" name="ta001o"  value="<?php echo $ta001o; ?>" /></td>
+	    <td class="normal14a" width="12%">結束員工代號：</td>
+        <td class="normal14a" width="38%">
+	     <input tabIndex="2" id="ta002" onKeyPress="keyFunction()" type="text" name="ta001c"  value="<?php echo $ta001c; ?>" /></td> 
+	  <tr>
+	    <td class="start14" >發薪年月：</td>
+	    <td class="normal14" ><input tabIndex="3" id="dateo" onchange="dateformat_ym(this)" class="date-picker" onKeyPress="keyFunction()" type="text" name="dateo"  value="<?php echo $dateo; ?>"  size="20" style="background-color:#E7EFEF" minlength="6" required /></td>
+        <td class="normal14" ></td>
+	    <td class="normal14" ></td>
+	  </tr>
+	  <tr>
+	    <td class="start14" >起迄列印別：</td>
+	    <td class="normal14" >
+		<?php 
+		foreach($data_col['rows'] as $key => $val){
+		?>
+		<input type="checkbox" id="" name="mv202[]" class="mv202" value="<?=$val->mm001?>" /><?=$val->mm001.":"?><?=$val->mm002?>
+		<?php 
+		}
+		?>
+		<input type="checkbox" class="mv202_all" />全選
+		</td>
+        <td class="normal14" align="right"></td>
+	  </tr>
+	  <tr>
+	    <td class="start14" >列印外勞國籍：</td>
+	    <td class="normal14" >
+		<input tabIndex="6" id="mv032"  onKeyPress="keyFunction()" type="radio" checked="checked" name="mv032"  value="3"  size="20" style="background-color:#E7EFEF"/>菲律賓　
+		<input tabIndex="7" id="mv032" onKeyPress="keyFunction()" type="radio" name="mv032"  value="4"  size="20" style="background-color:#E7EFEF"/>越南　
+		<input tabIndex="8" id="mv032" onKeyPress="keyFunction()" type="radio" name="mv032"  value="5"  size="20" style="background-color:#E7EFEF"/>印尼</td>
+        <td class="normal14" ></td>
+	    <td class="normal14" ></td>
+	  </tr>
+	   <tr>
+	    <td class="normal14" >選擇列印紙張：</td>
+	    <td class="normal14" ><select id="te009p" onKeyPress="keyFunction()" name="te009p"  tabIndex="12">
+            <option <?php if($te009p == '1') echo 'selected="selected"';?> value='1'>1.A4 半張(直式)</option>                                                                        
+		    <option <?php if($te009p == '2') echo 'selected="selected"';?> value='2'>2.Letter 半張(直式)</option>
+		  </select></td> 
+        <td class="normal14" ></td>		  
+		 <td class="normal14" ></td>		 
+	  </tr>	
+	  
+    </table>
+	
+	    <div class="buttons">
+	      <button  type='submit' tabIndex="98" accesskey="p" name='submit' class="button"   target="_new" value='&nbsp;列印F8&nbsp;'><span>列 印Alt+p</span><img src="<?php echo base_url()?>assets/image/png/print.png" /></button>&nbsp;&nbsp;&nbsp;&nbsp;
+	      <a  accesskey="x" tabIndex="97" onKeyPress="keyFunction()"  id='cancel' name='cancel' href="<?php echo site_url('main/index/111'); ?>" class="button" ><span>返 回Alt+x</span><img src="<?php echo base_url()?>assets/image/png/cancle.png" /></a>
+	    </div>
+		
+       </form>
+    </div> <!-- div-6 -->
+  </div> <!-- div-5 -->
+</div> <!-- div-4 -->
+  <?php	if ($message!=' ') { ?>
+	<div class="success"><?php echo '  提示訊息：'.$message.'<span>'.'</span>'.
+'◎操作說明:[ 欄位名稱紅色代表必需輸入欄位,按Tab鍵或Enter鍵跳下一個欄位,按Shift+Tab鍵跳上一個欄位,Tab鍵停留在有選項欄位按上下鍵可選擇資料. ] ' ?> </div>  <?php } ?>
+    </div> <!-- div-3 -->
+  </div> <!-- div-2 -->
+</div> <!-- div-1 -->
+<?php include("./application/views/fun/report_funjs_v.php"); ?> 
+<script>
+$(document).ready(function(){
+	check_check_all();
+});
+$(".mv202_all").click(function() {
+	check_check_all();
+});
+function check_check_all(){
+   if($(".mv202_all").prop("checked")) {
+     $("input[name='mv202[]']").each(function() {
+         $(this).prop("checked", true);
+     });
+   } else {
+     $("input[name='mv202[]']").each(function() {
+         $(this).prop("checked", false);
+     });           
+   }
+	
+}
+$(".mv202").click(function() {
+   if($(".mv202_all").prop("checked")) {
+	   $(".mv202_all").prop("checked", false);
+   }
+});
+</script>

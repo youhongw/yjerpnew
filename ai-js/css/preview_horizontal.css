@@ -1,0 +1,102 @@
+.TitleName{
+    font-family:Times New Roman,標楷體;
+    padding:5px;
+    font-size:28px;
+    font-weight:bold;
+    letter-spacing: 3px;
+    border:0px solid black;
+    text-align:center;
+}
+.TitleName2{
+    font-family:Times New Roman,標楷體;
+    padding:5px;
+    font-size:20px;
+    font-weight:bold;
+    letter-spacing: 1px;
+    border:0px solid black;
+    text-align:center;
+}
+.TitleName3{
+    padding:5px 5px 0 5px;
+    border-bottom:2px solid black;
+    text-align:center;
+}
+.TitleName3 div{
+    font-family:Times New Roman,標楷體;
+    font-size:18px;
+    font-weight:bold;
+    padding:5px;
+}
+
+tr {
+    height:20px;
+}
+td {
+    border:0px solid red;
+    height:25px;
+}
+div {
+    border:0px solid green;
+    font-family:Times New Roman,新細明體;
+}
+/* 資產負債表-橫式- CSS */
+.ra_thead_tr_th_1 {
+    width:390px;
+}
+.ra_thead_tr_th_1 div{
+    width:380px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:3px;
+    border-bottom:2px solid black;
+}
+.ra_thead_tr_th_2 {
+    width:110px;
+}
+.ra_thead_tr_th_2 div{
+    width:100px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:3px;
+    border-bottom:2px solid black;
+}
+.ra_thead_tr_th_3 {
+    width:60px;
+}
+.ra_thead_tr_th_3 div{
+    width:50px;
+    margin: 0 auto;
+    font-family:Times New Roman,標楷體;
+    font-weight:bold;
+    padding:3px;
+    border-bottom:2px solid black;
+}
+.ra_tbody_tr_1 {
+    height:20px;
+}
+.ra_tbody_td_1 {
+    height:25px;
+    border-bottom:1px dashed #999;
+}
+.ra_tbody_td_1 div {
+    text-align:left;
+    font-family:Times New Roman,新細明體;
+    width:380px;
+    margin-left:10px;
+    padding:2px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.ra_tbody_td_2 {
+    height:25px;
+}
+.ra_tbody_td_2 div {
+    font-family:Times New Roman;
+    padding:2px 12px 2px 2px;
+    text-align:right;
+}
+/* 資產負債表-橫式- CSS */
+

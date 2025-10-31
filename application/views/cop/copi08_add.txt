@@ -1,0 +1,138 @@
+<!-- 頁尾群組  -->
+	
+
+        	<!--   明細0  --> 
+		<?php $i=0; $mproduct_row=0; $product_row='0'; ?>  
+			 <input id="row_count" name="row_count" value="0" style="display:none;" />
+		<?php while ($i<$ii) { ?>
+		<tbody  <?php echo 'id='.'product-row'.$product_row ?> >
+		   <?php $current_product_count++; ?>
+	     <tr>
+	  <!--   <td class="center"><img src="<?php echo base_url()?>assets/image/delete.png" title="移除" onclick="$(\'#product-row0\').remove();" /></td> -->
+         <td class="center"><img src="<?php echo base_url()?>assets/image/delete.png" title="刪除資料" onclick="del_detail('<?php echo $tg001;?>','<?php echo $tg002; ?>','<?php echo $th003[$i]; ?>');" /></td>    	    
+		<input type="hidden"  name="order_product[<?php echo $i ?>][th001]" value="<?php echo $th001[$i]; ?>" />
+	     <input type="hidden" name="order_product[<?php echo $i ?>][th002]" value="<?php echo $th002[$i]; ?>" />
+	      <td class="left"><input type="text"   readonly="value"   name="order_product[$i][th003]" value="<?php echo $th003[$i]; ?>" size="6" style="background-color:#EBEBE4" /></td>
+	     <td class="left"><input type="text"  <?php echo 'id='.'th004'.$i ?>   name="order_product[<?php echo $i ?>][th004]" value="<?php echo $th004[$i]; ?>" size="12" style="background-color:#E7EFEF"  /></td>
+	     <td class="left"><input  type="text"  onKeyPress="keyFunction()"  id="th005"  name="order_product[<?php echo $i ?>][th005]" value="<?php echo $th005[$i]; ?>" size="20" style="background-color:#EBEBE4" /></td>
+	     <td class="left"><input type="text"  onKeyPress="keyFunction()"  id="th006"   name="order_product[<?php echo $i ?>][th006]" value="<?php echo $th006[$i]; ?>"  size="20" style="background-color:#EBEBE4" /></td>
+	     <td class="left"><input  type="text"  onKeyPress="keyFunction()"    id="th009"   name="order_product[<?php echo $i ?>][th009]" value="<?php echo $th009[$i]; ?>" size="4" style="background-color:#EBEBE4" /></td>
+	     
+		 <td class="left"><input type="text"   <?php echo 'id='.'th007'.$i ?>   name="order_product[<?php echo $i ?>][th007]" value="<?php echo $th007[$i]; ?>" size="6"  style="background-color:#E7EFEF" /></td>
+		<td class="left"><input  type="text"  onKeyPress="keyFunction()"  id="th007disp"  name="order_product[<?php echo $i ?>][th007disp]" value="<?php echo $th007disp[$i]; ?>" size="10"  style="background-color:#EBEBE4" /></td>
+		
+	     <td class="center"><input type="text"  class="total_qty" id="th008" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th008]" value="<?php echo $th008[$i]; ?>" size="10" style="text-align:right;" /></td>
+		 <td class="center"><input type="text"  id="th012" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th012]" value="<?php echo $th012[$i]; ?>" size="10" style="text-align:right;" /></td>
+		 <td class="center"><input type="text"  id="th013" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th013]" value="<?php echo $th013[$i]; ?>" size="10" style="text-align:right;background-color:#EBEBE4;" /></td>
+		 <td class="center"><input type="text"  class="total_price" id="th035" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th035]" value="<?php echo $th035[$i]; ?>" size="10" style="text-align:right;;background-color:#EBEBE4;" /></td>
+         <td class="center"><input type="text"   id="th036" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th036]" value="<?php echo $th036[$i]; ?>" size="10" style="text-align:right;;background-color:#EBEBE4;"  /></td>	
+         <td class="right"><input readonly="value" type="text" class="total_price1" name="order_product[<?php echo $i ?>][th037]" value="<?php echo $th037[$i]; ?>" size="10" style="text-align:right;background-color:#EBEBE4;" /></td>
+		 <td class="right"><input readonly="value" type="text"  name="order_product[<?php echo $i ?>][th038]" value="<?php echo $th038[$i]; ?>" size="10" style="text-align:right;background-color:#EBEBE4;" /></td>
+		
+	     <td class="left"><input type="text" id="th014"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th014]" value="<?php echo $th014[$i]; ?>" size="10"  /></td>
+		 <td class="left"><input type="text" id="th015"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th015]" value="<?php echo $th015[$i]; ?>" size="10"  /></td>
+		 <td class="left"><input type="text" id="th016"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th016]" value="<?php echo $th016[$i]; ?>" size="10"  /></td>
+		 <td class="left"><input type="text" id="th017"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th017]" value="<?php echo $th017[$i]; ?>" size="10"  /></td>
+		 <td class="left"><input type="text" id="th019"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th019]" value="<?php echo $th019[$i]; ?>" size="10"  /></td>
+		 <td class="left"><input type="text" id="th030"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th030]" value="<?php echo $th030[$i]; ?>" size="10"  /></td>
+	
+		 <td class="left"><input type="text" id="th018"  onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][th018]" value="<?php echo $th018[$i]; ?>" size="20"  /></td>
+	     </tr>	    
+        </tbody>
+			<script>
+		function del_detail(del_md001,del_md002,del_md003){
+			if(confirm('是否刪除此筆資料，單別:'+del_md001+'單號:'+del_md002+'序號:'+del_md003))
+			{
+				$('#del_md001').val(del_md001);
+				$('#del_md002').val(del_md002);
+				$('#del_md003').val(del_md003);
+				$('#del_form').submit();
+			}
+		}
+		</script>
+        <?php $i++; $mproduct_row = (int) $product_row + 1; $product_row=(string)$mproduct_row;
+		  echo "<script>$('#row_count').val(".$product_row.")</script>";?>
+ <?php } ?>		 
+    <!-- javascrit 0 -->	
+	
+	<?php   } ?>	
+	
+	
+	================add 186
+	 <?php $ii=0;$tg013=0;$tg025=0;$tg033=0;$tg045=0;$tg046=0; ?>
+	<?php foreach($result as $row) { ?>
+           <?php if (!@$otg001) {$otg001='';} ?>
+		  <?php if (!@$otg002) {$otg002='';} ?>
+		  <?php if (!@$otg042) {$otg042='';} ?>
+		  <!--   記住單別,單號, 日期         -->
+	      <?php $tg001=$otg001; ?>
+		   <?php $tg002=$otg002; ?>
+		    <?php $tg042=substr($otg042,0,4).'/'.substr($otg042,4,2).'/'.substr($otg042,6,2);?>
+			
+		  <?php   $tg048=$row->tc001;?>  
+          <?php   $tg049=$row->tc002;?>      
+          <?php   $tg003=date("Y/m/d");?>
+          <?php   $tg004=$row->tc004;?>
+	      <?php   $tg004disp=$row->tc004disp;?>
+		  <?php   $tg005=$row->tc005;?>
+		  <?php   $tg005disp=$row->tc005disp;?>
+		  <?php   $tg006=$row->tc006;?>
+          <?php   $tg006disp=$row->tc006disp;?> 	
+		  <?php   $tg007=$row->tc007;?>
+          <?php   $tg007disp=$row->tc007disp;?> 	
+		  <?php   $tg008=$row->tc008;?>
+          <?php   $tg008disp=$row->tc008disp;?> 
+          <?php   $tg012=$row->tc009;?>    		  
+		  <?php   $tg008=$row->tc010;?>    
+		  <?php   $tg009=$row->tc011;?>
+          <?php   $tg014=$row->tc014;?>
+		  <?php   $tg014disp=$row->tc014disp;?>
+		  <?php //  $tg042=date("Y/m/d");?>  
+          <?php   $tg020=$row->tc015;?>     
+          <?php   $tg017=$row->tc016;?>
+		  <?php   $tg039=$row->tc017;?>
+		  <?php  // $tg013=$row->tc029;?>
+		  <?php  // $tg025=$row->tc030;?>  
+		  
+		  <?php  // $tg033=$row->tc031;?>
+		  <?php   $tg044=$row->tc041;?>
+		  <?php  // $tg045=$row->tc029;?>
+		  <?php  // $tg046=$row->tc030;?>		  
+		 
+		   <?php   $flag=$row->flag;?>	
+		
+		 <!-- 明細 -->
+		    <?php   $th001[]='';?>
+			<?php  $th002[]='';?>
+			<?php   $th003[]=$row->td003;?>
+		   <?php   $th014[]=$row->td001;?>
+		   <?php   $th015[]=$row->td002;?>
+		   <?php   $th016[]=$row->td003;?>
+		   <?php   $th004[]=$row->td004;?> 
+		   <?php   $th005[]=$row->td005;?>
+		   <?php   $th006[]=$row->td006;?>
+		   <?php   $th009[]=$row->td010;?> 
+		   <?php   $th007[]=$row->td007;?>   
+		   <?php   $th007disp[]=$row->td007disp;?>
+		   <?php   $th008[]=$row->td008-$row->td009;?> 
+           <?php   $th012[]=$row->td011;?> 
+           <?php   $th013[]=$row->td012;?> 
+         
+           <?php   $th017[]=$row->td030;?> 		   
+          <?php   $th030[]=$row->td031;?> 
+          <?php   $th019[]=$row->td014;?> 
+          <?php   $th018[]=$row->td020;?> 
+		      <?php   $th035[]=$row->td012;?> 
+			<?php    $th036[]=round($row->td012*$row->tc041); ?> 
+			 
+			 <?php   $th037[]=round($row->td012*$row->tc009); ?>
+			 <?php   $th038[]=round($row->td012*$row->tc041*$row->tc009); ?>
+		    
+		  <?php   $mb991=' ';?>
+		  <?php   $mb992=' ';?>
+		  <?php   $mb999=' ';?>
+	<?php $ii = $ii + 1 ;$tg013=$tg013+$row->td012;$tg025=$tg025+round($row->td012*$row->tc041);$tg045 =$tg045+round($row->td012*$row->tc009);
+          $tg046 = $tg046+round($row->td012*$row->tc041*$row->tc009); $tg033=$tg033+$row->td008-$row->td009;}?>
+        	
+   <?php } ?>
+	

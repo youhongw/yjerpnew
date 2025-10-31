@@ -1,0 +1,1478 @@
+--------------
+--   系統   --
+--------------1080813
+https://dotblogs.com.tw/newmonkey48/2017/03/24/120358
+thank you very much. Finally i solved it, its just because i install Native Client 10 and sqlsrv3.0 require Native Client 11.
+【Tips】SQL查詢時設定大小寫認定
+如果在安裝SQL Server未特別指定資料庫定序的話，預設會是
+
+Chinese_Taiwan_Stroke_CI_AS
+
+其中的 _CI：不分大小寫；_AS：區分腔調字
+
+相反的，如果要區分大小寫的話就必須用
+
+_CS：區分大小寫；_AI：不區分腔調字
+安裝上ODBTP,它替代了原有的MSSQL擴展(安裝方法見套裝軟體內的Readme),
+經試驗，順利地解決了SQL Server中Unicode的顯示問題。
+
+mysql show index
+show indexes from <table>
+
+EXEC sp_helpindex   MOCTG
+EXEC sp_helpindex   MOCTA
+EXEC sp_helpindex   INVLA
+EXEC sp_helpindex   MOCTF
+
+
+CREATE INDEX MOCTG_K02 ON MOCTG (TG001,TG002);
+CREATE INDEX MOCTG_K03 ON MOCTG (TG001,TG002,TG014,TG015);
+
+CREATE INDEX MOCTI_K04 ON MOCTI (TI001,TI002);
+CREATE INDEX MOCTI_K05 ON MOCTI (TI004);
+
+CREATE INDEX MOCTB_K02 ON MOCTB (TB001,TB002);
+CREATE INDEX MOCTB_K03 ON MOCTB (TB003);
+
+CREATE INDEX MOCTA_K04 ON MOCTA (TA006);
+CREATE INDEX MOCTA_K05 ON MOCTA (TA026,TA027,TA028);
+
+CREATE INDEX INVLA_K02 ON INVLA (LA006,LA007,LA008);
+
+SQLSTATE = 37000
+
+ UPDATE
+    Table_A
+SET
+    Table_A.col1 = Table_B.col1,
+    Table_A.col2 = Table_B.col2
+FROM
+    Some_Table AS Table_A
+    INNER JOIN Other_Table AS Table_B
+        ON Table_A.id = Table_B.id
+WHERE
+    Table_A.col3 = 'cool'
+
+UPDATE MOCTA  SET TA034=MB002,TA035=MB003
+FROM MOCTA AS B 
+     INNER JOIN INVMB AS C ON B.TA006=C.MB001 AND B.TA001='516' AND B.TA002='20190828002'
+WHERE  TA006=C.MB001 AND TA001='516' AND TA002='20190828002'
+
+ 
+
+网上?解? ??的一、二、三 不好使。??原?
+
+是在 配置?据源的?候，如下?，??“使用”前的 勾 去掉。
+
+其他地方不?。
+
+???成功。
+
+文章來源
+http://borland.mblogger.cn/nothingdone/posts/9036.aspx#FeedBack
+
+其他參考點
+http://mmug.com.tw/forum/viewtopic.php?p=41675
+
+http://cha.homeip.net/blog/archives/2005/01/phplinux_vs_mss.html 
+
+
+$sql = "SELECT ID,Title,convert(text,Content)as Content,Aboutusorder FROM dbo.Aboutus";
+$query = $this->db->query($sql);
+$result = $query->result_array();
+foreach($result as $value){
+var_dump($value);
+$this->db->affected_rows().
+因此在對應要區分大小寫的使用者帳號、密碼時的SQL語法即可使用：
+
+SELECT left(idno,1) COLLATE Chinese_Taiwan_Stroke_CS_AI x,count(*) cnt 
+
+FROM  dbo.Stud_studentinfo 
+
+group by left(idno,1) COLLATE Chinese_Taiwan_Stroke_CS_AI
+
+order by left(idno,1) COLLATE Chinese_Taiwan_Stroke_CS_AI
+把欄位設定成nchar或nvarchar之類的「n開頭」型別
+
+SQL SERVER 分頁
+
+SELECT TOP 15 A.TC001,A.TC002,A.TC003,A.TC004,A.TC006,A.TC039,A.TC030,C.MQ002,B.MA002,
+			            D.TD001,D.TD002,D.TD003,D.TD004,D.TD005,D.TD006,D.TD008,D.TD020,D.TD027,D.TD028,D.TD029
+			           FROM  COPTC AS A
+					   LEFT JOIN  COPTD AS D ON	A.TC001=D.TD001 AND A.TC002=D.TD002
+                       LEFT JOIN  COPMA AS B ON	A.TC004=B.MA001
+					   LEFT JOIN CMSMQ AS C ON A.TC001=C.MQ001   WHERE TC003='20190826'
+					   
+			  AND  TD002 NOT  in (  
+                   SELECT    TD002 from COPTD WHERE  TD002>='1080826001'  AND TD002<= '1080826010' )
+
+
+SELECT A.MD001,A.MD002,A.MD003,A.MD004,A.MD006,MB002,MB003
+			           FROM  BOMMD AS A LEFT JOIN INVMB AS B ON A.MD003=B.MB001
+                       WHERE MD001='130431010418' 
+                       AND MD003 in ( SELECT MD003 FROM MD003>='11' AND MD003<='119999999' )
+
+===============建立索引
+
+ALTER TABLE COPTD ALTER COLUMN TD028 CHAR(30)
+
+CREATE INDEX COPTD_TD00123 ON COPTD (TD001,TD002,TD003);
+==================================
+CI 3.1.1 VER MSSQL SEESION
+
+CREATE TABLE ci_sessions (
+        id varchar(40) NOT NULL,
+        ip_address varchar(45) NOT NULL,
+        timestamp int  DEFAULT 0 NOT NULL,
+        data bit NOT NULL,
+		PRIMARY KEY (id)
+);
+CREATE INDEX ci_sessions_timestamp ON ci_sessions (timestamp);
+
+======================================  1030725  驗証碼資料庫
+CREATE TABLE captcha (
+ captcha_id INT IDENTITY PRIMARY KEY,
+ captcha_time int  NOT NULL,
+ ip_address varchar(16) default '0' NOT NULL,
+ word varchar(20) NOT NULL,
+);
+CREATE INDEX captcha_word ON captcha (word);
+========================= 檢查進入的ip
+drop table hack_log;
+CREATE TABLE  hack_log (
+  hl_sn  INT IDENTITY PRIMARY KEY,
+  hl_name varchar(30)  NOT NULL ,
+  hl_mail varchar(50)   ,
+  hl_date_time varchar(20)  NOT NULL ,
+  hl_ip varchar(20)  NOT NULL ,
+) ;
+
+alter table hack_log add hl_logout_datetime varchar(20) ;
+alter table hack_log add hl_alive_datetime varchar(20) ;
+=============================
+檔案代碼:CMSML
+檔案名稱:公司名稱    
+DROP TABLE cmsmlf;
+CREATE TABLE CMSMLF (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  int   NOT NULL DEFAULT 0,
+
+  ml001 char(10)  NOT NULL DEFAULT '',
+  ml002 char(10)  NOT NULL DEFAULT '',
+  ml003 varchar(72)  DEFAULT '',
+  ml004 varchar(255)  DEFAULT '',
+  ml005 char(20)  DEFAULT '',
+  ml006 char(20)  DEFAULT '',
+  ml007 char(20)  DEFAULT '',
+  ml008 char(9)  DEFAULT '',
+  ml009 char(10)  DEFAULT '',
+  ml010 varchar(36)   DEFAULT '',
+  ml011 varchar(255)   DEFAULT '',
+  ml012 varchar(72)   DEFAULT '',
+  ml013 varchar(72)   DEFAULT '',
+  ml014 varchar(72)   DEFAULT '',
+  ml015 varchar(72)   DEFAULT '',
+  ml016 varchar(72)   DEFAULT '',
+  ml017 char(10)   DEFAULT '',
+  ml018 char(10)   DEFAULT '',
+  ml019 char(10)   DEFAULT '',
+    
+  PRIMARY KEY (ml001)
+);
+insert into CMSMLF (ml001,ml002) values ('001','test');
+====================
+檔案代碼:CMSMA
+檔案名稱:共用參數設定檔
+CREATE TABLE  cmsma (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  integer   NOT NULL DEFAULT 0,
+
+  ma001 char(1)  DEFAULT '',
+  ma002 char(1)    DEFAULT '',
+   ma003 char(4)    DEFAULT '',
+    ma004 float        DEFAULT  0,
+    ma005 char(1)    DEFAULT '',
+    ma006 char(1)    DEFAULT '',
+    ma007 char(10)    DEFAULT '',
+    ma008 char(10)    DEFAULT '',
+   ma009 char(10)    DEFAULT '',
+   ma010 char(10)    DEFAULT '',
+   ma011 char(6)    DEFAULT '',
+   ma012 char(6)    DEFAULT '',
+   ma013 char(8)    DEFAULT '',
+   ma014 char(1)    DEFAULT '',
+    ma015 char(2)    DEFAULT '',
+    ma016 char(1)    DEFAULT '',
+    ma017 char(6)    DEFAULT '',
+    ma018 char(2)    DEFAULT '',
+   ma019 char(4)    DEFAULT '',
+   ma020 char(4)    DEFAULT '',
+  ma021 char(6)    DEFAULT '',
+   ma022 char(6)    DEFAULT '',
+   ma023 char(1)    DEFAULT '',
+   ma024 char(1)    DEFAULT '',
+    ma025 char(1)    DEFAULT '',
+    ma026 char(1)    DEFAULT '',
+    ma027 char(6)    DEFAULT '',
+    ma028 char(6)    DEFAULT '',
+   ma029 char(6)    DEFAULT '',
+   ma030 char(6)    DEFAULT '',
+   ma200 char(10)    DEFAULT '',
+   ma201 char(20)    DEFAULT '',
+  ma202 char(1)    DEFAULT '',
+  ma203 char(10)    DEFAULT '',
+ ma204 char(8)    DEFAULT '',
+ma205 float        DEFAULT  0,
+ma206 varchar(255)    DEFAULT '',
+ ma207 varchar(255)    DEFAULT '',
+
+  PRIMARY KEY (company)
+) ;
+insert into cmsma (company,ma001) values ('001','1');
+檔案代碼:ADMMF       
+檔案名稱:使用者資料
+CREATE TABLE admmf (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  integer   NOT NULL DEFAULT 0,
+  mf001 char(10)  NOT NULL DEFAULT '',
+  mf002 char(10)  NOT NULL DEFAULT '',
+  mf003 char(10)  NOT NULL DEFAULT '',
+  mf004 char(10)  NOT NULL DEFAULT '',
+  mf005 char(10)  NOT NULL DEFAULT 'N',
+  mf006 varchar(255)  NOT NULL DEFAULT '',
+  mf007 char(6)  NOT NULL DEFAULT '',
+   PRIMARY KEY (mf001)
+) ;
+INSERT INTO admmf (company, creator, usr_group, create_date, modifier, modi_date, flag, mf001, mf002, mf003, mf004, mf005, mf006, mf007) VALUES
+('demo', '73001', '7000', '20001209', '89044', '20120709', 3, 'demo', '測試', 'demo123456', 'A100', 'Y', '', '2100');
+檔案代碼:ADMMG
+檔案名稱:使用者作業權限檔
+CREATE TABLE admmg (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  integer   NOT NULL DEFAULT 0,
+
+  mg001 char(10)   NOT NULL DEFAULT '',
+  mg002 char(20)   DEFAULT '',
+    mg003 char(6)   DEFAULT '',
+    mg004 char(01)   DEFAULT '',
+    mg005 char(01)   DEFAULT '',
+    mg006 char(12)   DEFAULT '',
+    mg007 char(12)   DEFAULT '',
+    mg008 char(12)   DEFAULT '',
+  
+  PRIMARY KEY (mg001,mg002)
+) ;
+檔案代碼:ADMME
+檔案名稱:群組資料
+CREATE TABLE  admme (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  integer   NOT NULL DEFAULT 0,
+
+  me001 char(10)  NOT NULL DEFAULT '',
+  me002 char(10)  DEFAULT '',
+  me003 varchar(36)  DEFAULT '',
+  me004 varchar(255)  DEFAULT '',
+  
+  PRIMARY KEY (me001)
+) ;
+檔案代碼:CMSME
+檔案名稱:部門資料檔       
+CREATE TABLE cmsme (
+  company char(10)  NOT NULL DEFAULT '',
+  creator char(10)  NOT NULL DEFAULT '',
+  usr_group char(10)  NOT NULL DEFAULT '',
+  create_date char(8)  NOT NULL DEFAULT '',
+  modifier char(10)  NOT NULL DEFAULT '',
+  modi_date char(8)  NOT NULL DEFAULT '',
+  flag  integer   NOT NULL DEFAULT 0,
+
+  me001 char(6)   NOT NULL DEFAULT '',
+  me002 char(10)    NULL DEFAULT '',
+    me003 varchar(255)   NULL    DEFAULT '',
+    me004 varchar(20)   NULL    DEFAULT  '',
+      
+  PRIMARY KEY (me001)
+) ;
+ 
+==================================================================
+安裝 IPACCESS  ERP 元件
+--系統參數檔
+CREATE TABLE SYST00(
+  COMPANY VARCHAR(10) NOT NULL  --公司別
+ ,OPDATE VARCHAR(10)            --作業日期/月份/年度
+ ,ISSHOWMARK VARCHAR(1)         --是否SHOW MARK圖 Y/N //--轉帳媒體A彰銀B郵局C中國農銀D華南銀行
+ ,TITLE VARCHAR(50)             --螢幕抬頭
+ ,PTITLE1 VARCHAR(50)           --報表抬頭1
+ ,PTITLE2 VARCHAR(50)           --報表抬頭2
+ ,DATETYPE VARCHAR(1)           --日期格式 E:9999/99/99 C:99/99/99 D:999/99/99
+ ,SECURITYKEY VARCHAR(15)       --安裝序號 //轉帳媒體格式PL彰銀(埔榮)WC農銀(灣橋)LC郵局
+ ,SUPERVISOR VARCHAR(13)        --超級使用者代號
+ ,ACCTNOCASHIN VARCHAR(20)      --現收傳票對應科目
+ ,ACCTNOCASHOUT VARCHAR(20)     --現支傳票對應科目
+ ,ACCTNOTHISNET VARCHAR(20)     --本期損益科目
+ ,ACCTNOLASTNET VARCHAR(20)     --前期損益科目
+ ,ACCTNOSINCOME VARCHAR(20)     --營業收入科目
+ ,VRNOCODE VARCHAR(15)          --傳票編碼格式
+ ,VRNOTYPE VARCHAR(1)           --傳票編碼方式 1:日編號 2:月編號 3:流水號 4:手動編號
+ ,VRNOYEARNUM SMALLINT          --傳票編碼年碼數
+ ,VRNOYEARTYPE VARCHAR(1)       --傳票編碼年格式 E:西元年 C:民國年
+ ,VRNOFLOWNUM SMALLINT          --傳票流水號碼數
+ ,RECDAY1 SMALLINT              --本埠票據交換天數
+ ,RECDAY2 SMALLINT              --外埠票據交換天數
+ ,ACCTNONOTR  VARCHAR(20)       --應收票據科目 1/收票,2/託收,3/融資,4/轉付,5/退票,6/兌現,7/還票,8/呆帳,9/撤票,A/再收
+ ,ACCTNONOTR1 VARCHAR(20)       --收票對方科目
+ ,ACCTNONOTR6 VARCHAR(20)       --兌現對方科目
+ ,ACCTNONOTR7 VARCHAR(20)       --還票對方科目
+ ,ACCTNONOTR8 VARCHAR(20)       --呆帳對方科目
+ ,ACCTNONOTP  VARCHAR(20)       --應付票據科目 1/開票,5/退票,6/兌現,7/註銷
+ ,ACCTNONOTP1 VARCHAR(20)       --開票對方科目
+ ,ACCTNONOTP6 VARCHAR(20)       --兌現對方科目
+ ,ACCTNONOTP5 VARCHAR(20)       --退票對方科目
+ ,ACCTNONOTP7 VARCHAR(20)       --註銷對方科目
+ ,NOTINPTYPE VARCHAR(1)         --現金科目維護方式1僅出納2出納及傳票--票據輸入方式 1:由傳票 2:由票據
+ ,ASTDISTYPE VARCHAR(1)         --固定資產折舊法 1:平均法 2:定率法
+ ,ASTDISYM VARCHAR(1)           --固定資產折舊攤提方式 Y:年結 M:月結
+ ,ACCCLOSEYM VARCHAR(8)         --會計關帳月份
+ ,GACCTNONUM SMALLINT           --總帳科目碼數
+ ,ACCTNOCASH VARCHAR(20)        --期初現金及約當現金餘額
+ ,ACCTNOTHISNET2 VARCHAR(20)    --本期短絀科目
+ ,ACCTNOLASTNET2 VARCHAR(20)    --前期短絀科目
+ ,SUBNOINPTYPE VARCHAR(1)       --科子目輸入方式 1:明細 2:彙總
+ ,VERSION VARCHAR(10)           --會計版本
+ ,CSHNOCODE VARCHAR(15)         --出納編碼格式
+ ,CSHNOTYPE VARCHAR(1)          --出納編碼方式 1:日編號 2:月編號 3:流水號 4:手動編號
+ ,CSHNOYEARNUM SMALLINT         --出納編碼年碼數
+ ,CSHNOYEARTYPE VARCHAR(1)      --出納編碼年格式 E:西元年 C:民國年
+ ,CSHNOFLOWNUM SMALLINT         --出納流水號碼數
+ ,UPDATEPATH VARCHAR(100)       --版更路徑
+ ,UPDATEID VARCHAR(30)          --版更USER ID
+ ,UPDATEPASS VARCHAR(30)        --版更USER PASS
+ ,VERSION1 VARCHAR(10)          --出納版本
+ ,EXCELPATH VARCHAR(100)        --Excel檔路徑
+ ,ACCTNOMANFEE VARCHAR(20)      --代扣管理費科目
+ ,COMPNM VARCHAR(60)            --公司名稱
+ ,COMPZIPID VARCHAR(5)          --公司郵遞區號
+ ,COMPADDR VARCHAR(60)          --公司地址
+ ,COMPPOSTNO VARCHAR(60)        --郵資已付字樣內容
+ ,RECEIPTCHAR VARCHAR(20)       --收據字
+ ,COMPTEL VARCHAR(20)           --連絡電話
+ ,COMPFAX VARCHAR(20)           --傳真機號碼
+ ,COMPADMIN VARCHAR(20)         --委存機構主管
+ ,COMPOFFICER VARCHAR(20)       --經辦
+ ,POSTNM VARCHAR(50)            --受託局名
+ ,POSTNO VARCHAR(10)            --受託局號
+ ,COMPBACTID VARCHAR(10)        --劃撥儲金帳號
+ 
+ ,TAXRATE NUMERIC(7,2)          --稅率
+ ,PATH01 VARCHAR(100)           --路徑01:csv目的路徑
+ ,PATH02 VARCHAR(100)           --路徑02:csv所在對SQL Server所認知路徑
+ ,PATH03 VARCHAR(100)           --路徑03:路徑
+ ,PATH04 VARCHAR(100)           --路徑04:路徑
+ ,PATH05 VARCHAR(100)           --路徑05
+ ,STOCKID VARCHAR(5)            --標準庫別
+ ,IOSCLOSEYM VARCHAR(8)         --進銷存關帳月份
+ ,PRICE1NM VARCHAR(20)          --售價1名稱
+ ,PRICE2NM VARCHAR(20)          --售價2名稱
+ ,PRICE3NM VARCHAR(20)          --售價3名稱
+ ,PRICE4NM VARCHAR(20)          --售價4名稱
+ ,PRICE5NM VARCHAR(20)          --售價5名稱
+ ,ACCEXIST VARCHAR(1)           --會計系統連動 Y/N
+ ,ACCTNOBUY VARCHAR(20)         --進貨科目
+ ,ACCTNOBRET VARCHAR(20)        --進貨退回科目
+ ,ACCTNOBTAX VARCHAR(20)        --進項稅額科目
+ ,ACCTNOSALE VARCHAR(20)        --銷貨收入科目
+ ,ACCTNOSRET VARCHAR(20)        --銷貨退回科目
+ ,ACCTNOSTAX VARCHAR(20)        --銷項稅額科目
+ ,ACCTNOIOSCASH VARCHAR(20)     --進銷存現金科目
+ ,ACCTNOPAYABLE VARCHAR(20)     --應付帳款科目
+ ,ACCTNORECABLE VARCHAR(20)     --應收帳款科目
+ ,COSTTYPE VARCHAR(1)           --成本計價方式 1標準成本制2月加權平均成本制
+);
+ALTER TABLE SYST00 ADD PRIMARY KEY (COMPANY);
+
+ALTER TABLE SYST00  ADD SEC1  INT
+ALTER TABLE SYST00  ADD DIV1  INT
+ALTER TABLE SYST00  ADD PLUS1 INT
+ALTER TABLE SYST00  ADD SEC2  INT
+ALTER TABLE SYST00  ADD DIV2  INT
+ALTER TABLE SYST00  ADD PLUS2 INT
+ALTER TABLE SYST00  ADD SEC3  INT
+ALTER TABLE SYST00  ADD DIV3  INT
+ALTER TABLE SYST00  ADD PLUS3 INT
+ALTER TABLE SYST00  ADD SEC4  INT
+ALTER TABLE SYST00  ADD DIV4  INT
+ALTER TABLE SYST00  ADD PLUS4 INT
+ALTER TABLE SYST00  ADD SHOWTERMMONTH SMALLINT
+ALTER TABLE SYST00  ADD VERSION2 VARCHAR(10)
+ALTER TABLE SYST00  ADD VERSION3 VARCHAR(10)
+ALTER TABLE SYST00  ADD VERSION4 VARCHAR(10)
+ALTER TABLE SYST00  ADD VERSION5 VARCHAR(10)
+ALTER TABLE SYST00  ADD PRICE1NM  VARCHAR(20)  --售價1名稱
+ALTER TABLE SYST00  ADD PRICE2NM  VARCHAR(20)
+ALTER TABLE SYST00  ADD PRICE3NM  VARCHAR(20)
+ALTER TABLE SYST00  ADD PRICE4NM  VARCHAR(20)
+ALTER TABLE SYST00  ADD PRICE5NM  VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCEXIST  VARCHAR(1)
+ALTER TABLE SYST00  ADD COSTTYPE  VARCHAR(1)
+
+ALTER TABLE SYST00  ALTER COLUMN ACCTNOBUY  VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNOBRET  VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNOBTAX  VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNOSALE VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNOSRET VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNOSTAX VARCHAR(20) 
+ALTER TABLE SYST00  ADD ACCTNOIOSCASH VARCHAR(20) 
+ALTER TABLE SYST00  ADD ACCTNOPAYABLE VARCHAR(20)
+ALTER TABLE SYST00  ADD ACCTNORECABLE VARCHAR(20)
+
+--使用者檔
+CREATE TABLE USERT00(
+  USERID VARCHAR(13)  NOT NULL     --使用者代碼
+ ,USERNM VARCHAR(8)                --使用者姓名
+ ,PSWD   VARCHAR(8)                --使用者密碼
+ ,LASTLOGINTIME VARCHAR(20)        --最後登入日期+時間
+ ,LASTLOGOUTTIME VARCHAR(20)       --最後登出日期+時間
+  );
+ALTER TABLE USERT00 ADD PRIMARY KEY (USERID);
+--CREATE VIEW USERT00 AS (
+--SELECT EM_EMPNO USERID,EM_EMPNAME USERNM,EM_PASSWORD PSWD,ALL_USERMENU USERMENU
+--  FROM TREEMP@HIS
+--);
+--CREATE VIEW USERT00 AS (
+--SELECT EM_EMPNO USERID,EM_EMPNAME USERNM,EM_PASSWORD PSWD,' ' USERMENU
+--  FROM TREEMP@HIS
+--);
+
+
+
+--群組檔
+CREATE TABLE GROUPT00(
+  GROUPID VARCHAR(13)   NOT NULL    --群組編號
+ ,GROUPNM VARCHAR(20)               --群組名稱
+  );
+ALTER TABLE GROUPT00 ADD PRIMARY KEY (GROUPID);
+
+--使用者群組檔
+CREATE TABLE USGRT00 (
+  USERID           VARCHAR(13)  NOT NULL
+ ,GROUPID          VARCHAR(13)  NOT NULL
+  );
+ALTER TABLE USGRT00  ADD PRIMARY KEY (USERID,GROUPID);
+
+--使用者使用程式檔
+CREATE TABLE USPRT00 (
+  USERID   VARCHAR(13) NOT NULL
+ ,PROGID   VARCHAR(10) NOT NULL
+ ,UPD            VARCHAR(1)
+ ,INS            VARCHAR(1)
+ ,DEL            VARCHAR(1)
+ ,QUR            VARCHAR(1)
+ ,PRN            VARCHAR(1)
+  );
+ALTER TABLE USPRT00 ADD PRIMARY KEY (USERID,PROGID);
+
+
+--群組使用程式檔
+CREATE TABLE GRPRT00 (
+  GROUPID         VARCHAR(13)  NOT NULL
+ ,PROGID          VARCHAR(10)  NOT NULL
+ ,UPD            VARCHAR(1)
+ ,INS            VARCHAR(1)
+ ,DEL            VARCHAR(1)
+ ,QUR            VARCHAR(1)
+ ,PRN            VARCHAR(1)
+  );
+ALTER TABLE GRPRT00 ADD PRIMARY KEY (GROUPID,PROGID);
+
+--程式檔
+CREATE TABLE PROGT00(
+  PROGID VARCHAR(10)  NOT NULL    --程式代碼
+ ,PROGNM VARCHAR(40)              --程式名稱
+  );
+ALTER TABLE PROGT00 ADD PRIMARY KEY (PROGID);
+
+--使用者群組使用程式VIEW
+CREATE VIEW USGRPRV00 AS (
+SELECT '使用者' UORG,PROGID,A.USERID UGID,B.USERNM UGNM,QUR,INS,UPD,DEL,PRN
+FROM   USPRT00 A,USERT00 B
+WHERE  A.USERID=B.USERID
+UNION
+SELECT '群組' UORG,PROGID,A.GROUPID UGID,B.GROUPNM UGNM,QUR,INS,UPD,DEL,PRN
+FROM GRPRT00 A,GROUPT00 B
+WHERE A.GROUPID=B.GROUPID
+);
+
+--Log檔
+CREATE TABLE LOGT00 (
+   USERID VARCHAR(13) NOT NULL     --使用者代碼
+  ,EXETIME VARCHAR(20) NOT NULL    --執行日期+時間
+  ,PROGID VARCHAR(10)              --程式代號
+  ,DOITEM VARCHAR(20)              --執行事項
+  ,MEMO VARCHAR(50)                --備註
+);
+CREATE INDEX LOGT00IDX01 ON LOGT00 (USERID,EXETIME);
+CREATE INDEX LOGT00IDX02 ON LOGT00 (EXETIME,USERID);
+
+
+--地址檔
+CREATE TABLE RALL (
+   ZIPCODE VARCHAR2(5)
+  ,CITY    VARCHAR2(6)
+  ,AREA    VARCHAR2(6)
+  ,ROAD    VARCHAR2(20)
+  ,SECNO   VARCHAR2(4)
+  ,SCOOP   VARCHAR2(30)
+  ,OFFICE  VARCHAR2(16)
+);
+CREATE INDEX RALLIDX01 ON RALL (ZIPCODE);
+
+
+--日期設定檔
+CREATE TABLE DATET00 ( DD VARCHAR(8),HOLIDAY CHAR(1),PRIMARY KEY (DD))
+
+
+--------------------------------------------------------------------
+
+
+--員工基本資料檔
+CREATE TABLE EMPT00 (
+   EMPNO VARCHAR(11) NOT NULL   /* 員工代號 */
+  ,EMPNM VARCHAR(30) NOT NULL   /* 員工姓名 */
+  ,DEPTID VARCHAR(5)            /* 部門代號 */
+  ,EMAIL VARCHAR(50)            /* e-mail */
+  ,USERID VARCHAR(13)           /* 登錄系統使用者代號 */
+  ,SALES VARCHAR(1)             /* 業務 */
+  ,FUN01 VARCHAR(1)             /* 功能01 */
+  ,FUN02 VARCHAR(1)             /* 功能01 */
+  ,FUN03 VARCHAR(1)             /* 功能01 */
+  ,FUN04 VARCHAR(1)             /* 功能01 */
+  ,FUN05 VARCHAR(1)             /* 功能01 */
+  ,PRIMARY KEY (EMPNO)
+);
+
+
+
+--客戶基本檔
+CREATE TABLE IOSCUST00 (
+   CUSID VARCHAR(10) NOT NULL   /* 客戶代號 */
+  ,CUSSN VARCHAR(12)            /* 客戶簡稱 */
+  ,CUSNM VARCHAR(30)            /* 客戶全名 */
+  ,OWNER VARCHAR(12)            /* 負責人 */
+  ,UNICODE VARCHAR(12)          /* 統一編號 */
+  ,EMAIL VARCHAR(50)            /* e-mail */
+  ,WWWADDR VARCHAR(50)          /* 網址 */
+  ,ZIPID VARCHAR(5)             /* 郵遞區號 */
+  ,ADDR VARCHAR(50)             /* 公司地址 */
+  ,INVZIPID VARCHAR(5)          /* 發票郵遞區號 */
+  ,INVADDR VARCHAR(50)          /* 發票地址 */
+  ,DELZIPID VARCHAR(5)          /* 送貨郵遞區號 */
+  ,DELADDR VARCHAR(50)          /* 送貨地址 */
+  ,TEL VARCHAR(20)              /* 電話 */
+  ,MOBIL VARCHAR(20)            /* 手機 */
+  ,FAX VARCHAR(20)              /* 傳真 */
+  ,CONTACT VARCHAR(12)          /* 聯絡人 */
+  ,CONTACTTITLE VARCHAR(12)     /* 聯絡人職稱 */
+  ,PAYMENT VARCHAR(50)          /* 付款條件 */
+  ,PAYTYPE CHAR(1)              /* 付款方式 1現金 2電匯 3支票 4郵政劃撥 5超商繳款 6信用卡 9其他 */
+  ,INVTYPE CHAR(1)              /* 發票聯數 0不開 2二聯 3三聯 1二聯式收銀機發票 4三聯式收銀機發票 5電子計算機發票 6免用統一發票 A增值稅專用發票 B普通發票 C免用發票 */
+  ,TAXTYPE CHAR(1)              /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 9不計稅*/
+  ,MANPOWER INTEGER             /* 員工數 */
+  ,DEGREE CHAR(1)               /* 售價等級 0標準售價 1售價1 2售價2 3售價3 4售價4 5售價5 */
+  ,BANKID1 VARCHAR(10)          /* 付款銀行1 */
+  ,BACTID1 VARCHAR(20)          /* 帳號1 */
+  ,BANKID2 VARCHAR(10)          /* 付款銀行2 */
+  ,BACTID2 VARCHAR(20)          /* 帳號2 */
+  ,BANKID3 VARCHAR(10)          /* 付款銀行3 */
+  ,BACTID3 VARCHAR(20)          /* 帳號3 */
+  ,ACCTNO VARCHAR(10)           /* 會計子科目 */
+  ,EMPNO VARCHAR(11)            /* 業務員 */
+  ,MCDAY SMALLINT               /* 每月結帳日 */
+  ,MEMO VARCHAR(50)             /* 備註 */
+  ,INVOPTYPE CHAR(1)            /* 發票開立方式 1月結開立 2定期開立 3隨貨開立 */
+  ,ASKDAY SMALLINT              /* 請款截止日 */
+  ,ARDAY SMALLINT               /* 應收帳款截止日 */
+  ,BILLDEGREE CHAR(1)           /* 帳款額度等級 */
+  ,NOTEDEGREE CHAR(1)           /* 票據額度等級 */
+  ,BILLLIMIT NUMERIC(14,2)      /* 帳款信用額度 */
+  ,NOTELIMIT NUMERIC(14,2)      /* 票據信用額度 */
+  ,BILLACCTNO VARCHAR(10)       /* 帳款科目 */
+  ,NOTEACCTNO VARCHAR(10)       /* 票據科目 */
+  ,BACTNM1 VARCHAR(20)          /* 帳戶名稱1 */
+  ,BACTNM2 VARCHAR(20)          /* 帳戶名稱2 */
+  ,BACTNM3 VARCHAR(20)          /* 帳戶名稱3 */
+  ,AREAID VARCHAR(5)            /* 區域別 */
+  ,CASHID VARCHAR(10)           /* 幣別代號 */
+  ,PRIMARY KEY (CUSID)
+  );
+
+
+--廠商基本檔
+CREATE TABLE IOSSUPT00 (
+   SUPID VARCHAR(5) NOT NULL   /* 廠商代號 */
+  ,SUPNM VARCHAR(30)           /* 廠商名稱 */
+  ,SUPSN VARCHAR(12)           /* 廠商簡稱 */
+  ,OWNER VARCHAR(12)           /* 負責人 */
+  ,UNICODE VARCHAR(12)         /* 統一編號 */
+  ,EMAIL VARCHAR(50)           /* e-mail */
+  ,ZIPID VARCHAR(5)            /* 郵遞區號 */
+  ,ADDR VARCHAR(50)            /* 地址 */
+  ,TEL1 VARCHAR(12)            /* 電話1 */
+  ,TEL2 VARCHAR(12)            /* 電話2 */
+  ,MOBIL VARCHAR(20)           /* 手機 */
+  ,FAX VARCHAR(12)             /* 傳真 */
+  ,CONTACT VARCHAR(12)         /* 聯絡人 */
+  ,CONTACTTITLE VARCHAR(12)    /* 聯絡人職稱 */
+  ,PAYMENT VARCHAR(50)         /* 付款條件 */
+  ,TAXTYPE CHAR(1)             /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 9不計稅*/
+  ,INVTYPE CHAR(1)             /* 發票聯數 0不開 2二聯 3三聯 1二聯式收銀機發票 4三聯式收銀機發票 5電子計算機發票 6免用統一發票 A增值稅專用發票 B普通發票 C免用發票 */
+  ,ACCTNO VARCHAR(10)          /* 會計子科目 */
+  ,MEMO VARCHAR(50)            /* 備註 */
+  ,EMPNO VARCHAR(11)           /* 採購員 */
+  ,CASHID VARCHAR(10)          /* 幣別代號 */
+  ,BILLACCTNO VARCHAR(10)      /* 帳款科目 */
+  ,NOTEACCTNO VARCHAR(10)      /* 票據科目 */
+  ,PRIMARY KEY (SUPID)
+  );
+
+--常用摘要檔
+CREATE TABLE REMT00 (
+   REMNM  VARCHAR(200) NOT NULL  /* 摘要 */
+  ,USERID VARCHAR(13)  NOT NULL  /* 使用者代號 */
+  ,PRIMARY KEY (USERID,REMNM)
+  );
+
+
+
+--銀行資料檔
+CREATE TABLE ACCBANKT0(
+  BANKID  VARCHAR(10) NOT NULL --銀行代號
+ ,BANKNM  VARCHAR(40)          --銀行名稱
+ ,BANKTYPE CHAR(1)             --種類 1:本國銀行 2:外國銀行 3:信託投資 4:票券金融 5:信用合作社 6:產物保險 7:漁會信用 8:農會信用 9:郵局
+ ,BANKAREA VARCHAR(30)         --銀行地區 1:本埠 2:外埠
+ ,RECDAY SMALLINT              --票據交換天數
+ ,PRIMARY KEY (BANKID)
+  );
+
+
+--合約書檔案
+CREATE TABLE CONT00 (
+   CONNO  VARCHAR(12) NOT NULL  /* 合約編號 */
+  ,CONNM  VARCHAR(20)          /* 合約名稱 */
+  ,KDATE  VARCHAR(10)          /* 建檔日期 */
+  ,RENTAMT DECIMAL(14,0)         /* 租金總額 */
+  ,RBDATE  VARCHAR(10)          /* 租賃起日 */
+  ,REDATE  VARCHAR(10)          /* 租賃迄日 */
+  ,CUSID  VARCHAR(10)          /* 客戶代號 */
+  ,CUSNM  VARCHAR(20)          /* 客戶名稱 */
+  ,PDATE  VARCHAR(10)         /* 到期提醒 */
+  ,RDATE  VARCHAR(10)         /* 合約回簽日 */
+  ,CONFILE  VARCHAR(50)         /* 合約檔案 */
+  ,CONYN    VARCHAR(10)         /* 結案 */
+  ,CONDAY   INT                 /*天數*/
+  ,REM      VARCHAR(80)         /*備註*/
+  ,CONYN1   CHAR(1)             /*合約*/
+  ,CONYN2   CHAR(1)             /*支票*/
+  ,CONYN3   CHAR(1)             /*本票*/
+  ,PRIMARY KEY (CONNO)
+  );
+
+ALTER TABLE CONT00 ADD  CONDAY INT;
+ALTER TABLE CONT00 ADD  REM  VARCHAR(80);
+ALTER TABLE CONT00 ADD  CONYN1  CHAR(1);
+ALTER TABLE CONT00 ADD  CONYN2  CHAR(1);
+ALTER TABLE CONT00 ADD  CONYN3  CHAR(1);
+
+
+--區域別檔
+CREATE TABLE AREAT00 (
+   AREAID VARCHAR(5) NOT NULL  /* 區域別 */
+  ,AREANM VARCHAR(20)          /* 區域別名稱 */
+  ,PRIMARY KEY (AREAID)
+  );
+
+--客戶拜訪主檔
+CREATE TABLE VISIT00 (
+   VISSEQ VARCHAR(14) NOT NULL   /* 拜訪單號 */
+  ,VISDT VARCHAR(10)             /* 拜訪日期 */
+  ,EMPNO VARCHAR(11)             /* 業務員 */
+  ,AREAID VARCHAR(5)             /* 區域別 */
+  ,MEMO VARCHAR(60)              /* 備註 */
+  ,PRIMARY KEY (VISSEQ)
+  );
+
+--客戶拜訪明細檔
+CREATE TABLE VISIT01 (
+   VISSEQ VARCHAR(14) NOT NULL  /* 銷貨單號 */
+  ,ITEM VARCHAR(4) NOT NULL     /* 序號 */
+  ,CUSID VARCHAR(10)            /* 客戶代號 */
+  ,CUSSN VARCHAR(12)            /* 客戶簡稱 */
+  ,CUSNM VARCHAR(30)            /* 客戶全名 */
+  ,ADDR VARCHAR(50)             /* 公司地址 */
+  ,CONTACT VARCHAR(12)          /* 聯絡人 */
+  ,OWNER VARCHAR(12)            /* 負責人 */
+  ,UNICODE VARCHAR(12)          /* 統一編號 */
+  ,TEL VARCHAR(20)              /* 電話 */
+  ,MOBIL VARCHAR(20)            /* 手機 */
+  ,FAX VARCHAR(20)              /* 傳真 */
+  ,BMEMO VARCHAR(16)            /* 備註 */
+  ,PRIMARY KEY (VISSEQ,ITEM)
+  );
+
+
+--庫別基本檔
+CREATE TABLE IOSSTKT00 (
+   STOCKID VARCHAR(5) NOT NULL   /* 庫別代號 */
+  ,STOCKNM VARCHAR(20)           /* 庫名 */
+  ,MEMO VARCHAR(30)              /* 備註 */
+  ,EMPNO VARCHAR(11)            /* 業務員 */
+  ,PRIMARY KEY (STOCKID)
+  );
+
+--產品類別檔
+CREATE TABLE IOSPCLST00 (
+   PCLASSID VARCHAR(5) NOT NULL  /* 類別 */
+  ,PCLASSNM VARCHAR(20)          /* 類別名稱 */
+  ,PRIMARY KEY (PCLASSID)
+  );
+
+--產品資料檔
+CREATE TABLE IOSPRODT00 (
+   PRODID VARCHAR(17) NOT NULL   /* 品項代號 */
+  ,PRODNM VARCHAR(30) NOT NULL   /* 品名 */
+  ,PCLASSID VARCHAR(5)           /* 類別 */
+  ,UNIT VARCHAR(6)               /* 庫存單位 */
+  ,COST DECIMAL(14,5)            /* 標準成本 */
+  ,BARCODE VARCHAR(13)           /* 條碼 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,SUPID VARCHAR(5)              /* 主供應商 */
+  ,INPRICE DECIMAL(14,5)         /* 標準進價 */
+  ,INTAXTYPE CHAR(1)             /* 進價稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,OTPRICE DECIMAL(14,5)         /* 標準售價 */
+  ,OTTAXTYPE CHAR(1)             /* 售價稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,SAFEQTY DECIMAL(14,5)         /* 安全存量 */
+  ,STOCKNUM DECIMAL(14,5)        /* 庫存數量 */
+  ,STOCKAMT DECIMAL(14,5)        /* 庫存金額 */
+  ,PRICE1 DECIMAL(14,5)          /* 售價1:零售價 */
+  ,PRICE2 DECIMAL(14,5)          /* 售價2:機車行價 */
+  ,PRICE3 DECIMAL(14,5)          /* 售價3:中盤價 */
+  ,PRICE4 DECIMAL(14,5)          /* 售價4 */
+  ,PRICE5 DECIMAL(14,5)          /* 售價5 */
+  ,SUPCODE VARCHAR(30)           /* 廠商碼 */
+  ,QUICKCODE VARCHAR(20)         /* 快捷碼 */
+  ,SALEUNIT VARCHAR(6)           /* 銷貨單位 */
+  ,BUYUNIT VARCHAR(6)            /* 進貨單位 */
+  ,PRIMARY KEY (PRODID)
+  );
+
+--庫別庫存檔
+CREATE TABLE IOSPRODT01 (
+   STOCKID VARCHAR(5) NOT NULL   /* 庫別代號 */
+  ,PRODID VARCHAR(17) NOT NULL   /* 產品代號 */
+  ,STOCKNUM DECIMAL(14,5)        /* 庫存數量 */
+  ,STOCKAMT DECIMAL(14,5)        /* 庫存金額 */
+  ,PRIMARY KEY (PRODID,STOCKID)
+  );
+
+--月份進銷存主檔
+CREATE TABLE IOSYMT00 (
+   YYMM VARCHAR(6) NOT NULL      /* 月份 */
+  ,PRODID VARCHAR(17) NOT NULL   /* 產品代號 */
+  ,BEGINQTY DECIMAL(14,5)        /* 期初數量 */
+  ,BUYQTY DECIMAL(14,5)          /* 採購數量 */
+  ,SALEQTY DECIMAL(14,5)         /* 銷售數量 */
+  ,CHGIQTY DECIMAL(14,5)         /* 調撥進數量 */
+  ,CHGOQTY DECIMAL(14,5)         /* 調撥出數量 */
+  ,BRETQTY DECIMAL(14,5)         /* 採購退回數量 */
+  ,SRETQTY DECIMAL(14,5)         /* 銷售退回數量 */
+  ,USEQTY DECIMAL(14,5)          /* 領用數量 */
+  ,MAKEQTY DECIMAL(14,5)         /* 生產入庫數量 */
+  ,ADJQTY DECIMAL(14,5)          /* 調整數量 */
+  ,QTY1 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY2 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY3 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY4 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY5 DECIMAL(14,5)            /* 其他數量1 */
+  ,STOCKNUM DECIMAL(14,5)        /* 期末庫存數量 */
+  ,BEGINAMT DECIMAL(14,5)        /* 期初金額 */
+  ,BUYAMT DECIMAL(14,5)          /* 採購金額 */
+  ,SALEAMT DECIMAL(14,5)         /* 銷售金額 */
+  ,CHGIAMT DECIMAL(14,5)         /* 調撥進金額 */
+  ,CHGOAMT DECIMAL(14,5)         /* 調撥出金額 */
+  ,BRETAMT DECIMAL(14,5)         /* 採購退回金額 */
+  ,SRETAMT DECIMAL(14,5)         /* 銷售退回金額 */
+  ,USEAMT DECIMAL(14,5)          /* 領用金額 */
+  ,MAKEAMT DECIMAL(14,5)         /* 生產入庫金額 */
+  ,ADJAMT DECIMAL(14,5)          /* 調整金額 */
+  ,AMT1 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT2 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT3 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT4 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT5 DECIMAL(14,5)            /* 其他金額1 */
+  ,STOCKAMT DECIMAL(14,5)        /* 期末庫存金額 */
+  ,COST DECIMAL(14,5)            /* 成本 */
+  ,COSTTYPE VARCHAR(1)           --成本計價方式 1標準成本制2月加權平均成本制
+  ,PRIMARY KEY (YYMM,PRODID)
+  );
+
+--月份進銷存庫別明細檔
+CREATE TABLE IOSYMT01 (
+   YYMM VARCHAR(6) NOT NULL      /* 月份 */
+  ,STOCKID VARCHAR(5) NOT NULL   /* 庫別代號 */
+  ,PRODID VARCHAR(17) NOT NULL   /* 產品代號 */
+  ,BEGINQTY DECIMAL(14,5)        /* 期初數量 */
+  ,BUYQTY DECIMAL(14,5)          /* 採購數量 */
+  ,SALEQTY DECIMAL(14,5)         /* 銷售數量 */
+  ,CHGIQTY DECIMAL(14,5)         /* 調撥進數量 */
+  ,CHGOQTY DECIMAL(14,5)         /* 調撥出數量 */
+  ,BRETQTY DECIMAL(14,5)         /* 採購退回數量 */
+  ,SRETQTY DECIMAL(14,5)         /* 銷售退回數量 */
+  ,USEQTY DECIMAL(14,5)          /* 領用數量 */
+  ,MAKEQTY DECIMAL(14,5)         /* 生產入庫數量 */
+  ,ADJQTY DECIMAL(14,5)          /* 調整數量 */
+  ,QTY1 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY2 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY3 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY4 DECIMAL(14,5)            /* 其他數量1 */
+  ,QTY5 DECIMAL(14,5)            /* 其他數量1 */
+  ,STOCKNUM DECIMAL(14,5)        /* 期末庫存數量 */
+  ,BEGINAMT DECIMAL(14,5)        /* 期初金額 */
+  ,BUYAMT DECIMAL(14,5)          /* 採購金額 */
+  ,SALEAMT DECIMAL(14,5)         /* 銷售金額 */
+  ,CHGIAMT DECIMAL(14,5)         /* 調撥進金額 */
+  ,CHGOAMT DECIMAL(14,5)         /* 調撥出金額 */
+  ,BRETAMT DECIMAL(14,5)         /* 採購退回金額 */
+  ,SRETAMT DECIMAL(14,5)         /* 銷售退回金額 */
+  ,USEAMT DECIMAL(14,5)          /* 領用金額 */
+  ,MAKEAMT DECIMAL(14,5)         /* 生產入庫金額 */
+  ,ADJAMT DECIMAL(14,5)          /* 調整金額 */
+  ,AMT1 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT2 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT3 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT4 DECIMAL(14,5)            /* 其他金額1 */
+  ,AMT5 DECIMAL(14,5)            /* 其他金額1 */
+  ,STOCKAMT DECIMAL(14,5)        /* 期末庫存金額 */
+  ,PRIMARY KEY (YYMM,PRODID,STOCKID)
+  );
+
+--產品單位換算檔
+CREATE TABLE IOSPRODT02 (
+   PRODID VARCHAR(17) NOT NULL   /* 產品代號 */
+  ,UNIT VARCHAR(6) NOT NULL      /* 單位名稱 */
+  ,QTY DECIMAL(14,5)             /* 換算量 */
+  ,PRIMARY KEY (PRODID,UNIT)
+  );
+
+CREATE VIEW IOSPRODV02 AS
+(
+SELECT PRODID,UNIT,1 QTY FROM IOSPRODT00
+UNION
+SELECT PRODID,UNIT,QTY FROM IOSPRODT02
+)
+
+DROP VIEW IOSPRODIO
+CREATE VIEW IOSPRODIO AS (
+SELECT 'BUY ' IOTYPE,A.BUYSEQ IOSEQ,BUYDT IODT,B.ITEM,STOCKID,PRODID,QTY,ADDQTY FROM IOSBUYT00 A,IOSBUYT01 B WHERE A.BUYSEQ=B.BUYSEQ AND STATUS='1'
+UNION
+SELECT 'BRET' IOTYPE,A.BRETSEQ IOSEQ,BRETDT IODT,B.ITEM,STOCKID,PRODID,-QTY,0 FROM IOSBRETT00 A,IOSBRETT01 B WHERE A.BRETSEQ=B.BRETSEQ AND STATUS='1'
+UNION
+SELECT 'SALE' IOTYPE,A.SALESEQ IOSEQ,SALEDT IODT,B.ITEM,STOCKID,PRODID,-QTY,-ADDQTY FROM IOSSALET00 A,IOSSALET01 B WHERE A.SALESEQ=B.SALESEQ AND STATUS='1'
+UNION
+SELECT 'SRET' IOTYPE,A.SRETSEQ IOSEQ,SRETDT IODT,B.ITEM,STOCKID,PRODID,QTY,0 FROM IOSSRETT00 A,IOSSRETT01 B WHERE A.SRETSEQ=B.SRETSEQ AND STATUS='1'
+UNION
+SELECT 'CHGI' IOTYPE,A.CHGSEQ IOSEQ,CHGDT IODT,B.ITEM,TSTOCKID,B.PRODID,QTY,0 FROM IOSCHGT00 A,IOSCHGT01 B WHERE A.CHGSEQ=B.CHGSEQ AND STATUS='1'
+UNION
+SELECT 'CHGO' IOTYPE,A.CHGSEQ IOSEQ,CHGDT IODT,B.ITEM,FSTOCKID,B.PRODID,-QTY,0 FROM IOSCHGT00 A,IOSCHGT01 B WHERE A.CHGSEQ=B.CHGSEQ AND STATUS='1'
+)
+
+
+--銷貨主檔
+CREATE TABLE IOSSALET00 (
+   SALESEQ VARCHAR(14) NOT NULL  /* 銷貨單號 */
+  ,SALEDT VARCHAR(10)            /* 銷貨日期 */
+  ,STATUS CHAR(1)                /* 狀態 0開單 1確認 X作廢 */
+  ,CUSID VARCHAR(10)             /* 客戶 */
+  ,RECEIPT VARCHAR(50)           /* 收款條件 */
+  ,STOCKID VARCHAR(5)            /* 庫別 */
+  ,INVOICENO VARCHAR(10)         /* 發票號碼 */
+  ,INVOICEDT VARCHAR(10)         /* 發票日期 */
+  ,INVOICENUM INT                /* 發票張數 */
+  ,RECSEQ INT                    /* 收款序號 */
+  ,AMOUNT DECIMAL(14,5)          /* 出貨金額 */
+  ,SUBTRACT DECIMAL(14,5)        /* 折價金額 */
+  ,TAXTYPE CHAR(1)               /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,TAX DECIMAL(14,5)             /* 稅額 */
+  ,ADDTAX DECIMAL(14,5)          /* 另加稅額 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 含稅合計金額 */
+  ,RECDT VARCHAR(10)             /* 收款日期 */
+  ,RECAMOUNT DECIMAL(14,5)       /* 已收款金額 */
+  ,MEMO VARCHAR(60)              /* 備註 */
+  ,EMPNO VARCHAR(11)             /* 業務員 */
+  ,APPROVER VARCHAR(13)          /* 確認UserID */
+  ,CASHID VARCHAR(10)            /* 幣別代號 */
+  ,CASHAMT DECIMAL(14,5)         /* 現金收款金額 */
+  ,CHKAMT DECIMAL(14,5)          /* 支票收款金額 */
+  ,PAYAMT1 DECIMAL(14,5)         /* 其他收款金額1 */
+  ,PAYAMT2 DECIMAL(14,5)         /* 其他收款金額2 */
+  ,PAYAMT3 DECIMAL(14,5)         /* 其他收款金額3 */
+  ,CHKNO VARCHAR(10)             /* 支票號碼 */
+  ,BANKID VARCHAR(10)            /* 銀行代號 */
+  ,PRIMARY KEY (SALESEQ)
+  );
+
+ALTER TABLE IOSSALET00 ADD MATDT VARCHAR(8)
+ALTER TABLE IOSSALET00 ADD INVOICENUM INT 
+ALTER TABLE IOSSALET00 ADD INVTYPE VARCHAR(1)
+
+
+--銷貨明細檔
+CREATE TABLE IOSSALET01 (
+   SALESEQ VARCHAR(14) NOT NULL  /* 銷貨單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,ADDQTY DECIMAL(14,5)          /* 贈送數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣金額 */
+  ,BMEMO VARCHAR(16)             /* 備註 */
+  ,PRIMARY KEY (SALESEQ,ITEM)
+  );
+
+DROP VIEW IOSSALEV00
+CREATE VIEW IOSSALEV00 AS (
+SELECT A.*,C.CUSNM,C.CUSSN,E.STOCKNM,F.AREANM
+  FROM IOSSALET00 A
+  LEFT JOIN ACCCUST00 C ON A.CUSID=C.CUSID
+  LEFT JOIN IOSSTKT00 E ON A.STOCKID=E.STOCKID
+  LEFT JOIN AREAT00 F ON C.AREAID=F.AREAID
+WHERE STATUS='1'
+)
+
+DROP VIEW IOSSALEV01
+CREATE VIEW IOSSALEV01 AS (
+SELECT A.*,B.ITEM,B.PRODID,B.PRODNM,B.SPEC,B.QTY,B.ADDQTY,B.UNIT,B.PRICE,B.DISCOUNT,B.BMEMO
+       ,ISNULL(PRICE,0)*ISNULL(DISCOUNT,1) DPRICE,ROUND(ISNULL(QTY,0)*ISNULL(PRICE,0)*ISNULL(DISCOUNT,1),0) DAMT
+       ,C.CUSNM,C.CUSSN,D.PRODNM DPRODNM,D.SPEC DSPEC,D.PCLASSID,G.PCLASSNM,E.STOCKNM,F.AREANM
+  FROM IOSSALET00 A
+  INNER JOIN IOSSALET01 B ON A.SALESEQ=B.SALESEQ
+  LEFT JOIN ACCCUST00 C ON A.CUSID=C.CUSID
+  LEFT JOIN IOSPRODT00 D ON B.PRODID=D.PRODID
+  LEFT JOIN IOSSTKT00 E ON A.STOCKID=E.STOCKID
+  LEFT JOIN AREAT00 F ON C.AREAID=F.AREAID
+  LEFT JOIN IOSPCLST00 G ON D.PCLASSID=G.PCLASSID
+WHERE STATUS='1'
+)
+
+--報價主檔
+CREATE TABLE IOSQUOT00 (
+   QUOSEQ VARCHAR(14) NOT NULL   /* 報價單號 */
+  ,QUODT VARCHAR(10)             /* 訂購日期 */
+  ,STATUS CHAR(1)                /* 狀態 0報價中 1確認 C結案 X作廢 */
+  ,CUSID VARCHAR(10)             /* 客戶 */
+  ,RECEIPT VARCHAR(50)           /* 收款條件 */
+  ,VALIDDTF VARCHAR(10)          /* 報價有效日期起 */
+  ,VALIDDTT VARCHAR(10)          /* 報價有效日期迄 */
+  ,AMOUNT DECIMAL(14,5)          /* 報價總金額 */
+  ,EMPNO VARCHAR(12)             /* 報價人員 */
+  ,TAXTYPE CHAR(1)               /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,TAX DECIMAL(14,5)             /* 稅額 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 含稅合計金額 */
+  ,MEMO VARCHAR(50)              /* 備註 */
+  ,APPROVER VARCHAR(13)          /* 確認UserID */
+  ,CASHID VARCHAR(10)            /* 幣別代號 */
+  ,PRIMARY KEY (QUOSEQ)
+  );
+
+
+--報價明細檔
+CREATE TABLE IOSQUOT01 (
+   QUOSEQ VARCHAR(14) NOT NULL   /* 報價單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,ADDQTY DECIMAL(14,5)          /* 贈送數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣 */
+  ,BMEMO VARCHAR(255)            /* 備註 */
+  ,PRIMARY KEY (QUOSEQ,ITEM)
+  );
+
+// 訂單主檔
+CREATE TABLE IOSORDT00 (
+   ORDSEQ VARCHAR(14) NOT NULL   /* 報價單號 */
+  ,ORDDT VARCHAR(10)             /* 訂購日期 */
+  ,STATUS CHAR(1)                /* 狀態 0報價中 1確認 C結案 X作廢 */
+        ,ISCLOSE varchar(1) ,
+	BRAND varchar(10) ,
+	CUSID varchar(8) ,
+	RECEIPT varchar(50) ,
+	SENDT varchar(10) ,
+	STOCKID varchar(5) ,
+	AMOUNT decimal(14, 5) ,
+	SUBTRACT decimal(14, 5) ,
+	EMPNO varchar(12) ,
+	TAXTYPE char(1) ,
+	TAX decimal(14, 5) ,
+	ADDTAX decimal(14, 5) ,
+	TTAMOUNT decimal(14, 5) ,
+	APPROVER varchar(13) ,
+	CASHID varchar(10) ,
+	MEMO varchar(50) ,
+	CNAME varchar(20) ,
+	CTELE varchar(20) ,
+	CPNO varchar(20) ,
+	TRDT varchar(30) ,
+	TRORD varchar(20) ,
+	TRBUYER varchar(20) ,
+	TRRECNM varchar(20) ,
+	TRRECZIP varchar(5) ,
+	TRREDADDR varchar(50) ,
+	TRRECTEL1  varchar(20) ,
+	TRRECTEL2  varchar(20) ,
+	TRRECTEL3  varchar(20) ,
+	TRCARMEMO  varchar(100) ,
+	TRTYPE  varchar(1) ,
+	BACCNO  varchar(20) ,
+   PRIMARY KEY (ORDSEQ)
+  );
+
+--訂單明細檔
+CREATE TABLE IOSORDT01 (
+   ORDSEQ VARCHAR(14) NOT NULL   /* 報價單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(50)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,COLOR VARCHAR(20)              /* 規格 */
+  ,SIZE  VARCHAR(12)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,ADDQTY DECIMAL(14,5)          /* 贈送數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣 */
+  ,TRORDNO VARCHAR(50)            /* 備註 */
+  ,BMEMO VARCHAR(16)            /* 備註 */
+  ,SALEQTY DECIMAL(14,5)        /* 折扣 */
+  ,PRIMARY KEY (ORDSEQ,ITEM)
+  );
+
+
+
+--採購主檔
+CREATE TABLE IOSPURT00 (
+   PURSEQ VARCHAR(14) NOT NULL   /* 採購單號 */
+  ,PURDT VARCHAR(10)             /* 採購日期 */
+  ,STATUS CHAR(1)                /* 狀態 0開單 1確認 X作廢 */
+  ,ISCLOSE VARCHAR(1)            /* 結案碼 0未結案 Y自動結案 y手動結案 */
+  ,SUPID VARCHAR(10)             /* 客戶 */
+  ,RECEIPT VARCHAR(50)           /* 收款條件 */
+  ,STOCKID VARCHAR(5)            /* 庫別 */
+  ,SENDT VARCHAR(10)             /* 指送日期 */
+  ,INVOICENO VARCHAR(10)         /* 發票號碼 */
+  ,INVOICEDT VARCHAR(10)         /* 發票日期 */
+  ,PAYSEQ INT                    /* 付款序號 */
+  ,AMOUNT DECIMAL(14,5)          /* 出貨金額 */
+  ,SUBTRACT DECIMAL(14,5)        /* 折價金額 */
+  ,TAXTYPE CHAR(1)               /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,TAX DECIMAL(14,5)             /* 稅額 */
+  ,ADDTAX DECIMAL(14,5)          /* 另加稅額 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 含稅合計金額 */
+  ,PAYDT VARCHAR(10)             /* 付款日期 */
+  ,PAYAMOUNT DECIMAL(14,5)       /* 已付款金額 */
+  ,MEMO VARCHAR(60)              /* 備註 */
+  ,EMPNO VARCHAR(11)             /* 採購員 */
+  ,APPROVER VARCHAR(13)          /* 確認UserID */
+  ,CASHID VARCHAR(10)            /* 幣別代號 */
+  ,PRIMARY KEY (PURSEQ)
+  );
+
+--採購明細檔
+CREATE TABLE IOSPURT01 (
+   PURSEQ VARCHAR(14) NOT NULL  /* 採購單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,ADDQTY DECIMAL(14,5)          /* 贈送數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣金額 */
+  ,BMEMO VARCHAR(16)             /* 備註 */
+  ,BUYQTY DECIMAL(14,5)          /* 進貨數量 */
+  ,PRIMARY KEY (PURSEQ,ITEM)
+  );
+
+
+
+--進貨主檔
+CREATE TABLE IOSBUYT00 (
+   BUYSEQ VARCHAR(14) NOT NULL  /* 進貨單號 */
+  ,BUYDT VARCHAR(10)            /* 進貨日期 */
+  ,STATUS CHAR(1)                /* 狀態 0開單 1確認 X作廢 */
+  ,SUPID VARCHAR(10)             /* 客戶 */
+  ,RECEIPT VARCHAR(50)           /* 收款條件 */
+  ,STOCKID VARCHAR(5)            /* 庫別 */
+  ,INVOICENO VARCHAR(10)         /* 發票號碼 */
+  ,INVOICEDT VARCHAR(10)         /* 發票日期 */
+  ,PAYSEQ INT                    /* 付款序號 */
+  ,AMOUNT DECIMAL(14,5)          /* 進貨金額 */
+  ,SUBTRACT DECIMAL(14,5)        /* 折價金額 */
+  ,TAXTYPE CHAR(1)               /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,TAX DECIMAL(14,5)             /* 稅額 */
+  ,ADDTAX DECIMAL(14,5)          /* 另加稅額 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 含稅合計金額 */
+  ,PAYDT VARCHAR(10)             /* 付款日期 */
+  ,PAYAMOUNT DECIMAL(14,5)       /* 已付款金額 */
+  ,MEMO VARCHAR(60)              /* 備註 */
+  ,EMPNO VARCHAR(11)             /* 採購員 */
+  ,APPROVER VARCHAR(13)          /* 確認UserID */
+  ,CASHID VARCHAR(10)            /* 幣別代號 */
+  ,INVTYPE VARCHAR(1)            /* 發票聯數 */
+  ,PRIMARY KEY (BUYSEQ)
+  );
+
+--進貨明細檔
+CREATE TABLE IOSBUYT01 (
+   BUYSEQ VARCHAR(14) NOT NULL  /* 進貨單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,ADDQTY DECIMAL(14,5)          /* 贈送數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣金額 */
+  ,BMEMO VARCHAR(16)             /* 備註 */
+  ,PURSEQ VARCHAR(14)            /* 採購單號 */
+  ,PURITEM VARCHAR(14)           /* 採購項次 */
+  ,PRIMARY KEY (BUYSEQ,ITEM)    
+  );
+
+
+--驗退主檔
+CREATE TABLE IOSBRETT00 (
+   BRETSEQ VARCHAR(14) NOT NULL   /* 驗退單號 */
+  ,BRETDT VARCHAR(10)             /* 驗退日期 */
+  ,STATUS CHAR(1)                 /* 狀態 0驗退中 1確認 X作廢 */
+  ,SUPID VARCHAR(5)               /* 供應廠商 */
+  ,STOCKID VARCHAR(5)             /* 庫別 */
+  ,AMOUNT DECIMAL(14,5)           /* 驗退金額 */
+  ,TAXTYPE CHAR(1)                /* 稅別 0應稅內含 1應稅外加 2免稅 3零稅率 */
+  ,TAX DECIMAL(14,5)              /* 稅額 */
+  ,TTAMOUNT DECIMAL(14,5)         /* 含稅合計金額 */
+  ,PAYSEQ INT                     /* 付款序號 */
+  ,PAYAMOUNT DECIMAL(14,5)        /* 已付款金額 */
+  ,MEMO VARCHAR(50)               /* 備註 */
+  ,EMPNO VARCHAR(11)              /* 採購員 */
+  ,APPROVER VARCHAR(13)           /* 確認UserID */
+  ,CASHID VARCHAR(10)             /* 幣別代號 */
+  ,PRIMARY KEY (BRETSEQ)
+  );
+
+--驗退明細檔
+CREATE TABLE IOSBRETT01 (
+   BRETSEQ VARCHAR(14)            /* 驗退單號 */
+  ,ITEM VARCHAR(4) NOT NULL       /* 序號 */
+  ,PRODID VARCHAR(17)             /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)              /* 數量 */
+  ,ADDQTY DECIMAL(14,5)           /* 贈送數量 */
+  ,UNIT VARCHAR(6)                /* 單位 */
+  ,PRICE DECIMAL(14,5)            /* 單價 */
+  ,DISCOUNT DECIMAL(14,5)        /* 折扣金額 */
+  ,BMEMO VARCHAR(16)             /* 備註 */
+  ,PRIMARY KEY (BRETSEQ,ITEM)
+  );
+
+
+
+
+
+--調撥主檔
+CREATE TABLE IOSCHGT00 (
+   CHGSEQ VARCHAR(14) NOT NULL   /* 調撥單號 */
+  ,CHGDT VARCHAR(10)             /* 調撥日期 */
+  ,STATUS CHAR(1)                /* 狀態 0調撥中 X作廢 */
+  ,FSTOCKID VARCHAR(5)           /* 來源庫別 */
+  ,TSTOCKID VARCHAR(5)           /* 目的庫別 */
+  ,AMOUNT DECIMAL(14,5)          /* 調撥金額 */
+  ,MEMO VARCHAR(50)              /* 備註 */
+  ,APPROVER VARCHAR(13)          /* 確認UserID */
+  ,PRIMARY KEY (CHGSEQ)
+);
+
+--調撥明細檔
+CREATE TABLE IOSCHGT01 (
+   CHGSEQ VARCHAR(14)            /* 調撥單號 */
+  ,ITEM VARCHAR(4) NOT NULL      /* 序號 */
+  ,PRODID VARCHAR(17)            /* 品號 */
+  ,PRODNM VARCHAR(30)            /* 品名 */
+  ,SPEC VARCHAR(30)              /* 規格 */
+  ,QTY DECIMAL(14,5)             /* 數量 */
+  ,UNIT VARCHAR(6)               /* 單位 */
+  ,PRICE DECIMAL(14,5)           /* 單價 */
+  ,BMEMO VARCHAR(16)             /* 備註 */
+  ,PRIMARY KEY (CHGSEQ,ITEM)
+);
+
+--------------------------------------------------------------------
+
+--收票主檔
+CREATE TABLE ACCRCHKT0(
+  CHKNO VARCHAR(20) NOT NULL   --票據號碼
+ ,CHKDT VARCHAR(8)             --收票日期
+ ,MATDT VARCHAR(8)             --到期日
+ ,EXCEPTDT VARCHAR(8)          --預計到期日
+ ,CHKAMT NUMERIC(14,2)         --金額
+ ,ACCUSENO VARCHAR(10)         --對象別 A:廠商 B:員工 C:部門 X:其他
+ ,ACCTIT VARCHAR(11)           --沖帳對象(客戶代號)
+ ,REM VARCHAR(30)              --摘要
+ ,VRNO VARCHAR(12)             --待切傳票號碼
+ ,BANKID VARCHAR(10)           --付款銀行代號
+ ,STATUS CHAR(1)               --目前票況 1/收票,2/託收,3/融資,4/轉付,5/退票,6/兌現,7/還票,8/呆帳,9/撤票,A/再收
+ ,BACTID VARCHAR(20)           --收款帳號
+ ,SUPID VARCHAR(10)            --轉付廠商代號
+ ,CASHDT VARCHAR(8)            --實際兌現日
+ ,ACCTNO VARCHAR(10)           --收票科目代號
+ ,PRIMARY KEY (CHKNO)
+  );
+CREATE INDEX K1_ACCRCHKT0 ON ACCRCHKT0 (STATUS,CHKDT);
+CREATE INDEX K2_ACCRCHKT0 ON ACCRCHKT0 (VRNO,CHKNO);
+CREATE INDEX K3_ACCRCHKT0 ON ACCRCHKT0 (ACCTIT,MATDT);
+CREATE INDEX K4_ACCRCHKT0 ON ACCRCHKT0 (STATUS,EXCEPTDT);
+
+--收票明細檔
+CREATE TABLE ACCRCHKT1(
+  CHKNO VARCHAR(20) NOT NULL   --票據號碼
+ ,ITEM CHAR(4) NOT NULL        --項次
+ ,UPDDT VARCHAR(8)             --異動日期
+ ,UPDTYPE CHAR(1)              --異動類別1.收票,2.託收,3.融資,4.轉付,5.退票,6.兌現,7.還票,8.呆帳,9.撤票
+ ,VRNO VARCHAR(12)             --待切傳票號碼
+ ,PRIMARY KEY (CHKNO,ITEM)
+  );
+CREATE INDEX K1_ACCRCHKT1 ON ACCRCHKT1 (VRNO);
+
+--收款主檔
+CREATE TABLE IOSRECT00 (
+   RECSEQ VARCHAR(14) NOT NULL   /* 收款單號 */
+  ,RECDT VARCHAR(10)             /* 收款日期 */
+  ,STATUS CHAR(1)                /* 狀態 0已收款 1確認 X作廢 */
+  ,CUSID VARCHAR(10)              /* 客戶 */
+  ,SRDTF VARCHAR(10)             /* 貨款日期起 */
+  ,SRDTT VARCHAR(10)             /* 貨款日期迄 */
+  ,PRECSEQ VARCHAR(14)           /* 預收款單號 */
+  ,CASHAMT DECIMAL(14,5)         /* 現金收款金額 */
+  ,CHKAMT DECIMAL(14,5)          /* 支票收款金額 */
+  ,PAYAMT1 DECIMAL(14,5)         /* 其他收款金額1 */
+  ,PAYAMT2 DECIMAL(14,5)         /* 其他收款金額2 */
+  ,PAYAMT3 DECIMAL(14,5)         /* 其他收款金額3 */
+  ,CHKNO VARCHAR(10)             /* 支票號碼 */
+  ,BANKID VARCHAR(10)            /* 銀行代號 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 收款總金額 */
+  ,REM VARCHAR(50)              /* 備註 */
+  ,PRIMARY KEY (RECSEQ)
+  );
+
+ALTER TABLE IOSRECT00  ADD MATDT VARCHAR(10)
+ALTER TABLE IOSRECT00  ALTER COLUMN  MATDT VARCHAR(8)
+
+--收款沖帳明細檔
+CREATE TABLE IOSRECT01 (
+   RECSEQ VARCHAR(14)            /* 收款單號 */
+  ,ITEM CHAR(4) NOT NULL        --項次
+  ,SRTYPE VARCHAR(10)            /* 單別 SALE銷貨/SRET銷退 */
+  ,SRSEQ VARCHAR(14)             /* 銷貨/銷退單號 */
+  ,SRTTAMT DECIMAL(14,5)         /* 含稅合計金額 */
+  ,SRNETAMT DECIMAL(14,5)        /* 尚未收款金額 */
+  ,AMT DECIMAL(14,5)             /* 沖帳金額 */
+  ,PRIMARY KEY (RECSEQ,ITEM)
+  );
+
+-----------------------------------
+--付款主檔
+CREATE TABLE IOSPAYT00 (
+   PAYSEQ VARCHAR(14) NOT NULL   /* 收款單號 */
+  ,PAYDT VARCHAR(10)             /* 收款日期 */
+  ,STATUS CHAR(1)                /* 狀態 0已收款 1確認 X作廢 */
+  ,SUPID VARCHAR(10)              /* 客戶 */
+  ,BRDTF VARCHAR(10)             /* 貨款日期起 */
+  ,BRDTT VARCHAR(10)             /* 貨款日期迄 */
+  ,PPAYSEQ VARCHAR(14)           /* 預收款單號 */
+  ,CASHAMT DECIMAL(14,5)         /* 現金收款金額 */
+  ,CHKAMT DECIMAL(14,5)          /* 支票收款金額 */
+  ,PAYAMT1 DECIMAL(14,5)         /* 其他收款金額1 */
+  ,PAYAMT2 DECIMAL(14,5)         /* 其他收款金額2 */
+  ,PAYAMT3 DECIMAL(14,5)         /* 其他收款金額3 */
+  ,CHKNO VARCHAR(10)             /* 支票號碼 */
+  ,BANKID VARCHAR(10)            /* 銀行代號 */
+  ,TTAMOUNT DECIMAL(14,5)        /* 收款總金額 */
+  ,REM VARCHAR(50)              /* 備註 */
+  ,BACTID VARCHAR(20)              /* 備註 */
+  ,MATDT  VARCHAR(8)              /* 備註 */
+  ,PRIMARY KEY (PAYSEQ)
+  );
+
+--付款沖帳明細檔
+CREATE TABLE IOSPAYT01 (
+   PAYSEQ VARCHAR(14) NOT NULL    /* 收款單號 */
+  ,ITEM CHAR(4) NOT NULL        --項次
+  ,BRTYPE VARCHAR(10)            /* 單別 SALE銷貨/SRET銷退 */
+  ,BRSEQ VARCHAR(14)             /* 銷貨/銷退單號 */
+  ,TTAMT DECIMAL(14,5)         /* 含稅合計金額 */
+  ,NETAMT DECIMAL(14,5)        /* 尚未收款金額 */
+  ,AMT DECIMAL(14,5)             /* 沖帳金額 */
+  ,PRIMARY KEY (PAYSEQ,ITEM)
+  );
+
+VIEW 
+
+CREATE VIEW IOSPAYV00 AS (
+SELECT M.PAYSEQ,D.ITEM,D.BRTYPE,D.BRSEQ,D.AMT,M.PAYDT,M.REM,V.VRNO
+  FROM IOSPAYT00 M
+  INNER JOIN IOSPAYT01 D ON M.PAYSEQ=D.PAYSEQ
+  LEFT JOIN ACCVOUT0 V ON V.AYN1='R' AND V.VISANO=M.PAYSEQ
+ WHERE M.STATUS=1 )
+
+CREATE VIEW ACCBANKV1 AS (
+SELECT BACTID,OPENDT TRDT,OPENAMT TRAMT ,'0' TRTYPE,'開帳' TRTYPENM FROM ACCBANKT1
+UNION
+SELECT BACTID,UPDDT,CHKAMT,'P','付票兌現'
+  FROM ACCPCHKT0 A INNER JOIN ACCPCHKT1 B ON B.CHKNO=A.CHKNO
+ WHERE UPDTYPE='6'
+UNION
+SELECT BACTID,UPDDT,CHKAMT,'R','收票兌現'
+  FROM ACCRCHKT0 A INNER JOIN ACCRCHKT1 B ON B.CHKNO=A.CHKNO
+ WHERE UPDTYPE='6'
+UNION
+SELECT BACTID,BCWDT,BCWAMT,BCWTYPE,
+       CASE WHEN BCWTYPE='1' THEN '存款' WHEN BCWTYPE='2' THEN '提款' WHEN BCWTYPE='3' THEN '銀行存款轉入' WHEN BCWTYPE='4' THEN '銀行存款轉出' END
+  FROM ACCBCWT0 )
+GO
+
+庫存計算
+DROP VIEW IOSPRODIO
+GO
+CREATE VIEW IOSPRODIO AS (
+SELECT 'BUY ' IOTYPE,'進貨' IONM,A.BUYSEQ IOSEQ,BUYDT IODT,B.ITEM,STOCKID,B.PRODID,B.QTY,ADDQTY,B.UNIT,(ISNULL(B.QTY,0)+ISNULL(ADDQTY,0))*ISNULL(C.QTY,1) STKQTY FROM IOSBUYT00 A LEFT JOIN IOSBUYT01 B ON A.BUYSEQ=B.BUYSEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+UNION
+SELECT 'BRET' IOTYPE,'退貨' IONM,A.BRETSEQ IOSEQ,BRETDT IODT,B.ITEM,STOCKID,B.PRODID,-B.QTY,0,B.UNIT,ISNULL(-B.QTY,0)*ISNULL(C.QTY,1) STKQTY FROM IOSBRETT00 A LEFT JOIN IOSBRETT01 B ON A.BRETSEQ=B.BRETSEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+UNION
+SELECT 'SALE' IOTYPE,'銷售' IONM,A.SALESEQ IOSEQ,SALEDT IODT,B.ITEM,STOCKID,B.PRODID,-B.QTY,-ADDQTY,B.UNIT,(-ISNULL(B.QTY,0)-ISNULL(ADDQTY,0))*ISNULL(C.QTY,1) STKQTY FROM IOSSALET00 A LEFT JOIN IOSSALET01 B ON A.SALESEQ=B.SALESEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+UNION
+SELECT 'SRET' IOTYPE,'銷退' IONM,A.SRETSEQ IOSEQ,SRETDT IODT,B.ITEM,STOCKID,B.PRODID,B.QTY,0,B.UNIT,ISNULL(B.QTY,0)*ISNULL(C.QTY,1) STKQTY FROM IOSSRETT00 A LEFT JOIN IOSSRETT01 B ON A.SRETSEQ=B.SRETSEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+UNION
+SELECT 'CHGI' IOTYPE,'調入' IONM,A.CHGSEQ IOSEQ,CHGDT IODT,B.ITEM,TSTOCKID,B.PRODID,B.QTY,0,B.UNIT,ISNULL(B.QTY,0)*ISNULL(C.QTY,1) STKQTY FROM IOSCHGT00 A LEFT JOIN IOSCHGT01 B ON A.CHGSEQ=B.CHGSEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+UNION
+SELECT 'CHGO' IOTYPE,'撥出' IONM,A.CHGSEQ IOSEQ,CHGDT IODT,B.ITEM,FSTOCKID,B.PRODID,-B.QTY,0,B.UNIT,-ISNULL(B.QTY,0)*ISNULL(C.QTY,1) STKQTY FROM IOSCHGT00 A LEFT JOIN IOSCHGT01 B ON A.CHGSEQ=B.CHGSEQ LEFT JOIN IOSPRODV02 C ON C.PRODID=B.PRODID AND C.UNIT=B.UNIT WHERE STATUS='1'
+)
+
+
+付票
+CREATE TABLE ACCPCHKT0(
+	COMPANY varchar(10) ,
+	CHKNO   varchar(20) NOT NULL,
+	CHKAMT  numeric(14, 2) ,
+	CHKDT   varchar(8) ,
+	MATDT   varchar(8) ,
+	EXCEPTDT   varchar(8) ,
+	BACTID   varchar(20) ,
+	STATUS   char(1) ,
+	ISAWAY   char(1) ,
+	AWAYTDT  varchar(8) ,
+	AWAYREM  varchar(30) ,
+	ACCUSENO varchar(10) ,
+	ACCTIT   varchar(11) ,
+	VRNO   varchar(12) ,
+	REM    varchar(100) ,
+	ACCTNO   varchar(10) ,
+	PRODNM   varchar(50) ,
+	PURAMT   decimal(14, 5) ,
+	PURTAX   decimal(14, 5) ,
+	PURYM   varchar(8) ,
+	VOCDT   varchar(8) ,
+	PURNO   varchar(20) ,
+        PRIMARY KEY (CHKNO)
+);
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div class = "main">
+    <pre>
+      請教各位專家，想要在網頁上直接列印報表(可指定印表機選定邊界等設定)，
+      目前爬文只看到有IE ONLY的ScriptX 可用。若是想要在Chrome瀏覽器使用，
+      請教有甚麼好的軟體或方法(可設定且不用預覽)，感謝
+    </pre>    
+  </div>
+</body>
+</html>
+<style>
+  @media print {
+    @page {size: landscape}
+    html {
+      height: 100vh;
+    }
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .main {
+      font-size: 2rem;
+    }
+  }
+</style>
+
+=======================
+前端技術人員
+html,css,js,design pattern,framework ,git,google, stackoverflow,
+api,webpack,sass,es6,npm,devtool ,http method/statns command line php seo/ga/gtm 3d test igulp,zeplin, nginx, bower,data structure
+
+
+
+
+
+
+	

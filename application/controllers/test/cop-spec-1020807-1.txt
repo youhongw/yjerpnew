@@ -1,0 +1,60 @@
+﻿網頁 資料庫規格表  1020807    cop : 訂單管理系統 
+
+--
+-- 資料庫: `hwhsinn3_ci`
+--
+
+
+--
+-- 表的結構 `admmf`  檔案名稱:使用者資料 
+--
+
+CREATE TABLE IF NOT EXISTS `admmf` (
+  `company` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `creator` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `usr_group` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `create_date` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `modifier` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `modi_date` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `flag`  float  COLLATE utf8_unicode_ci NOT NULL DEFAULT 0,
+
+  `mf001` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf002` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf003` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf004` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf005` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N',
+  `mf006` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf007` char(6) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  
+  PRIMARY KEY (`mf001`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- 轉存資料表中的資料 `admmf`
+--
+INSERT INTO `admmf` (`mf001`,`mf003`) VALUES ('89044','867651');
+
+
+
+
+MYSQL 語法
+SELECT deridno,pnodisp FROM  `derindx` WHERE pnodisp like "1129%"
+
+SELECT deridno, pro1, pro2, pro3, pro4, pro5, pro6, pro7, pro8, dermemo, jpgmemo, pnodisp
+FROM  `derindx` 
+ORDER BY deridno
+
+if ($copysave=="33") {$query = "INSERT INTO `hwhsinn3_der`.`derindx` (deridno) VALUES 
+( '".$yderidno."')"; mysql_query($query);}
+
+if ($modisave=="11") {
+$query = "UPDATE  `hwhsinn3_der`.`derindx` SET dermiddle3='".$dermiddle3."'
+ WHERE deridno='".$zderidno."' ";
+mysql_query($query); }
+
+DELETE FROM  `hwhsinn3_der`.`derindx` WHERE deridno=0
+
+UPDATE  `hwhsinn3_der`.`derindx` SET pnotw=pnodisp
+ WHERE pnotw=" "
+
+drop database lib13; 

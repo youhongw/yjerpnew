@@ -1,0 +1,40 @@
+.TitleName{
+    font-family:Times New Roman,標楷體;
+    font-size:28px;
+}
+tr {
+    height:20px;
+}
+td {
+    border:0px solid red;
+    height:25px;
+}
+div {
+    font-family:Times New Roman,新細明體;
+}
+tbody div{
+    font-size:14px; 
+}
+/*
+.TitleName3{
+    font-size:8px; 
+    -webkit-transform:scale(0.66);
+    display:inline-block;
+}
+scale(0.91) 裡面的數值是以 chrome 
+最小字型 12px 去計算轉換倍率，例如：9px 為
+9/12 = 0.75 這樣。
+*/
+
+@page { 
+    margin-top: 1cm;
+    margin-right: 1cm;
+    margin-bottom:1cm;
+    margin-left: 1cm;
+    size: A4 landscape;
+    /*
+    size:landscape;1170 portrait 810
+    -webkit-transform: rotate(-90deg); -moz-transform:rotate(-90deg);
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    */
+};

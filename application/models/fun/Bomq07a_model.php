@@ -1,0 +1,337 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Bomq07a_model extends CI_Model {
+	
+	function __construct()
+          {
+            parent::__construct();      //重載ci底層程式 自動執行父類別
+          }	
+	  
+	function selbrowse($num,$offset)   //查詢 table 表所有資料
+      {            
+	    $this->db->select('mf001, mb002, mb003, mf002, me003');
+        $this->db->from('bomme');
+		$this->db->join('bommf', 'bommf.mf001 = bomme.me001','left');
+		$this->db->join('invmb', 'invmb.mb001 = bomme.me001','left');
+        $this->db->order_by('mf001', 'ASC');                //排序  單欄
+	   // $this->db->order_by('md001 asc, md002 asc');    //排序  單欄以上 asc 由小至大 desc預設由大至小
+	    $this->db->limit($num,$offset);   // 每頁10筆
+	    $ret['rows']=$this->db->get()->result();			
+			
+	    $this->db->select('COUNT(*) as count');    //查詢總筆數
+	    $this->db->from('bomme');
+		$this->db->join('bommf', 'bommf.mf001 = bomme.me001','left');
+		$this->db->join('invmb', 'invmb.mb001 = bomme.me001','left');
+        $query = $this->db->get();
+	    $tmp = $query->result();
+	    $ret['num_rows'] = $tmp[0]->count;
+	    return $ret;	
+      }
+	
+	function search($limit, $offset, $sort_by, $sort_order)     //欄位表頭排序流覽資料
+	  { 
+	    $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	    $sort_columns = array('mf001, mb002, mb003, mf002, me003');
+	    $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'mf001';  //檢查排序欄位是否在 table 內
+	    $query = $this->db->select('mf001, mb002, mb003, mf002, me003')
+	                     ->from('bomme')
+		                 ->join('bommf', 'bommf.mf001 = bomme.me001','left')
+		                 ->join('invmb', 'invmb.mb001 = bomme.me001','left')
+		                  ->order_by($sort_by, $sort_order)
+		                  ->limit($limit, $offset);
+	    $ret['rows'] = $query->get()->result();
+	
+	    $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                     ->from('bomme')
+		                 ->join('bommf', 'bommf.mf001 = bomme.me001','left')
+		                 ->join('invmb', 'invmb.mb001 = bomme.me001','left');
+						    
+	    $num = $query->get()->result();		
+	    $ret['num_rows'] = $num[0]->count;		
+	    return $ret;
+	  }
+	   
+	  function search1($limit, $offset, $sort_by, $sort_order)     //欄位表頭排序流覽資料
+	  { 
+	    $seq4 = trim($this->uri->segment(4));    //欄位
+	//	 $seq6 = trim($this->uri->segment(7)); //輸入資料
+	//	if ($this->uri->segment(4) == "mb002") { $seq6 = $this->uri->segment(6); }
+	    $seq6 = urldecode(urldecode($this->uri->segment(6))); //輸入資料
+		  $sort_by = $this->uri->segment(4);			
+            $sort_order = $this->uri->segment(5);	
+	    $offset=$this->uri->segment(8,0);
+	//	$array = array('md001' => '1', 'md002 >=' => $seq6, 'md002 <=' => $seq6 );
+	//	$this->db->like('title', 'match', 'after'); 
+	    $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	    $sort_columns = array('mf001, mb002, mb003, mf002, me003');
+	    $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'mf001';  //檢查排序欄位是否在 table 內
+	    $query = $this->db->select('mf001, mb002, mb003, mf002, me003')
+	                       ->from('bomme')
+		                 ->join('bommf', 'bommf.mf001 = bomme.me001','left')
+		                 ->join('invmb', 'invmb.mb001 = bomme.me001','left')
+						   ->like($seq4, $seq6, 'after')                   					 
+		              ->order_by($sort_by, $sort_order)
+		              ->limit($limit, $offset);
+	    $ret['rows'] = $query->get()->result();
+		
+	     $array = array('mf001' => '1', 'md002' => $seq6 );
+	    $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                        ->from('bomme')
+		                 ->join('bommf', 'bommf.mf001 = bomme.me001','left')
+		                 ->join('invmb', 'invmb.mb001 = bomme.me001','left')
+						   ->like($seq4, $seq6, 'after');  
+					//	  ->where('md001','1');
+                        						  
+	    $num = $query->get()->result();		
+	    $ret['num_rows'] = $num[0]->count;		
+	    return $ret;
+	  }
+	    
+	
+	    
+	function filterf1($limit, $offset , $sort_by  , $sort_order)    //篩選多筆        
+	  {    
+	    $seq4 = urldecode(urldecode($this->uri->segment(6))); 	 //解決亂碼          
+            $sort_by = $this->uri->segment(4);			
+            $sort_order = $this->uri->segment(5);	
+	    $offset=$this->uri->segment(8,0);
+	    $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	    $sort_columns = array('mf001, mb002, mb003, mf002, me003');
+            $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'mf001';  //檢查排序欄位是否為 table
+			
+	    $this->db->select('mf001, mb002, mb003, mf002, me003');
+	     $this->db->from('bomme');
+		                 $this->db->join('bommf', 'bommf.mf001 = bomme.me001','left');
+		                 $this->db->join('invmb', 'invmb.mb001 = bomme.me001','left');
+		
+	    $this->db->like($sort_by, $seq4, 'after');
+	    $this->db->order_by($sort_by, $sort_order);
+	  //$this->db->order_by('md001 asc, md002 asc');
+	    $this->db->limit($limit, $offset);   // 每頁15筆
+	    $query = $this->db->get();    
+	    $ret['rows'] = $query->result();
+						
+	    $this->db->select('COUNT(*) as count');    // 計算筆數	
+	    $this->db->from('bomme');
+		                 $this->db->join('bommf', 'bommf.mf001 = bomme.me001','left');
+		                 $this->db->join('invmb', 'invmb.mb001 = bomme.me001','left');
+	    $this->db->like($sort_by, $seq4, 'after');	
+	    $query = $this->db->get();
+	    $tmp = $query->result();		
+	    $ret['num_rows'] = $tmp[0]->count;			
+	    return $ret;					 
+          }
+	  
+	function selone1($seg1,$seg2)    //查新增資料是否重複
+          {
+	    $this->db->set('md001', $this->input->post('md001'));              
+	    $this->db->set('md002', $this->input->post('md002'));
+	    $this->db->where('md001', $this->input->post('md001'));     
+	    $this->db->where('md002', $this->input->post('md002'));	
+	    $query = $this->db->get('invma');
+	    return $query->num_rows() ;
+	  }  	 
+		
+	function insertf()    //新增一筆
+          {
+	    $data = array( 
+	                  'company' => $this->session->userdata('syscompany'),
+	                  'creator' => $this->session->userdata('manager'),
+		          'usr_group' => 'A100',
+		          'create_date' =>date("Ymd"),
+		          'modifier' => '',
+		          'modi_date' => '',
+		          'flag' => 0,
+                          'md001' => $this->input->post('md001'),
+		          'md002' => $this->input->post('md002'),
+		          'md003' => $this->input->post('md003'),
+		          'md004' => $this->input->post('md004'),
+		          'md005' => $this->input->post('md005'),
+		          'md006' => $this->input->post('md006')             
+                         );
+         
+	    $exist = $this->invq01a_model->selone1($this->input->post('md001'),$this->input->post('md002'));
+	    if ($exist)
+	         {
+		    return 'exist';
+		 } 
+            return  $this->db->insert('invma', $data);
+         }
+		 
+        function selone2($seg1,$seg2)    //查copy複製資料是否重複
+          { 	
+	    $this->db->set('md001', $this->input->post('md003c'));              
+	    $this->db->set('md002', $this->input->post('md004c'));
+	    $this->db->where('md001', $this->input->post('md003c'));     
+	    $this->db->where('md002', $this->input->post('md004c'));	
+	    $query = $this->db->get('invma');
+	    return $query->num_rows() ; 
+	  }
+		
+        function copyf()           //複製一筆
+          {
+	    $seq1=$this->input->post('md001c');    
+	    $seq2=$this->input->post('md002c'); 
+	    $this->db->set('md001', $this->input->post('md001c'));              
+	    $this->db->set('md002', $this->input->post('md002c'));
+	    $this->db->where('md001', $this->input->post('md001c'));     
+	    $this->db->where('md002', $this->input->post('md002c'));	
+	    $query = $this->db->get('invma');
+	    $exist = $query->num_rows();
+            if (!$exist)
+	         {
+		    return 'exist';
+	         }         		
+            if ($query->num_rows() != 1) { return 'exist'; }
+		  if ($query->num_rows() == 1) 
+		       {
+			 $result = $query->result();
+			 foreach($result as $row):
+                           $md003=$row->md003;
+                           $md004=$row->md004;
+                           $md005=$row->md005;
+                           $md006=$row->md006;    	
+	 	         endforeach;
+		       }   
+		  
+            $seq3=$this->input->post('md003c');    //主鍵一筆
+	    $seq4=$this->input->post('md004c'); 
+	    $data = array( 
+	                  'company' => $this->session->userdata('syscompany'),
+	                  'creator' => $this->session->userdata('manager'),
+		          'usr_group' => 'A100',
+		          'create_date' =>date("Ymd"),
+		          'modifier' => ' ',
+		          'modi_date' => ' ',
+		          'flag' => 0,
+                          'md001' => $seq3,
+		          'md002' => $seq4,
+		          'md003' => $md003,
+		          'md004' => $md004,
+		          'md005' => $md005,
+		          'md006' => $md006             
+                         );
+            $exist = $this->invq01a_model->selone2($this->input->post('md003c'),$this->input->post('md004c'));
+		    if ($exist)
+		        {
+			  return 'exist';
+		        }         
+            return $this->db->insert('invma', $data);      //複製一筆  
+          }		
+		 
+	function excelnewf()           //轉excel檔,一筆以上
+          {			
+	    $seq1=$this->input->post('md001c');    //查詢一筆以上
+	    $seq2=$this->input->post('md002c'); 
+	    $seq3=$this->input->post('md003c'); 
+	    $seq4=$this->input->post('md004c'); 
+	    $sql = " SELECT md001,md002,md003,md004,md005,md006,create_date FROM invma WHERE md001 >= '$seq1'  AND md001 <= '$seq2' AND md002 >= '$seq3' AND md002 <= '$seq4' "; 
+            $query = $this->db->query($sql);
+	    return $query->result_array();
+          }
+		
+	function printfd()           //印明細表一筆以上
+          {
+	    $seq1=$this->input->post('md001c');    //查詢一筆以上
+	    $seq2=$this->input->post('md002c'); 
+	    $seq3=$this->input->post('md003c'); 
+	    $seq4=$this->input->post('md004c'); 
+	    $sql = " SELECT * FROM invma WHERE md001 >= '$seq1'  AND md001 <= '$seq2' AND md002 >= '$seq3' AND md002 <= '$seq4' "; 
+            $query = $this->db->query($sql);
+	    $ret['rows'] = $query->result();
+		
+            $seq32 = "md001 >= '$seq1'  AND md001 <= '$seq2' AND md002 >= '$seq3' AND md002 <= '$seq4' ";	
+	    $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+		              ->from('invma')
+		              ->where($seq32);
+	    $num = $query->get()->result();		
+	    $ret['num_rows'] = $num[0]->count;		
+	    return $ret;
+          }
+		 
+	function updatef()   //更改一筆
+          {
+	    $md001=$this->input->post('md001');
+	    $md002=$this->input->post('md002');
+            $data = array(			
+		          'modifier' => $this->session->userdata('manager'),
+		          'modi_date' => date("Ymd"),
+		          'flag' => $this->input->post('flag')+1,
+                          'md001' => $this->input->post('md001'),
+		          'md002' => $this->input->post('md002'),
+		          'md003' => $this->input->post('md003'),
+		          'md004' => $this->input->post('md004'),
+		          'md005' => $this->input->post('md005'),
+		          'md006' => $this->input->post('md006')      
+                        );
+            $this->db->where('md001', $md001);
+	    $this->db->where('md002', $md002);
+            $this->db->update('invma',$data);                   //更改一筆
+            if ($this->db->affected_rows() > 0)
+              {
+                 return TRUE;
+              }
+                 return FALSE;
+          }
+		
+	function deletef($seg1,$seg2)      //刪除一筆 暫存
+          {  
+	    $seg1=$this->uri->segment(4);
+            $seg2=$this->uri->segment(5); 
+	    $this->db->where('md001', $seg1);
+	    $this->db->where('md002', $seg2);
+            $this->db->delete('invma'); 
+	    if ($this->db->affected_rows() > 0)
+              {
+                return TRUE;
+              }
+                return FALSE;					
+          }	  
+	  
+	function delmutif()   //選取刪除多筆 
+          {           
+            $seq[] = array('','','','','','','','','','','','','','','');
+            $x=0;	
+            $seq1=' ';
+            $seq2=' ';			
+	    if (!empty($_POST['selected'])) 
+	         {
+                   foreach($_POST['selected'] as $check) 
+			    {
+			      $seq[$x] = $check; 
+		    	      list($seq1, $seq2) = explode("/", $seq[$x]);
+		    	      $seq1;
+		    	      $seq2;
+			      $this->db->where('md001', $seq1);
+			      $this->db->where('md002', $seq2);
+                              $this->db->delete('invma'); 
+	                    }
+                 }
+	  if ($this->db->affected_rows() > 0)
+             {
+                return TRUE;
+             }
+                return FALSE;					
+          }
+		  
+	  function ajaxbomq07a($seg1)    //ajax 查詢一筆 顯示用 途程代號8
+          { 	              
+	    $this->db->set('me001', $this->uri->segment(4));
+	    $this->db->where('me001', $this->uri->segment(4));	
+	    $query = $this->db->get('bomme');
+			
+	    if ($query->num_rows() > 0) 
+		 {
+		   $res = $query->result();
+		   foreach ($query->result() as $row)
+          {
+               $result=$row->me002;
+            }
+		   return $result;   
+		 }
+	  }
+
+}
+
+/* End of file model.php */
+/* Location: ./application/model/model.php */

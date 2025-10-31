@@ -1,0 +1,346 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Pali03 extends CI_Controller {           //擴展類必须註明由母類擴展而來 (自訂類使用 ci 框架)
+	
+	  public function __construct()       //在類中使用構造函數,必须在構造函數中顯式繼承母類構造函數
+	    {
+     	  parent::__construct();        //繼承父類別
+	      $this->load->helper('url');   //載入預設url 庫函數及數据庫配置	
+	      $this->load->library("session");	  
+	      $this->load->library('excel');
+	    }
+		
+	//自訂類預設執行函數 流覽資料	
+	  public function index()           
+	    {                      
+          $limit = 15;    //每頁筆數
+	      $sort_order =  'desc';
+          $sort_by= 'mv001';		  
+	      $data['message'] = '資料流覽成功!';
+	      $data['sort_by'] = $sort_by;
+	      $data['sort_order'] = $sort_order;
+	      $this->load->model('pal/pali03_model');     // 加載TABLE model 模型		
+	      $result= $this->pali03_model->search($limit, $offset = 0 , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,mv001,desc
+	      $data['results'] = $result['rows'];   // 所有列資料
+	      $data['num_results'] = $result['num_rows'];  // 總筆數
+	      $data['numrow']=$result['num_rows'];  // 總筆數 
+	      $data['page']=$result['num_rows']/$limit; // 總頁數 
+	      $config = array();		
+	    //$config['NUM_LINKS'] = 2;   //分頁前後出現2個數字
+	      $config['per_page'] = '15';// 每頁筆數 必填
+	      $config['first_link'] = '首頁';
+	      $config['last_link'] = '尾頁';
+	      $config ['next_link'] = '下一頁>';
+          $config ['prev_link'] = '<上一頁';
+	      $config['display_pages'] = TRUE;  //顯示數字鏈接 
+	      $config['full_tag_open'] = '<p>';  // 分頁開始樣式
+	      $config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+	      $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+          $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	      $config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1
+	      $this->pagination->initialize($config);    //分頁初始化 display 3
+	      $config['base_url'] = site_url("pal/pali03/display/$sort_by/$sort_order");   //設定分頁url路徑
+	      $config['total_rows'] = $result['num_rows']; // 總筆數
+	      $config['per_page'] = $limit;                //每頁筆數
+	      $config['uri_segment'] = 6;       //當前頁
+	      $this->pagination->initialize($config);
+	      $data['pagination'] = $this->pagination->create_links();	
+	      $data['username'] = $this->session->userdata('manager');  //session 儲存的使用者代號
+	      $data['curpage'] = $this->uri->segment(6,1);   //當前頁
+	      $data['limit'] = $limit ;    //每頁筆數
+	      $data['systitle'] ='員工基本資料建立作業';  //網頁抬頭顯示名稱
+	      $data['menu_v'] = 'main_menu_v';
+	      $data['content_v'] = 'pal/pali03_brow_v';		
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_headbrow_v');
+	    }
+		
+	//欄位表頭排序   資料流覽
+	  public function display($sort_by = 'mv001', $sort_order = 'desc', $offset = 0)  
+	    {		
+	      $limit = 15;    //每頁筆數
+	      $data['message'] = '資料瀏覽成功!';
+	      $data['sort_by'] = $sort_by;
+	      $data['sort_order'] = $sort_order;
+	      $this->load->model('pal/pali03_model');// 加載TABLE model 模型		
+	      $result= $this->pali03_model->search($limit, $offset , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,mv001,desc
+	      $data['results'] = $result['rows'];
+	      $data['num_results'] = $result['num_rows'];
+	      $this->load->library('pagination');
+	      $data['numrow']=$result['num_rows'];// 總筆數 
+	      $data['page']=$result['num_rows']/$limit; // 總頁數 
+	      $config = array();		
+	    //$config['NUM_LINKS'] = 2;   //分頁前後出現2個數字, 預設5個
+	      $config['per_page'] = '15';// 每頁筆數 必填
+	      $config['first_link'] = '首頁';
+	      $config['last_link'] = '尾頁';
+	      $config ['next_link'] = '下一頁>';
+          $config ['prev_link'] = '<上一頁';
+	      $config['display_pages'] = TRUE;  //顯示數字鏈接 
+	      $config['full_tag_open'] = '<p>';  // 分頁開始樣式
+	      $config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+	      $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+          $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	      $config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1  ,分頁初始化 display 3 + 2 + 1 = 6
+	      $config['base_url'] = site_url("pal/pali03/display/$sort_by/$sort_order");   //設定分頁url路徑
+	      $config['total_rows'] = $result['num_rows']; // 總筆數
+	      $config['per_page'] = $limit;                //每頁筆數
+	      $config['uri_segment'] = 6;       //當前頁
+	      $this->pagination->initialize($config);     //分頁初始化 display 3 + 2 + 1 = 6
+	      $data['pagination'] = $this->pagination->create_links();	
+	      $data['username'] = $this->session->userdata('manager');
+	      $data['curpage'] = $this->uri->segment(6,1);   //當前頁第6無時顯示 1
+	      $data['limit'] = $limit ;    //每頁筆數
+	      $data['systitle'] ='國定假日建立作業';		  
+  	      $data['menu_v'] = 'main_menu_v';
+	      $data['content_v'] = 'pal/pali03_brow_v';		
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_headbrow_v');		
+	    } 
+	
+    //中英文取字串	
+	  public function CuttingStr($str, $strlen) 
+	    { 
+         //把'&nbsp;'先轉成空白
+         $str = str_replace('&nbsp;', ' ', $str);
+         $output_str_len = 0; //累計要輸出的擷取字串長度
+         $output_str = ''; //要輸出的擷取字串
+ 
+         //逐一讀出原始字串每一個字元
+         for($i=0; $i<strlen($str); $i++)  {
+            //擷取字數已達到要擷取的字串長度，跳出回圈
+            if($output_str_len >= $strlen){
+               break;
+              }
+  
+            //取得目前字元的ASCII碼
+            $str_bit = ord(substr($str, $i, 1));
+  
+            if($str_bit  <  128)  {
+                  //ASCII碼小於 128 為英文或數字字符
+                  $output_str_len += 1; //累計要輸出的擷取字串長度，英文字母算一個字數
+                  $output_str .= substr($str, $i, 1); //要輸出的擷取字串
+   
+            }elseif($str_bit  >  191  &&  $str_bit  <  224)  {
+                  //第一字節為落於192~223的utf8的中文字(表示該中文為由2個字節所組成utf8中文字)
+                  $output_str_len += 2; //累計要輸出的擷取字串長度，中文字需算二個字數
+                  $output_str .= substr($str, $i, 2); //要輸出的擷取字串
+                  $i++;
+   
+            }elseif($str_bit  >  223  &&  $str_bit  <  240)  {
+                  //第一字節為落於223~239的utf8的中文字(表示該中文為由3個字節所組成的utf8中文字)
+                  $output_str_len += 2; //累計要輸出的擷取字串長度，中文字需算二個字數
+                  $output_str .= substr($str, $i, 3); //要輸出的擷取字串
+                  $i+=2;
+   
+            }elseif($str_bit  >  239  &&  $str_bit  <  248)  {
+                  //第一字節為落於240~247的utf8的中文字(表示該中文為由4個字節所組成的utf8中文字)
+                  $output_str_len += 2; //累計要輸出的擷取字串長度，中文字需算二個字數
+                  $output_str .= substr($str, $i, 4); //要輸出的擷取字串
+                  $i+=3;
+            }
+          }
+ 
+          //要輸出的擷取字串為空白時，輸出原始字串
+          return ($output_str == '') ? $str : $output_str; 
+        }
+		
+	//提示輸入資料 key 是否重複 	
+	public function checkkey()   
+      {
+	   $this->load->model('pal/pali03_model');
+	   $data['result'] = $this->pali03_model->ajaxkey($this->uri->segment(4));
+       $Result = $data['result'];		  
+	   $this->load->vars($data);
+	   echo  $Result;
+      }
+	  
+	//篩選資料	
+	public function filter1($sort_by = 'mv001', $sort_order = 'desc', $offset = 0)   
+        {
+	     $limit = 15;
+	     $data['sort_by'] = $this->uri->segment(4);
+	     $data['sort_order'] = $this->uri->segment(5); 
+	     $seq6 = urldecode(urldecode($this->uri->segment(6))); 	 //解決亂碼
+         $seq7 ='1';		  
+	     $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';  // if else  = ? :
+	     $data['sort_order'] = $sort_order;
+	     $this->load->model('pal/pali03_model','',TRUE);   //true 系統會使用反單引號（`, 在英文鍵盤左上方）來保護你的欄位或資料表名稱
+	     $result=$this->pali03_model->filterf1($limit, $offset , $sort_by  , $sort_order);
+	     $data['message'] = '篩選資料成功!';	
+	     $data['results'] = $result['rows'];
+	     $data['num_results'] = $result['num_rows'];
+	     $this->load->library('pagination');
+	     $data['numrow']= $result['num_rows'];  // 總筆數 
+	     $data['page'] = $result['num_rows']/$limit;  // 總頁數 
+	     $config = array();
+         $config['per_page'] = $limit;// 每頁筆數
+	     $config['total_rows'] = $result['num_rows'];  // 總筆數 
+	     $config['first_link'] = '首頁';
+	     $config['last_link'] = '尾頁';
+	     $config ['next_link'] = '下一頁>';
+         $config ['prev_link'] = '<上一頁';
+	     $config['display_pages'] = TRUE;  //顯示數字鏈接
+	     $config['full_tag_open'] = '<p>';
+	     $config['full_tag_close'] = '</p>'; 
+	     $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+         $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	     $config['cur_page'] = $this->uri->segment(8,0);   //當前頁 結合分頁url路徑 +1
+	     $config['base_url'] = site_url("pal/pali03/filter1/$sort_by/$sort_order/$seq6/$seq7");  //設定分頁url路徑
+	     $config['per_page'] = $limit;
+	     $config['uri_segment'] = 8;
+	     $this->pagination->initialize($config);
+	     $data['pagination'] = $this->pagination->create_links();	
+	     $data['username'] = $this->session->userdata('manager');
+	     $data['curpage'] = $this->uri->segment(8,1);   //當前頁
+	     $data['limit'] = $limit ;    //每頁筆數
+	     $data['systitle'] ='員工基本資料建立作業';
+	     $data['menu_v'] = 'main_menu_v';
+	     $data['content_v'] = 'pal/pali03_brow_v';
+	     $data['foot_v'] ='main_foot_v';
+	     $this->load->vars($data);
+	     $this->load->view('main_headbrow_v');
+        }
+		
+	 //新增輸入資料   
+      public function addform()   
+        {
+	     $data['date']= date("Ymd");
+	     $data['message'] = '';
+	     $data['username'] = $this->session->userdata('manager');
+	     $data['systitle'] ='員工基本資料-新增資料';
+	     $data['menu_v'] = 'main_menuno_v';
+	     $data['content_v'] = 'pal/pali03_add_v';
+	     $data['foot_v'] ='main_foot_v';
+	     $this->load->vars($data);
+	     $this->load->view('main_head_v');
+        }
+		
+	//新增存檔	
+      public function addsave()   
+        {
+	      $data['username'] = $this->session->userdata('manager');
+          $this->load->model('pal/pali03_model','',TRUE);
+	      $action = $this->pali03_model->insertf();
+	      $data['message'] = '成功:'.$action['done'].'筆 失敗:'.$action['total']-$action['done'].'筆';
+	      $data['systitle'] ='國定假日資料-新增資料';
+	      $data['menu_v'] = 'main_menuno_v';
+	      $data['content_v'] = 'pal/pali03_add_v';
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_head_v');
+        }
+		
+	//複製資料輸入	
+      public function copyform()   
+        {
+	     $data['username'] = $this->session->userdata('manager');
+	     $data['message'] = '';
+	     $data['systitle'] ='國定假日資料-複製資料';
+	     $data['menu_v'] = 'main_menuno_v';
+	     $data['content_v'] = 'pal/pali03_copy_v';
+	     $data['foot_v'] ='main_foot_v';
+	     $this->load->vars($data);
+	     $this->load->view('main_head_v');
+        }
+		
+	//複製存檔	
+      public function copysave()   //複製存檔
+        {
+	     $data['username'] = $this->session->userdata('manager');
+         $this->load->model('pal/pali03_model','',TRUE);
+	     $data['message'] = '複製成功!';
+         $action = $this->pali03_model->copyf();
+	     if ($action)      // "=="只比較數值，而"==="數值與類型一起比較
+	       {
+	         $data['message'] = "複製".$action['done']."筆";
+	       }
+	     $data['systitle'] ='國定假日資料-複製資料';
+	     $data['menu_v'] = 'main_menuno_v';
+	     $data['content_v'] = 'pal/pali03_copy_v';
+	     $data['foot_v'] ='main_foot_v';
+	     $this->load->vars($data);
+	     $this->load->view('main_head_v');
+        }
+		
+	//修改存檔	
+      public function updsave()   
+        {
+	     $data['username'] = $this->session->userdata('manager');
+	     $data['message'] = '修改資料成功!';
+         $this->load->model('pal/pali03_model','',TRUE);
+	     $this->load->vars($data);
+	     $this->pali03_model->updatef();
+	     redirect('pal/pali03/'.$this->session->userdata('search1'));
+        }
+		
+	//修改輸入資料	
+      public function updform()   
+        {
+          $data['seq1'] = $this->uri->segment(4); 
+	      $data['message'] = '查詢一筆修改資料!';
+	      $this->load->model('pal/pali03_model');
+	      $data['result'] = $this->pali03_model->selone($this->uri->segment(4));
+	      $data['username'] = $this->session->userdata('manager');
+	      $data['systitle'] ='國定假日資料-修改資料';
+	      $data['menu_v'] = 'main_menuno_v';
+	      $data['content_v'] = 'pal/pali03_upd_v';
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_head_v');
+        }
+		
+	//看資料
+      public function see()   
+        {      
+	      $data['seq1'] = $this->uri->segment(4);
+	      $data['message'] = '查看一筆資料!';
+	      $this->load->model('pal/pali03_model');
+	      $data['result'] = $this->pali03_model->selone($this->uri->segment(4));
+	      $data['username'] = $this->session->userdata('manager');
+	      $data['systitle'] ='國定假日資料-查看資料';
+	      $data['menu_v'] = 'main_menuno_v';
+	      $data['content_v'] = 'pal/pali03_see_v';
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_head_v');
+        }
+		
+	//刪除單筆
+      public function del()   
+        {      
+       	  $seg1=$this->uri->segment(4);
+          $seg2=$this->uri->segment(5); 
+	      $data['message'] = '刪除資料成功!';
+	      $this->load->model('pal/pali03_model','',TRUE);
+	      $this->pali03_model->deletef($seg1,$seg2);
+	      $this->display();
+        }
+		
+    //刪除選取
+      public function delete()   
+        {    
+	      $data['message'] = '刪除資料成功!';
+	      $this->load->model('pal/pali03_model','',TRUE);
+	      $this->pali03_model->delmutif();
+	      $this->display();
+        }
+	
+	//刪除單筆
+      public function del_ajax()   
+        {
+       	  $seg1 = $_GET['ms001'];
+		  $seg2 = $_GET['ms002'];
+	      $this->load->model('pal/pali03_model','',TRUE);
+	      if($this->pali03_model->deletef($seg1,$seg2))
+			$message = "刪除資料成功!";
+		  else
+			$message = "刪除資料失敗!";
+		  echo $message;
+        }
+}
+/* End of file puri01.php */
+/* Location: ./application/controllers/puri01.php */
+?>

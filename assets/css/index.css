@@ -1,0 +1,12 @@
+@charset "utf-8";
+/* CSS Document */
+.dv li
+{
+	height:35px
+}
+
+.dv li a
+{
+	font-size:16px;
+	color:#F39;
+}

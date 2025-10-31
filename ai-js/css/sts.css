@@ -1,0 +1,255 @@
+/*
+
+會計稅務專用css
+
+
+*/
+
+.button {
+    background-color: #87B42B;
+    border: none;
+    color: white;
+    padding: 5px ;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    margin: 4px 2px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.button1 {
+    background-color: #008CBA;
+}
+
+.button2 {
+    background-color: gray;
+}
+
+.button3 {
+    background-color: #806261;
+    padding: 5px 20px 5px 20px;
+    font-size: 1.2em;
+}
+
+.mh11 {
+    color: rgba(255,255,255,1);
+    transition: all 0.5s;
+    position: relative;
+}
+
+.mh11:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    border: 1px solid rgba(255,255,255,0.5);
+    transition: all 0.3s;
+}
+.mh11:hover:before{
+    opacity: 0;
+    transform: scale(1.2,1.2);
+}
+.mh11:after{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    opacity: 0;
+    background-color: rgba(255,255,255,0.25);
+    transition: all 0.3s;
+    transform: scale(0.5,0.5);
+}
+.mh11:hover:after{
+    opacity: 1 ;
+    transform: scale(1,1);
+}
+
+/*定義邊框*/
+#singleFieldTags{
+    border:0px solid #b1c9dc;
+    background:#FFFFFF;
+}
+/*定義輸入元素text*/
+#singleFieldTags input{
+    background:#FFFFFF;
+    color:#000000;
+}
+/*定義標籤樣式*/
+#singleFieldTags li{
+    background:#FFFFFF;
+    border:1px solid #668800;
+    color:red;
+}
+/*第一輸入元素的父元素*/
+#singleFieldTags .tagit-new{
+    border:none;
+}
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+    
+}
+.custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    
+}
+
+/* 下拉式選單輸入框 */
+.custom-combobox-input {
+    font-family: 微軟正黑體, Arial, Helvetica, sans-serif;
+    border:1px solid #d3d3d3;
+    margin: 0;
+    padding: 5px 10px;
+    width: 150px;
+}
+
+.ui-widget-content {
+	background: #ffffff /*url("images/ui-bg_flat_75_ffffff_40x100.png")*/ 50% 50% repeat-x;
+	color: #222222;
+}
+.ui-widget-content1 .ui-state-default1,
+.ui-widget-header .ui-state-default1 {
+	border: 1px solid #d3d3d3;
+	background: #000000 /*url("images/ui-bg_glass_75_e6e6e6_1x400.png")*/ 50% 50% repeat-x;
+	font-weight: normal;
+	color: #555555;
+}
+/* 下拉式選單輸入框 */
+
+/* 提示框 */
+.ui-tooltip {
+	padding: 8px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 300px;
+	-webkit-box-shadow: 0 0 5px #aaa;
+	box-shadow: 0 0 5px #aaa;
+}
+/* 提示框 */
+
+.ui-state-highlight1 {
+	border: 1px solid green;
+	background: #FFFFFF /*url("images/ui-bg_glass_55_fbf9ee_1x400.png")*/ 50% 50% repeat-x;
+	color: #333;
+}
+
+
+.ui-autocomplete {
+	position: absolute;
+	top: 0;
+	left: 0;
+	cursor: default;
+    border:1px solid #d3d3d3;
+    height:50%;
+}
+
+/* 下拉式選單內容 */
+.ui-menu {
+    font-family: 微軟正黑體, Arial, Helvetica, sans-serif;
+    width: auto;
+    height: auto;
+    max-height: 30%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index:9999;
+}
+.ui-menu .ui-menu {
+	position: relative;
+}
+.ui-menu .ui-menu-item {
+    background-color: #F8FDE5;
+	position: relative;
+	margin: 0;
+	padding: 3px 1em 3px .4em;
+	cursor: pointer;
+	min-height: 0; /* support: IE7 */
+	/* support: IE10, see #8844 */
+	list-style-image: url("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7");
+}
+.ui-menu .ui-menu-item a{
+    background:#FFFFFF;
+}
+/* 下拉式選單內容 */
+
+.sts_container{
+	padding:0;
+	margin: 0;
+	width:100%;
+	/*border: 1px solid #7db434;
+	background-color: #ffffff;*/
+	overflow: auto;
+}
+
+.sts_Approvalchapter{
+	position: absolute;
+	top: 30px;
+	right: 150px; 
+}
+
+.sts_tag,.sts_tagtw{
+	display:inline-block;
+	width:auto;
+	height:1.875em;
+	line-height:1.875em;
+	padding:0em 0.625em;
+	margin: 0.2em;
+	border-radius: 0.25em;
+	background-color: #dddddd;
+	font-size:1.1em;
+	font-weight:600;
+	font-family: 微軟正黑體, Arial, Helvetica, sans-serif;
+	color:#ffffff;
+	text-align: center;
+	cursor:pointer;
+	border: 1px solid #d5e2ca;
+	box-shadow:  inset 0 1px 0px rgba(255,255,255,0.4),inset 0 -2px rgba(0,0,0,0.2);
+}/*************sts標籤設定*****************/
+
+.sts_tagtw{
+	background-color: #f5f6e6;
+	color:#000000;
+}
+.sts_tagtw:active{
+	position:relative;
+	top:1px;
+	box-shadow: none!important;
+}
+
+/************************** 以下為測試增、刪行功能 *******************************/
+/************************** 以下為測試增、刪行功能 *******************************/
+.table-tb {
+    display: table;
+    border-collapse: collapse;
+    border-spacing: 5px;
+    /*border: 2px solid #000;*/
+}
+
+.table-row {
+    display: table-row;
+    border: 1px solid #000;
+}
+
+.table-cell {
+    display: table-cell;
+    /*border: 1px solid #000;*/
+    vertical-align: middle;
+    height: 30px;
+    padding:5px;
+}
+/************************** 以上為測試增、刪行功能 *******************************/
+/************************** 以上為測試增、刪行功能 *******************************/

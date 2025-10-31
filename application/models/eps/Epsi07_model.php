@@ -1,0 +1,1017 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class epsi07_model extends CI_Model {
+	
+	function __construct()
+        {
+          parent::__construct();      //重載ci底層程式 自動執行父類別
+        }
+		
+	//查詢 table 表所有資料-舊版 	 
+	function selbrowse($num,$offset)   
+        {            
+	      $this->db->select('td001, td002, td003, td004, td0011, td0019,td020, create_date');
+          $this->db->from('epstd');
+          //$this->db->order_by('id', 'DESC');                //排序  單欄
+	      $this->db->order_by('td001 desc, td002 desc');    //排序  單欄以上 asc 由小至大 desc預設由大至小
+	      $this->db->limit($num,$offset);   // 每頁15筆
+	      $ret['rows']=$this->db->get()->result();
+	      $this->db->select('COUNT(*) as count');    //查詢總筆數
+	      $this->db->from('epstd');
+          $query = $this->db->get();
+	      $tmp = $query->result();
+	      $ret['num_rows'] = $tmp[0]->count;
+	      return $ret;	
+        }
+		
+	//欄位表頭排序流覽資料-舊版
+	function search($limit, $offset, $sort_by, $sort_order)     
+	    { 
+	     $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	     $sort_columns = array('a.td001', 'a.td002', 'a.td003', 'a.td004', 'a.td011', 'a.td019','a.td030','b.ma002','a.create_date');
+	     $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否在 table 內
+	     $query = $this->db->select('a.td001, a.td002, a.td003, a.td004, b.ma002,  a.td029, a.td030,a.create_date')
+	                       ->from('epstd as a')
+						    ->join('copma as b', 'a.td004 = b.ma001','left')
+		                   ->order_by($sort_by, $sort_order)
+		                   ->limit($limit, $offset);
+	     $ret['rows'] = $query->get()->result();
+	
+	     $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                       ->from('epstd');
+	     $num = $query->get()->result();		
+	     $ret['num_rows'] = $num[0]->count;		
+	     return $ret;
+	    }
+	
+	//建構SQL字串 新增純粹以sql做查詢的方法
+	function construct_sql($limit = 15, $offset = 0, $func = "")
+	  {
+		$this->session->set_userdata('epsi07_search',"display_search/".$offset);
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+		
+		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
+		    { unset($_SESSION['epsi07']['search']);}
+		
+		if(is_array($this->input->get())){
+			extract($this->input->get());
+			$temp_url = explode(".html",$val);
+			$val = "";
+			foreach($temp_url as $k => $v){$val.=$v;}
+		}
+		$default_where = "";//在這裡塞入一些預設條件，如不顯示離職員工等等
+		$default_order = "td001 asc,td002 desc";//在這裡塞入一些預設排序
+		
+		/* where 處理區域 */
+		if($default_where){
+			$where = "(".$default_where.")";
+		}else{
+			$where = "";
+		}
+		
+		if(isset($_SESSION['epsi07']['search']['where'])){
+			if($where){$where .= " and ";}
+			$where .= $_SESSION['epsi07']['search']['where'];
+		}
+		
+		if($this->input->post('find005')){
+			if($where){$where .= " and ";}
+			$where .= $this->input->post('find005');
+		}
+		
+		if($func == "and_where" && @strlen($key)+@strlen($val)!=0){
+			if($where){$where .= " and ";}
+			$key_ary = explode(",",$key);
+			$val_ary = explode(",",$val);
+			$value = "";
+			foreach($key_ary as $key => $val){
+				if($value != ""){$value .= " and ";}
+				$value .= $val." like '".$val_ary[$key]."%' ";  //%% 合部搜尋 先一個 like '%
+			}
+			$where .= "(".$value.")";
+		}
+		
+		if($func == "or_where" && @strlen($key)+@strlen($val)!=0){
+			if($where){$where .= " or ";}
+			$key_ary = explode(",",$key);
+			$val_ary = explode(",",$val);
+			$value = "";
+			foreach($key_ary as $key => $val){
+				if($value != ""){$value .= " or ";}
+				$value .= $val." like '".$val_ary[$key]."%' ";
+			}
+			$where .= "(".$value.")";
+		}
+		
+		if($where == ""){$where=false;}
+		/* where end */
+		
+		/* order 處理區域 */
+		if($this->input->post('find007')){
+			$order = $this->input->post('find007');
+		}else{
+			$order = "";
+		}
+		
+		if($func == "order" && @strlen($val)!=0){
+			$value = $val;
+			$order = $value;
+		}else{
+			$order = "";
+		}
+		
+		if(isset($_SESSION['epsi07']['search']['order'])){
+			if($order){$order .= " , ";}
+			$order .= $_SESSION['epsi07']['search']['order'];
+		}
+		
+		if(!isset($_SESSION['epsi07']['search']['order']) && $default_order){
+			if($order){$order .= " , ";}
+			$order .= $default_order;
+		}
+		/* order end */
+		
+		/* Data SQL */
+		$query = $this->db->select('a.*,c.mq002,c.mq002 as td001disp,b.ma002,d.mb002,b.ma002 as td004disp,d.mb002 as td007disp')
+	                       ->from('epstd as a')
+						   ->join('purma as b', 'a.td004 = b.ma001','left')
+						   ->join('cmsmq as c', 'a.td001 = c.mq001','left')
+						   ->join('cmsmb as d', 'a.td007 = d.mb001 ','left')
+			               ->order_by($order);
+		if($where){
+			$query->where($where);
+		}
+		$ret['data'] = $query->get()->result();
+		//建構暫存view 1060614 上一頁,下一頁使用
+		$this->construct_view($ret['data']);
+	
+		$query = $this->db->select('a.*,c.mq002,c.mq002 as td001disp,b.ma002,d.mb002,b.ma002 as td004disp,d.mb002 as td007disp')
+	                       ->from('epstd as a')
+						   ->join('purma as b', 'a.td004 = b.ma001','left')
+						   ->join('cmsmq as c', 'a.td001 = c.mq001','left')
+						   ->join('cmsmb as d', 'a.td007 = d.mb001 ','left')
+			               ->order_by($order)
+			               ->limit($limit, $offset);
+		if($where){
+			$query->where($where);
+		}
+		$ret['data'] = $query->get()->result();
+		//儲存sql 語法
+		$_SESSION['epsi07']['search']['sql'] = $this->db->last_query();
+		
+		/* Num SQL 1060803*/ 
+		$query = $this->db->select('COUNT(*) as total_num')
+			->from('epstd as a')
+			->join('purma as b', 'a.td004 = b.ma001','left')
+			->join('cmsmq as c', 'a.td001 = c.mq001','left')
+			->join('cmsmb as d', 'a.td007 = d.mb001 ','left');
+		if($where){
+			$query->where($where);
+		}
+		$ret['num'] = $query->get()->result();
+		$ret['num'] = $ret['num'][0]->total_num;
+		
+		//儲存where與order
+		$_SESSION['epsi07']['search']['where'] = $where;
+		$_SESSION['epsi07']['search']['order'] = $order;
+		$_SESSION['epsi07']['search']['offset'] = $offset;
+		
+		return $ret;
+	}
+	
+	//新增暫存view表方法construct_view 上一筆,下一筆 2017.04.10
+	function construct_view($data){
+		//此處要設定primary key有哪幾個 以加班單為例應該輸入array("tf001","tf002")以方便導向
+		$pk_array = array(
+			"td001","td002"
+		);
+		$view_array = array();
+		$index_array = array();
+		
+		foreach($data as $key => $val){
+			$key_str = "";
+			foreach($pk_array as $pk_k => $pk_v){
+				if($key_str){
+					$key_str .= "_";
+				}$key_str .= $val->$pk_v;
+			}
+			$view_array[$key_str] = $key;
+			$index_array[$key] = $key_str;
+		}
+		$_SESSION['epsi07']['search']['view'] = $view_array;
+		$_SESSION['epsi07']['search']['index'] = $index_array;
+		//echo "<pre>";var_dump($_SESSION['epsi07']['search']['view']);exit;
+	}
+	
+	//查詢一筆 修改用   
+	function selone($seg1, $seg2) {
+		$this->db->select('a.* ,c.mq002 AS td001disp, d.mb002 AS td003disp,e.mv002 as td009disp, 
+		  b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
+		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te015,
+		  ,f.ma002 as  te010disp');
+		 
+        $this->db->from('epstd as a');	
+        $this->db->join('epste as b', 'a.td001 = b.te001  and a.td002=b.te002 ','left');	//單身	
+		$this->db->join('cmsmq as c', 'a.td001 = c.mq001  ','left');  //單別epsi01
+		$this->db->join('cmsmb as d', 'a.td007 = d.mb001 ','left');  //廠別
+		$this->db->join('cmsmv as e', 'a.td009 = e.mv001 ','left');  //人員代號5	
+		$this->db->join('copma as f', 'b.te010 = f.ma001 ','left');  //客戶
+		
+		$this->db->where('a.td001', $seg1); 
+	    $this->db->where('a.td002', $seg2); 
+		$this->db->order_by('td001 , td002,te003 ');
+		
+		
+		
+		$query = $this->db->get();
+	//	echo "<pre>";var_dump($query->num_rows());exit;
+		
+	    if ($query->num_rows() <= 0){return "no_data";}
+		
+		$result['title_data'] = $query->result();
+		
+		$this->db->select('b.*')
+			->from('epste as b')
+			->where('b.te001', $seg1)
+			->where('b.te002', $seg2);
+		$query = $this->db->get();
+		
+	    if ($query->num_rows() <= 0){$result['body_data']=array();return $result;}
+		
+		$result['body_data'] = $query->result();
+		
+		return $result;
+	  }
+	  
+	//查詢修改用 (看資料用)   
+	function selone_old($seq1,$seq2)  { 
+		  $this->db->select('a.* ,c.mq002 AS td001disp, d.mb002 AS td007disp,e.mf002 AS td008disp, f.mv002 AS td006disp,g.na003 AS td014disp,
+		  ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
+		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
+		 
+        $this->db->from('epstd as a');	
+        $this->db->join('epste as b', 'a.td001 = b.te001  and a.td002=b.te002 ','left');	//單身	
+		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ','left');  //單別
+	    $this->db->join('cmsmb as d', 'a.td007 = d.mb001 ','left');    //廠別
+		$this->db->join('cmsmf as e', 'a.td008 = e.mf001 ','left');		//幣別
+		$this->db->join('cmsmv as f ', 'a.td006 = f.mv001 and f.mv022 = " " ','left');  //業務人員
+		$this->db->join('cmsna as g ', 'a.td014 = g.na002 and g.na001= "1" ','left');    //付款條件
+		$this->db->join('copma as h', 'a.td004 = h.ma001 ','left');  //客戶代號
+		$this->db->join('cmsmc as i', 'b.te007 = i.mc001 ','left');   //庫別
+		$this->db->join('cmsme as j', 'a.td005 = j.me001 ','left');   //部門
+		$this->db->where('a.td001', $this->uri->segment(4)); 
+	    $this->db->where('a.td002', $this->uri->segment(5)); 
+		$this->db->order_by('td001 , td002 ,b.te003');
+		
+		$query = $this->db->get();
+			
+	    if ($query->num_rows() > 0) 
+		 {
+		   $result = $query->result();
+		   return $result;   
+		 }
+	    }
+		
+	//ajax 下拉視窗查詢類 google 下拉 明細 品號品名	15 改 10  1060815
+	function lookup($keyword){     
+      $this->db->select('mb001, mb002, mb003,mb004')->from('epstd');  
+      $this->db->like('mb001',urldecode(urldecode($this->uri->segment(4))),'after');
+	  $this->db->or_like('mb002',urldecode(urldecode($this->uri->segment(4))), 'after');
+      $this->db->limit('10');		
+      $query = $this->db->get(); 
+      return $query->result();
+    }  	
+	
+	//ajax 下拉視窗查詢類 google 下拉 明細 庫別
+	function lookupa($keyword){     
+      $this->db->select('mc001, mc002')->from('cmsmc');  
+      $this->db->like('mc001',urldecode(urldecode($this->uri->segment(4))),'after');
+	  $this->db->or_like('mc002',urldecode(urldecode($this->uri->segment(4))), 'after');
+      $this->db->limit('10');		
+      $query = $this->db->get(); 
+      return $query->result();
+    } 	
+			
+	//進階查詢 
+	function findf($limit, $offset, $sort_by, $sort_order)     
+         {            		
+	      //$seq5='';$seq51='';$seq7='';$seq71='';		  
+	      $seq11 = "SELECT COUNT(*) as count  FROM `epstd` ";
+	      $seq1 = "td001, td002, td003, td004, td004 as td004disp,td005, td006,td007,td08,td010,td011,td012, create_date FROM `epstd` ";
+          $seq2 = "WHERE `a.create_date` >=' ' ";
+	      $seq32 = "`a.create_date` >='' ";
+          $seq33 = 'a.td001 desc' ;
+          $seq9 = " ORDER BY a.td001 " ;
+	      $seq91=" limit ";
+	      $seq92=", ";
+	      $seq5= "`a.create_date` >='' ";
+		 
+          $seq7="a.td001 ";
+
+          if (trim($this->input->post('find005'))!='')
+		    {
+			 $seq5=$this->input->post('find005');
+		     $seq2="WHERE ".$seq5;
+		     $seq32=$seq5;
+		    }
+	      if ($seq5!='') {$seq2="WHERE ".$seq5;$seq32=$seq5;}
+			  
+	      if (trim($this->input->post('find007'))!='') 
+	        {
+		     $seq7=$this->input->post('find007');			   
+		     $seq9=" ORDER BY ".$seq7;
+		     $seq33=$seq7;
+		    }
+        if ($seq7!='') {$seq9=" ORDER BY ".$seq7;$seq33=$seq7;}
+		//下一頁不要跑掉 1050317 1060815
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+	    }
+		if(@$_SESSION['epsi07_sql_term']){$seq32 = $_SESSION['epsi07_sql_term'];}
+		if(@$_SESSION['epsi07_sql_sort']){$seq33 = $_SESSION['epsi07_sql_sort'];}
+		
+		
+		
+         $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	     $sort_columns = array('td001', 'td002', 'td003', 'td004','b.ma002', 'td005', 'td006','td007','td008','td010','td011','td012','td019','td027','a.create_date');
+	     $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否在 table 內
+	     $query = $this->db->select('a.*,c.mq002,c.mq002 as td001disp,b.ma002,d.mb002,b.ma002 as td004disp,d.mb002 as td007disp')
+	                       ->from('epstd as a')
+						   ->join('purma as b', 'a.td004 = b.ma001','left')
+						   ->join('cmsmq as c', 'a.td001 = c.mq001','left')
+						   ->join('cmsmb as d', 'a.td007 = d.mb001 ','left')
+		                   ->where($seq32)
+			               ->order_by($seq33)
+			              ->limit($limit, $offset);
+	     $ret['rows'] = $query->get()->result();
+		
+	     $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+	                       ->from('epstd as a')
+		                   ->where($seq32);
+	     $num = $query->get()->result();		
+	     $ret['num_rows'] = $num[0]->count;		
+	     return $ret;
+        }
+		
+	//篩選多筆  舊版   
+	function filterf1($limit, $offset , $sort_by  , $sort_order)          
+	    {    
+	      $seq4 = trim(urldecode(urldecode($this->uri->segment(6)))); 	 //解決亂碼          
+          $sort_by = $this->uri->segment(4);			
+          $sort_order = $this->uri->segment(5);	
+	      $offset=$this->uri->segment(8,0);
+	      $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';
+	      $sort_columns = array('a.td001', 'a.td002', 'a.td003', 'a.td004', 'b.ma002', 'a.td029','a.td030','a.create_date');
+          $sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否為 table
+	      $this->db->select('a.td001, a.td002, a.td003, a.td004,b.ma002,  a.td029,a.td030, a.create_date');
+	      $this->db->from('epstd as a');
+		  $this->db->join('copma as b', 'a.td004 = b.ma001 ','left');
+	      $this->db->like($sort_by, $seq4, 'after');
+	      $this->db->order_by($sort_by, $sort_order);
+	      //$this->db->order_by('td001 asc, td002 asc');
+	      $this->db->limit($limit, $offset);   // 每頁15筆
+	      $query = $this->db->get();    
+	      $ret['rows'] = $query->result();
+						
+	      $this->db->select('COUNT(*) as count');    // 計算筆數	
+	      $this->db->from('epstd as a');
+		  $this->db->join('copma as b', 'a.td004 = b.ma001 ','left');
+	      $this->db->like($sort_by, $seq4, 'after');	
+	      $query = $this->db->get();
+	      $tmp = $query->result();		
+	      $ret['num_rows'] = $tmp[0]->count;			
+	      return $ret;					 
+        }
+		
+	//查新增資料是否重複 (單頭)  
+	function selone1($seg1,$seg2)    
+        {
+	      $this->db->where('td001', $seg1);
+		  $this->db->where('td002', $seg2);
+	      $query = $this->db->get('epstd');
+	      return $query->num_rows() ;
+	    }
+		
+	//查新增資料是否重複 (單身)	
+    function selone1d($seg1,$seg2,$seg3)    
+        {
+	      $this->db->where('te001', $seg1);
+		  $this->db->where('te002', $seg2);
+		  $this->db->where('te003', $seg3);
+	      $query = $this->db->get('epste');
+	      return $query->num_rows() ;
+	    }  	
+ 		
+	//新增一筆 檔頭  epstd	
+	function insertf()    //新增一筆 檔頭  epstd
+        {
+		    //刪日期 / 符號
+		     preg_match_all('/\d/S',$this->input->post('td004'), $matches);  //處理日期字串
+			 $td004 = implode('',$matches[0]);
+			 preg_match_all('/\d/S',$this->input->post('td016'), $matches);  //處理日期字串
+			 $td016 = implode('',$matches[0]);
+			   
+			 $td001=$this->input->post('td001');
+			 $td002=$this->input->post('td002');
+			 $td002no=$td002;   //明細用再新增一筆時加1
+			 //檢查資料是否已存在 若存在加1
+			  while($this->epsi07_model->selone1($td001,$td002)>0){
+				$td002 = $this->check_title_no($td001,$td016);
+				$td002no=$td002;
+			}
+			
+	     $data = array( 
+	             'company' => $this->session->userdata('syscompany'),
+	             'creator' => $this->session->userdata('manager'),
+		         'usr_group' => 'A100',
+		         'create_date' =>date("Ymd"),
+		         'modifier' => '',
+		         'modi_date' => '',
+		         'flag' => 0,
+                 'td001' => $td001,
+		         'td002' => $td002,
+		         'td003' => $this->input->post('td003'),
+		         'td004' => $td004,    
+		         'td005' => $this->input->post('td005'),       
+		         'td006' => $this->input->post('td006'),    
+                 'td007' => $this->input->post('td007'),    
+                 'td008' => $this->input->post('td008'),  
+                 'td009' => $this->input->post('td009'),
+                 'td010' => $this->input->post('td010'),		
+                 'td011' => $this->input->post('td011'),
+                 'td012' => $this->input->post('td012'),
+                 'td013' => $this->input->post('td013'),	
+                 'td014' => $this->input->post('td014'),	
+                 'td015' => $this->input->post('td015'),	
+                 'td016' => $td016,
+				 'td017' => $this->input->post('td017'),
+                 'td018' => $this->input->post('td018'),
+                 'td019' => $this->input->post('td019')
+               );
+	    
+             $this->db->insert('epstd', $data);
+			
+			if ($this->input->post()){
+				extract($this->input->post());
+			}
+			if(!is_array($order_product)){$order_product=array();}
+		// 新增明細 epste  
+		      $vte003='1010';   //流水號重新排序
+		   foreach($order_product as $key => $val){
+		        if($val['te003'] && $val['te004']){
+				        extract($val);
+					//	preg_match_all('/\d/S',$te013, $matches);  //處理日期字串
+			         //   $te013 = implode('',$matches[0]);
+						$data = array( 
+							'company' => $this->session->userdata('syscompany'),
+							'creator' => $this->session->userdata('manager'),
+							'usr_group' => 'A100',
+							'create_date' =>date("Ymd"),
+							'modifier' => '',
+							'modi_date' => '',
+							'flag' => 0,
+							'te001' => $td001,
+							'te002' => $td002no
+						);
+						foreach($val as $k=>$v){
+							if($k!="te001"&&$k!="te002"&&$k!="te010disp"){//主鍵不用更改以及其他外來鍵庫別名稱
+							    if($k=="te003") {$data[$k] = $vte003;} else {$data[$k] = $v;}
+							}
+						}
+					$this->db->insert('epste', $data);
+					$mte003 = (int) $vte003+10;
+			        $vte003 =  (string)$mte003;
+				}
+			}
+		 }
+	
+    //自動列印	
+	function auto_print(){
+		$this->db->select('mq016');
+		$this->db->from('cmsmq');
+		$this->db->where("mq001",$this->input->post('copi03'));	
+		$query = $this->db->get();
+		$tmp = $query->result();
+		if($tmp[0]->mq016=="Y"){
+		      echo "<script>window.open('printbb/".$this->input->post('copi03')."/".$this->input->post('td002').".html', '_blank','menubar=no,status=no,scrollbars=no,top=0,left=0,toolbar=no,width=800,height=600');</script>";
+		}
+	}	
+		 
+	//查複製資料是否重複	 
+	/*
+    function selone2($seq1,$seq2)    
+        { 
+	      $this->db->where('td001', $this->input->post('td001c')); 
+          $this->db->where('td002', $this->input->post('td002c'));
+	      $query = $this->db->get('epstd');
+	      return $query->num_rows() ; 
+	    } */
+		  
+	//複製一筆	
+    function copyf()           
+        {
+	        $this->db->where('td001', $this->input->post('td001o'));
+			$this->db->where('td002', $this->input->post('td002o'));
+	        $query = $this->db->get('epstd');
+	        $exist = $query->num_rows();
+            if (!$exist)
+	          {
+		       return 'exist';
+	          }         		
+         //   if ($query->num_rows() != 1) { return 'exist'; }
+		    if ($query->num_rows() == 1) 
+		       {
+			     $result = $query->result();
+			     foreach($result as $row):
+                $td003=$row->td003;$td004=$row->td004;$td005=$row->td005;$td006=$row->td006;$td007=$row->td007;$td008=$row->td008;$td009=$row->td009;$td010=$row->td010;
+				$td011=$row->td011;$td012=$row->td012;$td013=$row->td013;$td014=$row->td014;$td015=$row->td015;$td016=$row->td016;
+				$td017=$row->td017;$td018=$row->td018;$td019=$row->td019;$td020=$row->td020;$td021=$row->td021;$td022=$row->td022;
+				$td023=$row->td023;$td024=$row->td024;$td025=$row->td025;$td026=$row->td026;$td027=$row->td027;$td028=$row->td028;
+				$td029=$row->td029;$td030=$row->td030;$td031=$row->td031;$td032=$row->td032;$td033=$row->td033;$td034=$row->td034;
+				$td035=$row->td035;$td036=$row->td036;$td037=$row->td037;$td038=$row->td038;$td039=$row->td039;$td040=$row->td040;$td041=$row->td041;
+				$td042=$row->td042;$td043=$row->td043;$td044=$row->td044;$td045=$row->td045;$td046=$row->td046;$td047=$row->td047;
+				$td048=$row->td048;$td049=$row->td049;$td050=$row->td050;$td051=$row->td051;
+			endforeach;
+		       }   
+		  
+            $seq1=$this->input->post('td001c');    //主鍵一筆檔頭epstd
+			$seq2=$this->input->post('td002c');    
+	        $data = array( 
+	               'company' => $this->session->userdata('syscompany'),
+	               'creator' => $this->session->userdata('manager'),
+		           'usr_group' => 'A100',
+		           'create_date' =>date("Ymd"),
+		           'modifier' => ' ',
+		           'modi_date' => ' ',
+		           'flag' => 0,
+		           'td001' => $seq1,'td002' => $seq2,'td003' => $td003,'td004' => $td004,'td005' => $td005,'td006' => $td006,'td007' => $td007,'td008' => $td008,'td009' => $td009,'td010' => $td010,
+		           'td011' => $td011,'td012' => $td012,'td013' => $td013,'td014' => $td014,'td015' => $td015,'td016' => $td016,'td017' => $td017,
+				   'td018' => $td018,'td019' => $td019,'td020' => $td020,'td021' => $td021,'td022' => $td022,'td023' => $td023,'td024' => $td024,
+				   'td025' => $td025,'td026' => $td026,'td027' => $td027,'td028' => $td028,'td029' => $td029,'td030' => $td030,
+				   'td031' => $td031,'td032' => $td032,'td033' => $td033,'td034' => $td034,'td035' => $td035,'td036' => $td036,
+				   'td037' => $td037,'td038' => $td038,'td039' => $td039,'td040' => $td040,'td041' => $td041,'td042' => $td042,
+				   'td043' => $td043,'td044' => $td044,'td045' => $td045,'td046' => $td046,'td047' => $td047,'td048' => $td048,
+				   'td049' => $td049,'td050' => $td050,'td051' => $td051
+                   );
+				   
+            $exist = $this->epsi07_model->selone1($seq1,$seq2);  //檢查單頭是否重複
+		    if ($exist)
+		      {
+			    return 'exist';
+		      }         
+             $this->db->insert('epstd', $data);      //複製一筆  
+			
+			//複製一筆明細
+			$this->db->where('te001', $this->input->post('td001o'));
+			$this->db->where('te002', $this->input->post('td002o'));
+	        $query = $this->db->get('epste');
+	        $exist = $query->num_rows();
+            if (!$exist)
+	          {
+		       return 'exist';
+	          }         
+			    $num=$query->num_rows();
+          //  if ($query->num_rows() != 1) { return 'exist'; }
+		    if ($query->num_rows() >= 1) 
+		       {
+			     $result = $query->result();
+				 $i=0;
+			     foreach($result as $row):
+                 $te003[$i]=$row->te003;$te004[$i]=$row->te004;$te005[$i]=$row->te005;$te006[$i]=$row->te006;$te007[$i]=$row->te007;
+				 $te008[$i]=$row->te008;$te009[$i]=$row->te009;$te010[$i]=$row->te010;$te011[$i]=$row->te011;$te012[$i]=$row->te012;
+				 $te013[$i]=$row->te013;$te014[$i]=$row->te014;$te015[$i]=$row->te015;$te016[$i]=$row->te016;$te017[$i]=$row->te017;
+				 $te018[$i]=$row->te018;$te019[$i]=$row->te019;$te020[$i]=$row->te020;$te021[$i]=$row->te021;$te022[$i]=$row->te022;
+			     $te023[$i]=$row->te023;$te024[$i]=$row->te024;$te025[$i]=$row->te025;$te026[$i]=$row->te026;$te027[$i]=$row->te027;
+				 $te028[$i]=$row->te028;$te029[$i]=$row->te029;$te030[$i]=$row->te030;$te031[$i]=$row->te031;$te032[$i]=$row->te032;
+				 $te033[$i]=$row->te033;$te034[$i]=$row->te034;$te035[$i]=$row->te035;$te036[$i]=$row->te036;
+				 $i++;
+			    endforeach;
+		       }   
+			$seq1=$this->input->post('td001c');    //主鍵一筆明細epste
+			$seq2=$this->input->post('td002c'); 
+              $i=0;
+            while ($i<$num) {	
+			  $data_array = array( 
+	             'company' => $this->session->userdata('syscompany'),
+	             'creator' => $this->session->userdata('manager'),
+		         'usr_group' => 'A100',
+		         'create_date' =>date("Ymd"),
+		         'modifier' => '',
+		         'modi_date' => '',
+		         'flag' => 0,
+                'te001' => $seq1,'te002' => $seq2,'te003' => $te003[$i],'te004' => $te004[$i],'te005' => $te005[$i],'te006' => $te006[$i],'te007' => $te007[$i],
+		         'te008' => $te008[$i],'te009' => $te009[$i],'te010' => $te010[$i],'te011' => $te011[$i],'te012' => $te012[$i],'te013' => $te013[$i],
+				 'te014' => $te014[$i],'te015' => $te015[$i],'te016' => $te016[$i],'te017' => $te017[$i],'te018' => $te018[$i],'te019' => $te019[$i],
+				 'te020' => $te020[$i],'te021' => $te021[$i],'te022' => $te022[$i],'te023' => $te023[$i],'te024' => $te024[$i],'te025' => $te025[$i],
+				 'te026' => $te026[$i],'te027' => $te027[$i],'te028' => $te028[$i],'te029' => $te029[$i],'te030' => $te030[$i],'te031' => $te031[$i],'te032' => $te032[$i],
+				 'te033' => $te033[$i],'te034' => $te034[$i],'te035' => $te035[$i],'te036' => $te036[$i]
+                ); 
+				
+             $this->db->insert('epste', $data_array);      //複製一筆 
+             $i++;			 
+            }
+             return true;		
+	   }
+
+	//轉excel檔   
+	function excelnewf()           
+        {			
+	      $seq1=$this->input->post('td001o');    
+	      $seq2=$this->input->post('td001c');
+		  $seq3=$this->input->post('td002o');    
+	      $seq4=$this->input->post('td002c');
+	      $sql = " SELECT td001,td002,td039,td004,ma002 as td004disp,te003,te004,te005,te006,te010,te008,te011,te012 
+		  FROM epstd as a,epste as b,copma as c WHERE td001=te001 and td002=te002 and td004=ma001 and td001 >= '$seq1'  AND td001 <= '$seq2' AND  td002 >= '$seq3'  AND td002 <= '$seq4'  "; 
+          $query = $this->db->query($sql);
+	      return $query->result_array();
+        }
+	
+	//印明細表	
+	function printfd()          
+        {
+	      $seq1=$this->input->post('td001o');    
+	      $seq2=$this->input->post('td001c');
+		  $seq3=$this->input->post('td002o');    
+	      $seq4=$this->input->post('td002c');
+	      $sql = " SELECT a.td001,a.td002,a.td039,a.td004,c.ma002 as td004disp,b.te003,b.te004,b.te005,b.te006,b.te010,b.te008,b.te011,b.te012
+		  FROM epstd as a,epste as b,copma as c
+		  WHERE td001=te001 and td002=te002 and td004=ma001 and td001 >= '$seq1'  AND td001 <= '$seq2' AND td002 >= '$seq3'  AND td002 <= '$seq4'  "; 
+          $query = $this->db->query($sql);
+	      $ret['rows'] = $query->result();
+		  
+          $seq32 = "td001 >= '$seq1'  AND td001 <= '$seq2' AND td002 >= '$seq3'  AND td002 <= '$seq4'  ";	
+	      $query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+		              ->from('epstd')
+		              ->where($seq32);
+	      $num = $query->get()->result();		
+	      $ret['num_rows'] = $num[0]->count;		
+	      return $ret;
+        }
+		
+	//選取印單據筆	
+	function printfd1()   
+       {           
+           $this->db->select('a.* ,c.mq002 AS td001disp, d.me002 AS td004disp, e.mb002 AS td010disp, f.mv002 AS td012disp,
+		  b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
+		  b.te006, b.te007, b.te011, b.te009, b.te017, b.te018, b.te012');
+		 
+        $this->db->from('epstd as a');	
+        $this->db->join('epste as b', 'a.td001 = b.te001  and a.td002=b.te002 ','left');		
+		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="31" ','left');
+		$this->db->join('cmsme as d', 'a.td004 = d.me001 ','left');
+	    $this->db->join('cmsmb as e', 'a.td010 = e.mb001 ','left');
+		$this->db->join('cmsmv as f ', 'a.td012 = f.mv001 and f.mv022 = " " ','left');		
+		$this->db->where('a.td001', $this->uri->segment(4)); 
+	    $this->db->where('a.td002', $this->uri->segment(5)); 
+		$this->db->order_by('td001 , td002 ,b.te003');
+		
+		$query = $this->db->get();
+		$ret['rows'] = $query->result();
+		$seq1=$this->uri->segment(4);
+		$seq2=$this->uri->segment(5);
+		$this->db->where('te001', $this->uri->segment(4));
+		$this->db->where('te002', $this->uri->segment(5));
+	    $query = $this->db->get('epste');	      
+	    $num = $query->get()->result();		
+	    $ret['num_rows'] = $num[0]->count;
+		return $ret;
+       }
+	   
+	 //印單據筆   一次多筆列印
+	function printfc()   
+      {           
+        $this->db->select('a.* ,c.mq002 AS td001disp, d.mb002 AS td007disp,e.mf002 AS td008disp, f.mv002 AS td006disp,g.na003 AS td014disp,
+		  ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
+		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
+		 
+        $this->db->from('epstd as a');	
+        $this->db->join('epste as b', 'a.td001 = b.te001  and a.td002=b.te002 ','left');	//單身	
+		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ','left');  //單別
+	    $this->db->join('cmsmb as d', 'a.td007 = d.mb001 ','left');    //廠別
+		$this->db->join('cmsmf as e', 'a.td008 = e.mf001 ','left');		//幣別
+		$this->db->join('cmsmv as f ', 'a.td006 = f.mv001 and f.mv022 = " " ','left');  //業務人員
+		$this->db->join('cmsna as g ', 'a.td014 = g.na002 and g.na001= "1" ','left');    //付款條件
+		$this->db->join('copma as h', 'a.td004 = h.ma001 ','left');  //客戶代號
+		$this->db->join('cmsmc as i', 'b.te007 = i.mc001 ','left');   //庫別
+		$this->db->join('cmsme as j', 'a.td005 = j.me001 ','left');   //部門	
+		$this->db->where('a.td001', $this->input->post('td001o')); 
+	    $this->db->where('a.td002 >= '.$this->input->post('td002o').' and a.td002 <= '.$this->input->post('td002c')); 
+		$this->db->order_by('td001 , td002 ,b.te003');
+		
+		$query = $this->db->get();
+	    $result['rows'] = $query->result();
+	    if ($query->num_rows() > 0) 
+		 {
+		 return $result;
+		 }
+      }
+	  //印單據筆  半張紙letter1/2 A4half  公司表頭
+		function companyf()   
+        {           
+          $this->db->select(' * ');
+		 $this->db->from('cmsml'); 		
+		$query = $this->db->get();
+	    $result1['rows1'] = $query->result();
+	    if ($query->num_rows() > 0) 
+		 {
+		 return $result1;
+		 }	    		
+        }
+	//  系統參數
+		function funsysf()   
+        {           
+          $this->db->select(' * ');
+		 $this->db->from('cmsma'); 		
+		$query = $this->db->get();
+	    $result2['rows2'] = $query->result();
+	    if ($query->num_rows() > 0) 
+		 {
+		 return $result2;
+		 }	    		
+        }
+		
+	//印單據筆  
+		function printfb()   
+        {           
+          $this->db->select('a.* ,c.mq002 AS td001disp, d.mb002 AS td007disp,e.mf002 AS td008disp, f.mv002 AS td006disp,g.na003 AS td014disp,
+		  ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
+		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
+		 
+        $this->db->from('epstd as a');	
+        $this->db->join('epste as b', 'a.td001 = b.te001  and a.td002=b.te002 ','left');	//單身	
+		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ','left');  //單別
+	    $this->db->join('cmsmb as d', 'a.td007 = d.mb001 ','left');    //廠別
+		$this->db->join('cmsmf as e', 'a.td008 = e.mf001 ','left');		//幣別
+		$this->db->join('cmsmv as f ', 'a.td006 = f.mv001 and f.mv022 = " " ','left');  //業務人員
+		$this->db->join('cmsna as g ', 'a.td014 = g.na002 and g.na001= "1" ','left');    //付款條件
+		$this->db->join('copma as h', 'a.td004 = h.ma001 ','left');  //客戶代號
+		$this->db->join('cmsmc as i', 'b.te007 = i.mc001 ','left');   //庫別
+		$this->db->join('cmsme as j', 'a.td005 = j.me001 ','left');   //部門
+		$this->db->where('a.td001', $this->uri->segment(4)); 
+	    $this->db->where('a.td002', $this->uri->segment(5)); 
+		$this->db->order_by('td001 , td002 ,b.te003');
+		
+		$query = $this->db->get();
+	    $result['rows'] = $query->result();
+	    if ($query->num_rows() > 0) 
+		 {
+		 return $result;
+		 }	    		
+        }
+		
+	//更改一筆	
+	function updatef()   
+        {
+			//substr($this->input->post('td003'),0,4).substr($this->input->post('td003'),5,2).substr(rtrim($this->input->post('td003')),8,2),
+			 //extract() 函数从数组中将变量导入到当前的符号表。相當於  $td002=$this->input->post('td002');
+             //该函数使用数组键名作为变量名，使用数组键值作为变量值。针对数组中的每个元素，将在当前符号表中创建对应的一个变量。
+			// if ($this->input->post()){
+			//	extract($this->input->post());
+			// }
+			preg_match_all('/\d/S',$this->input->post('td004'), $matches);  //處理日期字串
+			 $td004 = implode('',$matches[0]);
+			 preg_match_all('/\d/S',$this->input->post('td016'), $matches);  //處理日期字串
+			 $td016 = implode('',$matches[0]);
+			   
+			 $td001=$this->input->post('td001');
+			 $td002=$this->input->post('td002');
+          $data = array(			
+		        'modifier' => $this->session->userdata('manager'),
+		        'modi_date' => date("Ymd"),
+		        'flag' => $this->input->post('flag')+1,
+		         'td003' => $this->input->post('td003'),
+		         'td004' => $td004,    
+		         'td005' => $this->input->post('td005'),   
+		         'td006' => $this->input->post('td006'),    
+                 'td007' => $this->input->post('td007'),    
+                 'td008' => $this->input->post('td008'),  
+                 'td009' => $this->input->post('td009'),
+                 'td010' => $this->input->post('td010'),		
+                 'td011' => $this->input->post('td011'),
+                 'td012' => $this->input->post('td012'),
+                 'td013' => $this->input->post('td013'),	
+                 'td014' => $this->input->post('td014'),	
+                 'td015' => $this->input->post('td015'),	
+                 'td016' => $td016,
+				 'td017' => $this->input->post('td017'),
+                 'td018' => $this->input->post('td018'),
+                 'td019' => $this->input->post('td019')
+                );
+            $this->db->where('td001', $td001); //單別
+			$this->db->where('td002', $td002);
+            $this->db->update('epstd',$data);                   //更改一筆
+			
+			if ($this->input->post()){
+				extract($this->input->post());
+			}
+			if(!is_array($order_product)){$order_product=array();}
+		            $this->db->where('te001', $td001);
+					$this->db->where('te002', $td002);
+					$this->db->delete('epste'); //刪除明細 1060809
+					
+		    $vte003='1010';   //流水號重新排序
+			foreach($order_product as $key => $val){
+				extract($val);
+			//	preg_match_all('/\d/S',$te013, $matches);  //處理日期字串
+			 //   $te013 = implode('',$matches[0]);
+				if($this->seldetail($td001,$td002,$val['te003'])>0){
+					$data = array(
+						'modifier' => $this->session->userdata('manager'),
+						'modi_date' => date("Ymd"),
+						'flag'  => $flag
+					);
+					foreach($val as $k=>$v){
+						if($k!="te001"&&$k!="te002"&&$k!="te010disp" ){//主鍵不用更改以及其他外來鍵庫別名稱 te013日期等別處理
+							if($k=="te003") {$data[$k] = $vte003;} else {$data[$k] = $v;}
+						}
+					}
+					$this->db->where('te001', $td001);
+					$this->db->where('te002', $td002);
+					$this->db->where('te003', $vte003);
+					$this->db->update('epste',$data);//更改一筆
+					$mte003 = (int) $vte003+10;
+			        $vte003 =  (string)$mte003;
+				}else{
+					if($val['te003'] && $val['te004']){
+						$data = array( 
+							'company' => $this->session->userdata('syscompany'),
+							'creator' => $this->session->userdata('manager'),
+							'usr_group' => 'A100',
+							'create_date' =>date("Ymd"),
+							'modifier' => '',
+							'modi_date' => '',
+							'flag' => 0,
+							'te001' => $td001,
+							'te002' => $td002
+						);
+						foreach($val as $k=>$v){
+							if($k!="te001"&&$k!="te002"&&$k!="te010disp"){//主鍵不用更改以及其他外來鍵庫別名稱
+								if($k=="te003") {$data[$k] = $vte003;} else {$data[$k] = $v;}
+							}
+						}
+						$this->db->insert('epste', $data);
+						$mte003 = (int) $vte003+10;
+			            $vte003 =  (string)$mte003;
+					}
+				}
+				
+			}
+	
+        }
+		
+	//查複製資料是否重複	 
+    function seldetail($seg1,$seg2,$seg3)    
+        { 	
+			$this->db->where('te001', $seg1);
+			$this->db->where('te002', $seg2);
+	        $this->db->where('te003', $seg3);
+	        $query = $this->db->get('epste');
+	        return $query->num_rows() ; 
+	    }	
+		
+	//刪除一筆 	
+	function deletef($seg1)      
+        { 
+	      $this->db->where('td001', $this->uri->segment(4));
+		  $this->db->where('td002', $this->uri->segment(5));
+          $this->db->delete('epstd'); 
+		  $this->db->where('te001', $this->uri->segment(4));
+		  $this->db->where('te002', $this->uri->segment(5));
+          $this->db->delete('epste'); 
+	      if ($this->db->affected_rows() > 0)
+              {
+                return TRUE;
+              }
+                return FALSE;					
+        }	
+		
+	//刪除一筆細項	
+	function deletedetailf($seg1,$seg2,$seg3)
+        { 
+	      $this->db->where('te001', $seg1);
+	      $this->db->where('te002', $seg2);
+	      $this->db->where('te003', $seg3);
+          $this->db->delete('epste'); 
+	      if ($this->db->affected_rows() > 0)
+              {
+                return TRUE;
+              }
+                return FALSE;					
+        }		
+		
+	//選取刪除多筆   
+	function delmutif()   
+       {           
+          $seq[] = array('','','','','','','','','','','','','','','');
+          $x=0;	
+          $seq1=' ';
+          $seq2=' ';			
+	    if (!empty($_POST['selected'])) 
+	         {
+                foreach($_POST['selected'] as $check) 
+			    {
+			      $seq[$x] = $check; 
+		    	      list($seq1, $seq2) = explode("/", $seq[$x]);
+		    	      $seq1;
+		    	      $seq2;
+					  //只要有一筆Y就不能刪除
+					$query6c = $this->db->query("SELECT UPPER(te016) as te0161 FROM epste WHERE te001='$seq1' AND te002='$seq2' AND ( UPPER(te016)='Y' or te009>0 ) ");         
+                    foreach ($query6c->result() as $row)
+                          {
+                            $te0161[]=$row->te0161;		 
+                          }
+                         if(isset($te0161[0])) {
+	                         $vte0161=$te0161[0];
+                                                 }
+	                     else 
+                            { $vte0161='N'; }    //結案碼
+						
+						
+				if ($vte0161 != 'Y') {	  
+			      $this->db->where('td001', $seq1);
+			      $this->db->where('td002', $seq2);
+                  $this->db->delete('epstd'); 
+				  $this->db->where('te001', $seq1);
+			      $this->db->where('te002', $seq2);
+				  $this->db->delete('epste'); $this->session->set_userdata('msg1',"未出貨已刪除"); }
+					 else {$this->session->set_userdata('msg1',"已出貨不可刪除");} 
+				  
+	            }
+            }
+	    if ($this->db->affected_rows() > 0)
+            {
+              return TRUE;
+            }
+              return FALSE;					
+       }
+	   
+	//刪除明細一筆新增修改時使用   
+	function del_detail(){
+		$this->db->where('te001', $_POST['del_md001']);
+		$this->db->where('te002', $_POST['del_md002']);
+		$this->db->where('te003', $_POST['del_md003']);
+		$this->db->delete('epste');
+	}
+	
+	/*==以下AJAX處理區域==*/
+	//ajax 下拉視窗查詢類 google 下拉 明細 庫別
+	function lookup_old($select_col=array(),$search_col=array(),$keyword=array(),$limit=15){
+		$sel_col = "";
+		foreach($select_col as $val){
+			if($sel_col){$sel_col.=",";}
+			$sel_col .= $val;
+		}
+		if($sel_col == ""){$sel_col = "*";}
+		$this->db->select($sel_col)->from('invmb');
+		foreach($search_col as $key => $val){
+			if($key == "and"){
+				$this->db->like($val,$keyword[$val],'after');
+			}elseif($key == "or"){
+				$this->db->or_like($val,$keyword[$val], 'after');
+			}
+		}
+		$this->db->limit($limit);
+		$query = $this->db->get();
+		return $query->result();
+    }
+	
+	//取單號 最大值加1
+	function check_title_no($epsi01,$td016){
+		preg_match_all('/\d/S',$td016, $matches);  //處理日期字串
+		$td016 = implode('',$matches[0]);
+		//echo var_dump($td070);exit;
+		
+		$this->db->select('MAX(td002) as max_no')
+			->from('epstd')
+			->where('td001', $epsi01)
+			->where('td016', $td016);
+		//	->like('td070', $td070, "after");
+			
+		$query = $this->db->get();
+		$result = $query->result();
+		//echo var_dump($td001.$td070);exit;
+		
+	    if (!$result[0]->max_no){return $td016."001";}
+		
+		return $result[0]->max_no+1;
+	}
+	function check_vno_no(){
+	
+		$this->db->select('MAX(id) as max_no')
+			->from('invoice');
+		//	->where('td039', $td039);
+		//	->like('td039', $td039, "after");
+			
+		$query = $this->db->get();
+		$result = $query->result();
+		
+	   // if (!$result[0]->max_no){return $td039."001";}
+		
+		return $result[0]->max_no;
+	}
+}
+/* End of file model.php */
+/* Location: ./application/model/model.php */
+?>

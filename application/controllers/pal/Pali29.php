@@ -1,0 +1,660 @@
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Pali29 extends CI_Controller {           //擴展類必须註明由母類擴展而來 (自訂類使用 ci 框架)
+	
+	  public function __construct()       //在類中使用構造函數,必须在構造函數中顯式繼承母類構造函數
+	    {
+     	  parent::__construct();        //繼承父庫別
+	      $this->load->helper('url');   //載入預設url 庫函數及數据庫配置	
+	      $this->load->library("session");	  
+	      $this->load->library('excel');
+	    }
+		
+	//自訂類預設執行函數 流覽資料	
+	  public function index()           
+	    {                      
+          $limit = 15;    //每頁筆數
+	      $sort_order =  'desc';
+          $sort_by= 'md001';		  
+	      $data['message'] = '資料流覽成功!';
+	      $data['sort_by'] = $sort_by;
+	      $data['sort_order'] = $sort_order;
+	      $this->load->model('pal/pali29_model');     // 加載TABLE model 模型		
+	      $result= $this->pali29_model->search($limit, $offset = 0 , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,md001,desc
+	      $data['results'] = $result['rows'];   // 所有列資料
+	      $data['num_results'] = $result['num_rows'];  // 總筆數
+	    //$this->load->library('pagination');
+	      $data['numrow']=$result['num_rows'];  // 總筆數 
+	      $data['page']=$result['num_rows']/$limit; // 總頁數 
+	      $config = array();		
+	    //$config['NUM_LINKS'] = 2;   //分頁前後出現2個數字
+	      $config['per_page'] = '15';// 每頁筆數 必填
+	      $config['first_link'] = '首頁';
+	      $config['last_link'] = '尾頁';
+	      $config ['next_link'] = '下一頁>';
+          $config ['prev_link'] = '<上一頁';
+	      $config['display_pages'] = TRUE;  //顯示數字鏈接 
+	      $config['full_tag_open'] = '<p>';  // 分頁開始樣式
+	      $config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+	      $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+          $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	      $config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1
+	   //   $this->pagination->initialize($config);    //分頁初始化 display 3
+	      $config['base_url'] = site_url("pal/pali29/display/$sort_by/$sort_order");   //設定分頁url路徑
+	      $config['total_rows'] = $result['num_rows']; // 總筆數
+	      $config['per_page'] = $limit;                //每頁筆數
+	      $config['uri_segment'] = 6;       //當前頁
+	   // $this->load->library('table');//加載table函數
+	      $this->pagination->initialize($config);
+	      $data['pagination'] = $this->pagination->create_links();	
+	      $data['username'] = $this->session->userdata('manager');  //session 儲存的使用者代號
+	    //$data['find05']=$this->session->userdata('find05'); 
+	    //$data['find07']=$this->session->userdata('find07');
+	      $data['curpage'] = $this->uri->segment(6,1);   //當前頁
+	      $data['limit'] = $limit ;    //每頁筆數
+	      $data['systitle'] ='異動薪資建立作業';  //網頁抬頭顯示名稱
+	      $data['menu_v'] = 'main_menu_v';
+	      $data['content_v'] = 'pal/pali29_brow_v';		
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_headbrow_v');
+	    }
+		
+	 //欄位表頭排序 資料流覽 
+	  public function display($sort_by = 'md001', $sort_order = 'desc', $offset = 0)  
+	    {		
+		$data['message'] = '資料瀏覽成功!';
+		$this->load->model('pal/pali29_model');// 加載TABLE model 模型	
+		$select_col = array('`palmt1`.*','b.mv002 as mt002disp','c.mo002 as mt001disp','c.mo003','c.mo004');	
+		//$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"a.md001 = b.mv001"));
+		$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"mt002 = b.mv001"),
+				'c'=>array('table'=>"palmo1",'method'=>"left",'term'=>"mt001 = c.mo001")
+				);
+		$where = array();
+		if(isset($mt001)){$where[] = array('name'=>"mt001",'method'=>"is",'value'=>$mt001);}
+		if(isset($like_mt001)){$where[] = array('name'=>"mt001",'method'=>"like",'value'=>$like_mt001);}
+		if(isset($mt001o)){$where[] = array('name'=>"mt001",'method'=>"bigger",'value'=>$mt001o);}
+		if(isset($mt001c)){$where[] = array('name'=>"mt001",'method'=>"less",'value'=>$mt001c);}
+
+		if(isset($mt002)){$where[] = array('name'=>"mt002",'method'=>"is",'value'=>$mt002);}
+		if(isset($like_mt002)){$where[] = array('name'=>"mt002",'method'=>"like",'value'=>$like_mt002);}
+		if(isset($mt002o)){$where[] = array('name'=>"mt002",'method'=>"bigger",'value'=>$mt002o);}
+		if(isset($mt002c)){$where[] = array('name'=>"mt002",'method'=>"less",'value'=>$mt002c);}
+
+		if(isset($mt003)){$where[] = array('name'=>"mt003",'method'=>"is",'value'=>$mt003);}
+		if(isset($like_mt003)){$where[] = array('name'=>"mt003",'method'=>"like",'value'=>$like_mt003);}
+		if(isset($mt003o)){$where[] = array('name'=>"mt003",'method'=>"bigger",'value'=>$mt003o);}
+		if(isset($mt003c)){$where[] = array('name'=>"mt003",'method'=>"less",'value'=>$mt003c);}
+		$data['data'] = $this->pali29_model->get_pali29($select_col,$join,$where);
+
+		$this->load->library('pagination');
+		$config = array();		
+		//$config['NUM_LINKS'] = 2;   //分頁前後出現2個數字, 預設5個
+		$config['first_link'] = '首頁';
+		$config['last_link'] = '尾頁';
+		$config ['next_link'] = '下一頁>';
+		$config ['prev_link'] = '<上一頁';
+		$config['display_pages'] = TRUE;  //顯示數字鏈接 
+		$config['full_tag_open'] = '<p>';  // 分頁開始樣式
+		$config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+		$config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+		$config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+		$config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1
+		//$this->pagination->initialize($config);    //分頁初始化 display 3 + 2 + 1 = 6
+		$config['base_url'] = site_url("pal/pali29/display/$sort_by/$sort_order");   //設定分頁url路徑
+		$data['pagination'] = $this->pagination->create_links();	
+		$data['username'] = $this->session->userdata('manager');
+		$data['systitle'] ='異動薪資建立作業';		  
+		$data['menu_v'] = 'main_menu_v';
+		$data['content_v'] = 'pal/pali29_brow_v';		
+		$data['foot_v'] ='main_foot_v';
+		$this->load->vars($data);
+		// $this->check_date();
+		
+		$this->load->view('main_headbrow_v');		
+	    } 
+		
+	//篩選資料 	
+	public function filter1($sort_by = 'md001', $sort_order = 'desc', $offset = 0)   
+       {
+	     $limit = 15;
+	     $data['sort_by'] = $this->uri->segment(4);
+	     $data['sort_order'] = $this->uri->segment(5); 
+	     $seq6 = urldecode(urldecode($this->uri->segment(6))); 	 //解決亂碼
+         $seq7 ='1';		  
+	     $sort_order = (substr($sort_order,0,3) == 'asc') ? 'asc' : 'desc';  // if else  = ? :
+	     $data['sort_order'] = $sort_order;
+	     $this->load->model('pal/pali29_model','',TRUE);   //true 系統會使用反單引號（`, 在英文鍵盤左上方）來保護你的欄位或資料表名稱
+	     $result=$this->pali29_model->filterf1($limit, $offset , $sort_by  , $sort_order);
+	     $data['message'] = '篩選資料成功!';	
+	     $data['results'] = $result['rows'];
+	     $data['num_results'] = $result['num_rows'];
+	     $this->load->library('pagination');
+	     $data['numrow']= $result['num_rows'];  // 總筆數 
+	     $data['page'] = $result['num_rows']/$limit;  // 總頁數 
+	     $config = array();
+         $config['per_page'] = $limit;// 每頁筆數
+	     $config['total_rows'] = $result['num_rows'];  // 總筆數 
+	     $config['first_link'] = '首頁';
+	     $config['last_link'] = '尾頁';
+	     $config ['next_link'] = '下一頁>';
+         $config ['prev_link'] = '<上一頁';
+	     $config['display_pages'] = TRUE;  //顯示數字鏈接
+	     $config['full_tag_open'] = '<p>';
+	     $config['full_tag_close'] = '</p>'; 
+	     $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+         $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	     $config['cur_page'] = $this->uri->segment(8,0);   //當前頁 結合分頁url路徑 +1
+	     $config['base_url'] = site_url("pal/pali29/filter1/$sort_by/$sort_order/$seq6/$seq7");  //設定分頁url路徑
+	     $config['per_page'] = $limit;
+	     $config['uri_segment'] = 8;
+	     $this->pagination->initialize($config);
+	     $data['pagination'] = $this->pagination->create_links();	
+	     $data['username'] = $this->session->userdata('manager');
+	     $data['curpage'] = $this->uri->segment(8,1);   //當前頁
+	     $data['limit'] = $limit ;    //每頁筆數
+	     $data['systitle'] ='異動薪資建立作業';
+	     $data['menu_v'] = 'main_menu_v';
+	     $data['content_v'] = 'pal/pali29_brow_v';
+	     $data['foot_v'] ='main_foot_v';
+	     $this->load->vars($data);
+	     $this->load->view('main_headbrow_v');
+	   //$this->load->view('pal/pali29_v', $data);
+       }
+	   
+	//進階查詢輸入資料	
+    public function findform()   
+        {
+	      $data['date']= date("Ymd");
+	      $data['username'] = $this->session->userdata('manager');
+	      $data['message'] = '';
+	      $data['systitle'] ='異動薪資-進階查詢';
+	      $data['menu_v'] = 'main_menuno_v';
+	      $data['content_v'] = 'pal/pali29_find_v';
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_head_v');
+        }    
+		
+	//進階查詢	
+	public function findsql($sort_by = 'md001', $sort_order = 'desc', $offset = 0)  
+	    {		
+		  session_start();
+		  if(@$_POST['find005']){
+			$_SESSION['admi05_sql_term'] = $_POST['find005'];
+		  }
+		  if(@$_POST['find007']){
+			$_SESSION['admi05_sql_sort'] = $_POST['find007'];
+		  }
+	      $limit = 15;    //每頁筆數
+	      $data['message'] = '資料流覽成功!';
+	      $data['sort_by'] = $sort_by;
+	      $data['sort_order'] = $sort_order;
+	      $this->load->model('pal/pali29_model');// 加載TABLE model 模型		
+	      $result= $this->pali29_model->findf($limit, $offset , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,md001,desc
+	      $data['results'] = $result['rows'];
+	      $data['num_results'] = $result['num_rows'];
+	      $this->load->library('pagination');
+	      $data['numrow']=$result['num_rows'];// 總筆數 
+	      $data['page']=$result['num_rows']/$limit; // 總頁數 
+	      $config = array();		
+	    //$config['NUM_LINKS'] = 2;   //分頁前後出現2個數字
+	      $config['per_page'] = '15';// 每頁筆數 必填
+	      $config['first_link'] = '首頁';
+	      $config['last_link'] = '尾頁';
+	      $config ['next_link'] = '下一頁>';
+          $config ['prev_link'] = '<上一頁';
+	      $config['display_pages'] = TRUE;  //顯示數字鏈接 
+	      $config['full_tag_open'] = '<p>';  // 分頁開始樣式
+	      $config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+	      $config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+          $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+	      $config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1
+	      $this->pagination->initialize($config);    //分頁初始化 display 3
+	      $config['base_url'] = site_url("pal/pali29/findsql/$sort_by/$sort_order");   //設定分頁url路徑
+	      $config['total_rows'] = $result['num_rows']; // 總筆數
+	      $config['per_page'] = $limit;                //每頁筆數
+	      $config['uri_segment'] = 6;       //當前頁
+	    //$this->load->library('table');//加載table函數
+	      $this->pagination->initialize($config);
+	      $data['pagination'] = $this->pagination->create_links();	
+	      $data['username'] = $this->session->userdata('manager');
+	      $data['curpage'] = $this->uri->segment(6,1);   //當前頁
+	      $data['limit'] = $limit ;    //每頁筆數
+	    //$data['find05']=$this->session->userdata('find05'); 
+	    //$data['find07']=$this->session->userdata('find07');
+	      $data['systitle'] ='異動薪資建立作業';
+	      $data['menu_v'] = 'main_menu_v';
+	      $data['content_v'] = 'pal/pali29_brow_v';		
+	      $data['foot_v'] ='main_foot_v';
+	      $this->load->vars($data);
+	      $this->load->view('main_headbrow_v');		
+	    } 
+		 public function clear_sql_term(){  //清除條件
+		session_start();
+		  if(@$_SESSION["admi05_sql_term"]) {unset($_SESSION["admi05_sql_term"]);}
+		  if(@$_SESSION["admi05_sql_sort"]) {unset($_SESSION["admi05_sql_sort"]);}
+		  $this->display();
+	  }
+	 //新增輸入資料   
+    public function addform()   
+      {
+	   $data['date']= date("Ymd");
+	   $data['message'] = '';
+	   $data['username'] = $this->session->userdata('manager');
+	   $data['systitle'] ='異動薪資-新增資料';
+	   $data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_add_v';
+	   $data['foot_v'] ='main_foot_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_head_v');
+      }
+	  
+	//新增存檔	
+    public function addsave()   
+      {
+		$data['username'] = $this->session->userdata('manager');
+		$this->load->model('pal/pali29_model','',TRUE);
+		$data['message'] = '新增資料成功!';
+		extract($this->input->post());
+		$mt003 = strtotime($mt003);
+		$mt003 = date('Y_n_j',$mt003);
+		$action = $this->pali29_model->insertf();
+		if ($action === 'exist')
+		 {
+			$data['message'] = '資料重複!';	    
+		 }
+		else if($action === TRUE){
+			echo '<script>alert("新增資料成功!!");parent.$.unblockUI();parent.view_detail_of_day("'.$mt003.'")</script>';
+		}
+		else if($action === FALSE){
+			echo '<script>alert("新增資料失敗，請聯絡資訊人員。!!");parent.$.unblockUI();</script>';
+		}
+		//redirect('pal/pali29/display');
+      }
+	  
+	//複製資料輸入	
+    public function copyform()   
+      {
+	   $data['username'] = $this->session->userdata('manager');
+	   $data['message'] = '';
+	   $data['systitle'] ='異動薪資-複製資料';
+	   $data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_copy_v';
+	   $data['foot_v'] ='main_foot_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_head_v');
+      }
+	  
+	//複製存檔	
+    public function copysave()   
+      {
+	   $this->load->helper('url');
+	 //$date=date("Ymd");
+	   $data['username'] = $this->session->userdata('manager');
+       $this->db->get('invma');	
+       $this->load->model('pal/pali29_model','',TRUE);
+	   $data['message'] = '複製成功!';
+       $action = $this->pali29_model->copyf();
+	   if ($action === 'exist')      // "=="只比較數值，而"==="數值與類型一起比較
+	     {
+	       $data['message'] = '資料重複!';		    
+	     }
+	   $data['systitle'] ='異動薪資-複製資料';
+	   $data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_copy_v';
+	   $data['foot_v'] ='main_foot_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_head_v');
+      }
+	  
+    //轉excel明細輸入起迄資料
+    public function exceldetail()   
+      {
+	   $data['message'] = '';
+	   $data['username'] = $this->session->userdata('manager');
+	   $data['systitle'] ='異動薪資-轉excel檔';
+	   $data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_excel_v';
+	   $data['foot_v'] ='main_foot_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_head_v');
+      }
+	  
+    //轉excel 檔
+    public function write()   
+      {
+       $this->load->model('pal/pali29_model','',TRUE);
+	   $data['message'] = '轉檔excel成功!';
+	   $data['username'] = $this->session->userdata('manager');
+	   $title = array('員工代號','員工姓名','部門代號','部門名稱','異動日期','日薪','本薪','職務加級','主管加級','伙食津貼','全勤獎金','特別津貼','業務津貼','執照津貼','資歷津貼','全薪');  //excel 表頭
+       $result1 = $this->pali29_model->excelnewf();	
+       $this->excel->writer($title,$result1);    //讀取excel  
+      }
+	  
+    //印明細起迄資料輸入
+    public function printdetail()   
+      {
+	   $data['username'] = $this->session->userdata('manager');
+	   $data['message'] = '';
+	   $data['systitle'] ='異動薪資-印明細表';
+	   $data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_print_v';
+	   $data['foot_v'] ='main_foot_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_head_v');
+      }
+	  
+	//印明細	
+    public function printa()   
+      {
+		  	$data['paper9']=$this->input->post('tl009c');
+       $this->load->model('pal/pali29_model','',TRUE);
+	   $data['message'] = '列印明細成功!';
+       $result = $this->pali29_model->printfd();
+	   $data['results'] = $result['rows'];
+	   $data['num_results'] = $result['num_rows'];
+	   $this->load->library('pagination');
+	   $data['numrow']=$result['num_rows'];// 總筆數 
+	   $data['username'] = $this->session->userdata('manager');
+	   $data['systitle'] ='異動薪資-印明細表';
+	 //$data['menu_v'] = 'main_menuno_v';
+	   $data['content_v'] = 'pal/pali29_printa_v';
+	 //$data['foot_v'] ='main_footno_v';
+	   $this->load->vars($data);
+	   $this->load->view('main_headprint_v');
+	 //$this->load->view('pal/pali29_printa_v',$data);  
+      }
+      
+	//修改存檔	
+    public function updsave()   
+        {
+			$data['username'] = $this->session->userdata('manager');
+			$data['message'] = '修改資料成功!';
+			$this->load->model('pal/pali29_model','',TRUE);
+			$this->load->vars($data);
+			extract($this->input->post());
+			if($this->pali29_model->updatef()){
+				$mt003 = strtotime($mt003);
+				$mt003 = date('Y_n_j',$mt003);
+				echo "<script>alert('儲存成功!');parent.$.unblockUI();parent.view_detail_of_day('".$mt003."')</script>";
+			}else{
+				echo "<script>alert('儲存失敗或資料沒有變動!請聯絡資訊人員。');parent.$.unblockUI();</script>";
+			}
+			//redirect('pal/pali29/display');
+        }
+		
+	//修改輸入資料	
+    public function updform()   //修改輸入資料
+      {
+        $data['seq1'] = urldecode(urldecode($this->uri->segment(4))); 
+	    $data['seq2'] = $this->uri->segment(5); 
+		$data['seq3'] = $this->uri->segment(6);
+	    $data['message'] = '查詢一筆修改資料!';
+	    //$this->db->get('invma');
+	    $this->load->model('pal/pali29_model');
+	    $data['result'] = $this->pali29_model->selone(urldecode(urldecode($this->uri->segment(4))),$this->uri->segment(5),$this->uri->segment(6));
+		if(count($data['result'])!=1){
+			echo "<script>alert('查無資料!!!');parent.$.unblockUI();</script>";$data['result']=array();
+		}else{
+			$data['username'] = $this->session->userdata('manager');
+			$data['systitle'] ='異動薪資-修改資料';
+			$data['menu_v'] = 'main_menuno_v';
+			$data['content_v'] = 'pal/pali29_upd_v';
+			$data['foot_v'] ='main_foot_v';
+			$this->load->vars($data);
+			$this->load->view('main_head_v');
+		}
+      }
+	
+    public function see()   //看資料
+      {      
+	    $data['seq1'] = urldecode(urldecode($this->uri->segment(4)));
+	    $data['seq2'] = $this->uri->segment(5);
+        $data['seq3'] = $this->uri->segment(6);		
+	    $data['message'] = '查看一筆資料!';
+	    $this->load->model('pal/pali29_model');
+	    $data['result'] = $this->pali29_model->selone(urldecode(urldecode($this->uri->segment(4))),$this->uri->segment(5),$this->uri->segment(6));
+	    $data['username'] = $this->session->userdata('manager');
+	    $data['systitle'] ='異動薪資-查看資料';
+	    $data['menu_v'] = 'main_menuno_v';
+	    $data['content_v'] = 'pal/pali29_see_v';
+	    $data['foot_v'] ='main_foot_v';
+	    $this->load->vars($data);
+	    $this->load->view('main_head_v');
+      }	
+	
+	public function display_add($offset = 0,$func = "")  //欄位表頭排序
+	  {
+		if($this->input->get()){extract($this->input->get());}
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+		
+		$time_ary = explode("_",$mt003);$mt003 = "";
+		foreach($time_ary as $val){if($val<10){$val="0".$val;}$mt003.=$val;}
+		
+		$select_col = array('`palmo1`.mo002 as mt001disp');	
+		$join = array();
+		$where = array();
+		if(isset($mt001)){$where[] = array('name'=>"mo001",'method'=>"is",'value'=>$mt001);}
+		
+		$this->load->model('pal/pali29_model');// 加載TABLE model 模型
+		$data['result'] = $this->pali29_model->get_pali16($select_col,$join,$where);
+		$data['result'][0] = new stdclass;
+		$data['result'][0]->mt001 = (isset($mt001)) ? $mt001 : "";
+		$data['result'][0]->mt003 = (isset($mt003)&&$mt003) ? $mt003 : date("Ymd");
+		$data['result'][0]->mt004 = (isset($mt004)) ? $mt004 : "";
+		$data['result'][0]->mt005 = (isset($mt005)) ? $mt005 : "";
+		
+		$data['message'] = '資料流覽成功!';
+		$this->load->library('pagination');
+		$config = array();		
+		$config['display_pages'] = TRUE;  //顯示數字鏈接 
+		$config['full_tag_open'] = '<p>';  // 分頁開始樣式
+		$config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+		$config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+		$config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+		$this->pagination->initialize($config);//分頁初始化 display 3 + 2 + 1 = 6
+		$data['username'] = $this->session->userdata('manager');
+		$data['systitle'] ='人事資料建立作業';
+		$data['menu_v'] = 'main_menu_v';
+		$data['content_v'] = 'pal/pali29_add_v';
+		//$data['foot_v'] ='main_foot_v';
+		$data['foot_v'] ='main_foot_v';
+		$this->load->vars($data);
+		$this->load->view('main_headchild_v');		
+	  }	
+	  
+	public function display_upd($offset = 0,$func = "")  //欄位表頭排序
+	  {
+		if($this->input->get()){extract($this->input->get());}
+		if (session_status() == PHP_SESSION_NONE) {
+			session_start();
+		}
+		$select_col = array('`palmt1`.*','b.mv002 as mt002disp','c.mo002 as mt001disp','c.mo003','c.mo004');	
+		$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"mt002 = b.mv001"),
+				'c'=>array('table'=>"palmo1",'method'=>"left",'term'=>"mt001 = c.mo001")
+				);
+		$where = array();
+		if(isset($mt001)){$where[] = array('name'=>"mt001",'method'=>"is",'value'=>$mt001);}
+
+		if(isset($mt002)){$where[] = array('name'=>"mt002",'method'=>"is",'value'=>$mt002);}
+
+		if(isset($mt003)){$where[] = array('name'=>"mt003",'method'=>"is",'value'=>$mt003);}
+		
+		$this->load->model('pal/pali29_model');// 加載TABLE model 模型
+		$data['result'] = $this->pali29_model->get_pali29($select_col,$join,$where);
+		/* echo "<pre>";var_dump($data['result']);exit; */
+		$data['message'] = '資料流覽成功!';
+		$this->load->library('pagination');
+		$config = array();		
+		$config['display_pages'] = TRUE;  //顯示數字鏈接 
+		$config['full_tag_open'] = '<p>';  // 分頁開始樣式
+		$config['full_tag_close'] = '</p>';   // 分頁结束樣式	
+		$config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
+		$config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
+		$this->pagination->initialize($config);//分頁初始化 display 3 + 2 + 1 = 6
+		$data['username'] = $this->session->userdata('manager');
+		$data['systitle'] ='人事資料建立作業';
+		$data['menu_v'] = 'main_menu_v';
+		$data['content_v'] = 'pal/pali29_upd_v';
+		//$data['foot_v'] ='main_foot_v';
+		$data['foot_v'] ='main_foot_v';
+		$this->load->vars($data);
+		$this->load->view('main_headchild_v');		
+	  }	
+	  
+	//刪除單筆
+    public function del()
+      {      
+     	$seg1=$this->uri->segment(4);
+        $seg2=$this->uri->segment(5); 
+	    $data['message'] = '刪除資料成功!';
+	    $this->load->model('pal/pali29_model','',TRUE);
+	    $this->pali29_model->deletef($seg1,$seg2);
+	    $this->display();
+       }
+	   
+    //刪除選取 
+    public function delete()   
+      {    
+	    $data['message'] = '刪除資料成功!';
+	    $this->load->model('pal/pali29_model','',TRUE);
+	    $this->pali29_model->delmutif();
+	    $this->display();
+      }
+	   
+	/*==以下AJAX處理區域==*/
+    public function ajax_del()
+      {
+		if(is_array($this->input->get()))extract($this->input->get());
+		if(is_array($this->input->post()))extract($this->input->post());
+	    $data['message'] = '刪除資料成功!';
+	    $this->load->model('pal/pali29_model','',TRUE);
+		$ret = array();
+		$ret['response'] = $this->pali29_model->deletef($mt001,$mt002,$mt003);
+		$mt003 = strtotime($mt003);
+		$mt003 = date('Y_n_j',$mt003);
+		$ret['mt003'] = $mt003;
+		echo json_encode($ret);
+      }
+	public function get_pali16(){
+		if(is_array($this->input->get()))extract($this->input->get());
+		if(is_array($this->input->post()))extract($this->input->post());
+		$this->load->model('pal/pali29_model','',TRUE);
+		$select_col = array('mo001','mo002','mo003','mo004','mo005','mo006','mo007');
+		//$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"a.md001 = b.mv001"));
+		$join = array();
+		$where = array();
+		if(isset($mo001)&&$mo001){$where[] = array('name'=>"mo001",'method'=>"is",'value'=>$mo001);}
+		if(isset($like_mo001)&&$like_mo001){$where[] = array('name'=>"mo001",'method'=>"like",'value'=>$like_mo001);}
+		if(isset($mo001o)&&$mo001o){$where[] = array('name'=>"mo001",'method'=>"bigger",'value'=>$mo001o);}
+		if(isset($mo001c)&&$mo001c){$where[] = array('name'=>"mo001",'method'=>"less",'value'=>$mo001c);}
+		
+		$data['data'] = $this->pali29_model->get_pali16($select_col,$join,$where);
+		
+		if(count($data['data'])>0){$data['response']=true;}else{$data['response']=false;}
+		if(($mo001s||$mo001e)&&!($mo001o||$mo001c)){$data['response']=false;}
+		//echo var_dump($data);exit;
+		echo json_encode($data);
+		
+	}
+	public function get_pali29(){
+		if(is_array($this->input->get()))extract($this->input->get());
+		if(is_array($this->input->post()))extract($this->input->post());
+		$this->load->model('pal/pali29_model','',TRUE);
+		$select_col = array('`palmt1`.*','b.mv002 as mt002disp','c.mo002 as mt001disp','c.mo003','c.mo004');
+		//$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"a.md001 = b.mv001"));
+		$join = array('b'=>array('table'=>"cmsmv",'method'=>"left",'term'=>"mt002 = b.mv001"),
+						'c'=>array('table'=>"palmo1",'method'=>"left",'term'=>"mt001 = c.mo001")
+						);
+		$where = array();
+		if(isset($mt001)&&$mt001){$where[] = array('name'=>"mt001",'method'=>"is",'value'=>$mt001);}
+		if(isset($like_mt001)&&$like_mt001){$where[] = array('name'=>"mt001",'method'=>"like",'value'=>$like_mt001);}
+		if(isset($mt001o)&&$mt001o){$where[] = array('name'=>"mt001",'method'=>"bigger",'value'=>$mt001o);}
+		if(isset($mt001c)&&$mt001c){$where[] = array('name'=>"mt001",'method'=>"less",'value'=>$mt001c);}
+		
+		if(isset($mt002)&&$mt002){$where[] = array('name'=>"mt002",'method'=>"is",'value'=>$mt002);}
+		if(isset($like_mt002)&&$like_mt002){$where[] = array('name'=>"mt002",'method'=>"like",'value'=>$like_mt002);}
+		if(isset($mt002o)&&$mt002o){$where[] = array('name'=>"mt002",'method'=>"bigger",'value'=>$mt002o);}
+		if(isset($mt002c)&&$mt002c){$where[] = array('name'=>"mt002",'method'=>"less",'value'=>$mt002c);}
+		
+		if(isset($mt003)&&$mt003){$where[] = array('name'=>"mt003",'method'=>"is",'value'=>$mt003);}
+		if(isset($like_mt003)&&$like_mt003){$where[] = array('name'=>"mt003",'method'=>"like",'value'=>$like_mt003);}
+		if(isset($mt003o)&&$mt003o){$where[] = array('name'=>"mt003",'method'=>"bigger",'value'=>$mt003o);}
+		if(isset($mt003c)&&$mt003c){$where[] = array('name'=>"mt003",'method'=>"less",'value'=>$mt003c);}
+		$data['data'] = $this->pali29_model->get_pali29($select_col,$join,$where);
+		
+		if(count($data['data'])>0){$data['response']=true;}else{$data['response']=false;}
+		
+		echo json_encode($data);
+	}	
+	
+	//===以下lookup區===//
+	//品號快速查詢
+	public function lookup_pali01(){
+	    $keyword = urldecode(urldecode($this->uri->segment(4)));
+        $data['response'] = 'false'; //Set default response 
+		
+        $this->load->model('pal/pali01_model');
+		
+		/*	=== _model->lookup(select_col,search_col,keyword,limit) Parameter 參數 ===
+		 *
+		 *	select_col = array(str1); str1 = 取得欄位名稱
+		 *	search_col = array(str2,str3); str2 = 查詢欄位方法:or,and | str3 = 查詢欄位名稱
+		 *	keyword = array(str4,str5); str4 = 查詢欄位名稱 | str5 = 查詢關鍵字
+		 *	limit = int1; int1 = 回傳查詢結果筆數
+		 */
+		 
+        $query = $this->pali01_model->lookup(
+			array('mv001','mv002'),
+			array(array('and','mv001')),
+			array($keyword),
+			"",
+			15
+		);
+      
+        if( ! empty($query) )  
+          {  
+            $data['response'] = 'true'; //Set response  
+            $data['message'] = array(); //Create array  
+            foreach( $query as $row )  
+              {  
+                $data['message'][] = array(	//注意引數key值得照規矩來value,value1,...
+				  'category' => '', 
+				  'value' => $row->mv001.",".$row->mv002,//顯示用的欄位
+				  'value1' => $row->mv001,
+				  'value2' => $row->mv002
+				);  //Add a row to array  
+              }
+          }
+		  else
+		  {
+            $data['response'] = 'true'; //Set response  
+            $data['message'] = array(); //Create array
+			$data['message'][] = array(	//注意引數key值得照規矩來value,value1,...
+			  'category' => '', 
+			  'value' => "查無資料"//顯示用的欄位
+			);  //Add a row to array  
+		  }
+		echo json_encode($data); //echo json string if ajax request
+	}
+	/*==以下AJAX處理區域==*/
+	//抓取最新一筆的資料
+	public function check_date(){
+		//extract($this->input->get());
+		//echo "<pre>";var_dump($_GET['cmsi06']);exit;
+		$cmsi06=$_GET['cmsi06'];
+		//$cmsi06="20180511";
+		$this->load->model('pal/pali29_model','',TRUE);
+		$data1 = $this->pali29_model->check_date($cmsi06);
+		//echo print_r($data);var_dump('cmsi06');exit;
+		//$this->session->set_userdata('cmsi06',$data1);
+		echo json_encode($data1);
+	}
+	
+}
+/* End of file pali29.php */
+/* Location: ./application/controllers/pali29.php */
+?>

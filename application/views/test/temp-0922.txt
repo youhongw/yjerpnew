@@ -1,0 +1,291 @@
+今天遇到这个错误提示，查了一下解决方案：网上有人说是扩展Input类，我觉得问题根源不在这里，后面查到一个国外解决方案：
+http://www.tuicool.com/topics/11120008?st=0&lang=1&pn=1
+<!-- 这样将会引起报错 -->
+<input type="text" name="fieldname['foo']" value=""> 
+
+<!-- 这样是正常的. -->
+<input type="text" name="fieldname[foo]" value="">
+
+多了一对双引号
+
+source:http://tiffanybbrown.com/2010/07/21/codeigniters-disallowed-key-characters-error-revisited/
+
+用CI框架时，有时候会遇到这么一个问题，打开网页，只显示 Disallowed Key Characters 错误提示。有人说 url 里有非法字符。但是确定 url 是纯英文的，问题还是出来了。但清空浏览器历史记录和cookies后。 刷新就没问题了。有时候。打开不同的浏览器。有的浏览器会有问题。有的就不会。
+
+解决 CodeIgniter 框架应用中，出现Disallowed Key Characters错误提示的方法。找到core文件夹下的Input文件，将下面的代码：
+CodeIgniter  
+core文件夹下的Input文件
+	function _clean_input_keys($str)
+	{
+		if ( ! preg_match("/^[a-z0-9:_\/-]+$/i", $str))
+		{
+			exit('Disallowed Key Characters.');
+		}
+		// Clean UTF-8 if supported
+		if (UTF8_ENABLED === TRUE)
+		{
+			$str = $this->uni->clean_string($str);
+		}
+		return $str;
+	}
+
+改成这样：
+
+	function _clean_input_keys($str)   
+	{   
+		$config = &get_config('config');   
+		if ( ! preg_match("/^[".$config['permitted_uri_chars']."]+$/i", rawurlencode($str)))   
+		{   
+			exit('Disallowed Key Characters.');   
+		}   
+		
+		// Clean UTF-8 if supported
+		if (UTF8_ENABLED === TRUE)
+		{
+			$str = $this->uni->clean_string($str);
+		}
+		return $str;   
+	}  
+
+或者改成：742
+
+	function _clean_input_keys($str)
+	{
+		if(preg_match("/^,_[a-z0-9:_\/-]+$/",$str)){
+			$str = preg_replace("/,_/","",$str);
+ 		}
+                 
+     	if ( ! preg_match("/^[a-z0-9:_\/-]+$/i", $str))
+      	{
+      		exit('Disallowed Key Characters.'.$str);
+    	}
+		return $str;
+	}
+
+大概就这样～留个记录。
+
+
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<link rel="stylesheet" type="text/css" href="http://ci.dercaster.com/assets/stylesheet/stylesheet.css" />
+<link rel="stylesheet" type="text/css" href="http://ci.dercaster.com/assets/stylesheet/login.css" />
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery/ui/jquery-ui-1.8.16.custom.min.js"></script>
+<link type="text/css" href="http://ci.dercaster.com/assets/javascript/jquery/ui/themes/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery/tabs.js"></script>
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery/superfish/js/superfish.js"></script>
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/common.js"></script>
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery.maskedinput.js"></script>
+<script type="text/javascript" src="http://ci.dercaster.com/assets/javascript/jquery.blockUI.js"></script>
+Portfolio
+Tips & Trickshttp://ci.dercaster.com/assets/javascript           mypos.tw/view/stylesheet/ie6.css
+          
+Technologies
+Contact
+Follow Us  
+Disallowed Key Characters message in CodeIgniter and QapTcha jQuery plugin
+ 
+
+	/**
+	* Clean Keys
+	*
+	* This is a helper function. To prevent malicious users
+	* from trying to exploit keys we make sure that keys are
+	* only named with alpha-numeric text and a few other items.
+	*
+	* @access	private
+	* @param	string
+	* @return	string
+	*/
+	function _clean_input_keys($str)
+	{
+		if ( ! preg_match("/^[a-z0-9:_\/-]+$/i", $str))
+		{
+			exit('Disallowed Key Characters - '.$str);
+		}
+
+		// Clean UTF-8 if supported
+		if (UTF8_ENABLED === TRUE)
+		{
+			$str = $this->uni->clean_string($str);
+		}
+
+		return $str;
+	}
+I added the string with problems at the end of the message and this is what i got:
+
+Disallowed Key Characters - VNrNwBszU#Q2MrEhYfrgQFTsCAFSaY@v
+I realised then there are some chars not included in my config.php file (/application/config/config.php). Instead of adding the problematic chars in the config file, i dig a little bit further and found that those chars are submitted as a cookie by the QapTcha jQuery plugin.
+
+qaptcha plugin
+In the QapTcha.jquery.js file, you will notice the following function:
+
+		function generatePass(nb) {
+		      var chars = 'azertyupqsdfghjkmwxcvbn23456789AZERTYUPQSDFGHJKMWXCVBN_-#@';
+		      var pass = '';
+		      for(i=0;i<nb;i++){
+		          var wpos = Math.round(Math.random()*chars.length);
+		          pass += chars.substring(wpos,wpos+1);
+		      }
+		      return pass;
+		  }
+If you remove the last four chars (ar at least "#" and "@"), things should run smoother.
+
+
+back to top
+Contact Details
+image+4 0724 362 701
++4 0733 084 450
+
+image ArtSoftSolutions.ro
+Bucharest, 5th District
+25 Mache Eftimiu
+Romania
+
+image contact@artsoftsolutions.ro
+
+Prices, Rates and Quotations
+NOTE: There is no standard price, a fixed price or a fixed hourly rate for creating a website.
+
+We, at ArtSoftSolutions.ro will have to evaluate a series of factors before saying an estimated price. Please contact us and let us know as many details as possible in order to get a quote.
+
+See also
+FAQs
+Request a quote
+Business Partnership
+Non-Disclosure Agreements
+About Us
+Copyright © ArtSoftSolutions.ro
+Top
+<tr>
+  QapTcha.jquery  Disallowed Key Characters
+            <td>&nbsp;</td>
+          </tr>
+<meta charset="UTF-8" />
+<title>批發零售業庫存管理系統</title>
+<base href="http://mypos.tw/" />
+<link href="view/image/icon.png" rel="icon" />
+<link rel="stylesheet" type="text/css" href="view/stylesheet/login.css" />
+<link rel="stylesheet" type="text/css" href="view/javascript/jquery/qaptcha/QapTcha.jquery.css" media="screen" />
+<script type="text/javascript" src="view/javascript/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="view/javascript/jquery/ui/jquery-ui-1.8.16.custom.min.js"></script>
+<link type="text/css" href="view/javascript/jquery/ui/themes/ui-lightness/jquery-ui-1.8.16.custom.css" rel="stylesheet" />
+<script type="text/javascript" src="view/javascript/jquery/tabs.js"></script>
+<script type="text/javascript" src="view/javascript/jquery/superfish/js/superfish.js"></script>
+<script type="text/javascript" src="view/javascript/common.js"></script>
+<script type="text/javascript" src="view/javascript/jquery.maskedinput.js"></script>
+<script type="text/javascript" src="view/javascript/jquery.blockUI.js"></script>
+<script type="text/javascript" src="view/javascript/jquery/qaptcha/QapTcha.jquery.js"></script>
+<!--[if IE 7]> 
+    设为首页
+    加入收藏
+    网站地图
+    微博
+    博客
+
+你好，刘
+免费资源 不错系统 好用软件 视频教程
+电脑百科 网站素材 WordPress Photoshop
+经典电影 经典段子 手机软件 游戏
+河蟹网事 高清无码 太有才啦
+HTML5+CSS3 jQuery
+-存档- -私信- 投稿 关于我们
+给WordPress加评论滑动解锁QapTcha验证
+November 27th, 2011
+先看演示：
+
+1、先去官网下载最新版的 压缩包，解压。将jquery、images文件夹和php文件夹里的Qaptcha.jquery.php拷贝到主题下，比如我的主题yMoo下。
+2、找到jquery/QapTcha.jquery.js，大约在15行
+
+			txtLock : 'Locked : form can\'t be submited', //可以改成中文“发表评论前，请滑动滚动条”解锁
+			txtUnlock : 'Unlocked : form can be submited', //可以改成中文“已解锁，可以发表评论了”
+			disabledSubmit : true,
+			autoRevert : false,
+			PHPfile : '/wp-content/themes/yMoo/Qaptcha.jquery.php' //这个很重要，路径错误，就不显示了
+
+
+3、如果你要修改样式，请对照自己的主题修改QapTcha.jquery.css。
+4、修改主题里的functions.php，加上
+
+function my_wp_head() {//这个函数里的内容当然也可以直接写到header.php里
+  if(is_singular() && !is_user_logged_in()) {
+    echo ''."\n";
+    echo ''."\n";
+    echo ''."\n";
+    echo ''."\n";
+    echo ''."\n";
+  }
+}
+add_action('wp_head', 'my_wp_head', 100);
+function my_preprocess_comment($comment) {
+  if (!is_user_logged_in()) {
+    if(!session_id()) session_start();
+    if(isset($_POST['iQapTcha']) && empty($_POST['iQapTcha']) && isset($_SESSION['iQaptcha']) && $_SESSION['iQaptcha']) {
+      unset($_SESSION['iQaptcha']);
+      return($comment);
+    } else wp_die("抱歉，你没有通过验证。");//提示语自行修改
+  } else
+    return($comment);
+}
+add_action('preprocess_comment', 'my_preprocess_comment');
+
+
+5、然后修改主题的comments.php文件，找到你希望滚动条出现的位置，加上
+
+这个代码.
+常见问题请注意：
+1、不要用wordpress自带的jquery.js，这个js文件功能不全，请去jquery的官网下载或者用google，雅虎或微软提供的cdn服务，还有就是用qaptcha自带的（这个可能版本有点老）。
+2、jquery的引入一定要在qaptcha之前，有的朋友在页面中引入了两次jquery，一次在前，一次在后，也会导致失败。一定要把后面引入的那一个删掉。
+3、还有就是路径的问题了，很多朋友拖到最右边也没法解锁，多数就是这个路径写错了，赶紧检查一下吧。
+4、如果没有通过验证是返回一个wordpress提示，使用了“wp_die”函数。但是如果使用了Willin Kan的ajax提交评论的话，就必须得改改。可以看一下Willin Kan的comments-ajax.php 里面将“wp_die”改成了“err”。所以只要把上面代码中的wp_die改成err就没有问题了。
+
+function my_preprocess_comment($comment) {
+  if (!is_user_logged_in()) {
+    if(!session_id()) session_start();
+    if(isset($_POST['iQapTcha']) && empty($_POST['iQapTcha']) && isset($_SESSION['iQaptcha']) && $_SESSION['iQaptcha']) {
+      unset($_SESSION['iQaptcha']);
+      return($comment);
+    } else err(__("抱歉，你没有通过验证。"));//提示语自行修改
+  } else
+    return($comment);
+}
+add_action('preprocess_comment', 'my_preprocess_comment');
+
+
+这个参考这里。
+这个插件不需要用户敲击键盘输入验证码，只需要像ios系统那样滑动下就可以解锁，在用户体验上也加分不少。
+转自http://www.ysyn.net/wordpress-qaptcha.html
+网站素材 WordPress 滑动解锁 评论 QapTcha 验证
+最新最早最热
+
+    2条评论
+
+    泰国清新电影
+    泰国清新电影
+
+    挺好的。。
+    6月23日回复顶转发
+    侯永禄
+    侯永禄
+
+    我想把它用到投稿页面里面去，不知道怎么改代码。希望能帮帮忙
+    7月29日回复顶转发
+
+社交帐号登录:
+
+    微博
+    QQ
+    人人
+    豆瓣
+    更多»
+
+你好，刘正在使用多说
+
+    上一篇
+    下一篇
+
+你好，刘
+
+Copyright © 2012 Hilau.com, All Rights Reserved.百度统计
+
+你好，刘 版权所有. Theme By 皇家元林. Powered by diandian.com.
+返回顶部

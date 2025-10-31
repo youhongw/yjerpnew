@@ -1,0 +1,44 @@
+/***************/
+/* Autosuggest */
+
+.autosuggest {
+  border:1px solid #000000;
+  display:none;
+  overflow:hidden;
+  padding:0px;
+  position:absolute;
+  width:200px;
+  z-index:1;
+}
+
+.autosuggest ul li {
+  background-color:#FFFFFF;
+  cursor:pointer;
+  display:block;
+  list-style:none;
+  padding:5px;
+  white-space:nowrap;
+}
+
+.autosuggest ul li:hover {
+  background-color:#316AC5;
+  color:#FFFFFF;
+}
+
+.loading{
+  background-image:url('../img/indicator.gif');
+  background-position:right;
+  background-repeat:no-repeat;
+}
+
+.autosuggest_input {
+  width:200px;
+}
+
+.table_header_add {
+  background-color:#FFCC66;
+}
+
+.odd_row_add {
+  background-color:#FFCC66;
+}

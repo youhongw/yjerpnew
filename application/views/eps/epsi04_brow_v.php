@@ -1,0 +1,203 @@
+<div class="box2">  <!-- div-1 -->
+    <div class="heading">
+      <h1><img src="<?php echo base_url()?>assets/image/order.png" alt="" /> 客戶麥頭基本資料建立作業 - 瀏覽</h1>
+	   <div style="float:right; "> 
+	  <?PHP if (substr($this->session->userdata('sysmg006'),1,1)=='Y') { ?>
+	    <a onclick="location = '<?php echo base_url()?>index.php/eps/epsi04/display'"  style="float:left" accesskey="d" class="button"><span>清除查詢條件 d </span><img height="12" width="12" src="<?php echo base_url()?>assets/image/delete2.png" /></a>	
+      <?PHP } ?>
+	  <?PHP if (substr($this->session->userdata('sysmg006'),0,1)=='Y') { ?>
+	    <a onclick="location = '<?php echo base_url()?>index.php/eps/epsi04/addform'" style="float:left" accesskey="+" class="button"><span>新增&nbsp</span><img src="<?php echo base_url()?>assets/image/png/add.png" /></a>
+	  <?PHP } ?>
+	  <?PHP if (substr($this->session->userdata('sysmg006'),9,1)=='Y') { ?>
+	    <a onclick="location = '<?php echo base_url()?>index.php/eps/epsi04/copyform'" style="float:left" accesskey="c"  class="button"><span>複製 c </span><img src="<?php echo base_url()?>assets/image/png/copy.png" /></a>		
+      <?PHP } ?>
+	  <?PHP if (substr($this->session->userdata('sysmg006'),1,1)=='Y') { ?>
+	    <a onclick="location = '<?php echo base_url()?>index.php/eps/epsi04/findform'" style="float:left" accesskey="k" class="button"><span>進階查詢 k </span><img src="<?php echo base_url()?>assets/image/png/find.png" /></a>	
+      <?PHP } ?>
+	  <?PHP if (substr($this->session->userdata('sysmg006'),3,1)=='Y') { ?>
+	    <a onclick="$('form').submit();" style="float:left" accesskey="-" class="button"><span>選取刪除&nbsp</span><img src="<?php echo base_url()?>assets/image/png/del.png" /></a>
+	  <?PHP } ?>
+	  <?PHP if (substr($this->session->userdata('sysmg006'),6,1)=='Y') { ?>
+	    <a onclick="location = '<?php echo base_url()?>index.php/eps/epsi04/printdetail'" style="float:left" accesskey="p"  class="button"><span>列印 p </span><img src="<?php echo base_url()?>assets/image/png/print.png" /></a> 
+	  <?PHP } ?>
+	  
+	  <a onclick="location = '<?php echo base_url()?>index.php/main/index/151'" style="float:left" accesskey="x" class="button"><span>關閉&nbsp</span><img src="<?php echo base_url()?>assets/image/png/close.png" /></a>
+      </div>
+    </div>
+	<?php 
+	$title_array = array(
+		'rowid' => array('sort_name'=>"md001",'name'=>"序號",'width'=>"5%",'align'=>"left",'use'=>"disable"),
+		'md001' => array('sort_name'=>"md001",'name'=>"客戶代號",'width'=>"7%",'align'=>"left"),
+		'md002' => array('sort_name'=>"md002",'name'=>"麥頭代號",'width'=>"5%",'align'=>"left"),
+		'md007' => array('sort_name'=>"md007",'name'=>"麥頭名稱",'width'=>"16%",'align'=>"left"),
+		'md003' => array('sort_name'=>"md003",'name'=>"主要麥頭",'width'=>"8%",'align'=>"left"),
+		'md004' => array('sort_name'=>"md004",'name'=>"正麥",'width'=>"8%",'align'=>"left"),
+		'md005' => array('sort_name'=>"md005",'name'=>"側麥",'width'=>"8%",'align'=>"left"),
+		'mb006' => array('sort_name'=>"mb006",'name'=>"備註",'width'=>"7%",'align'=>"left"),
+		'see' => array('sort_name'=>"",'name'=>"查看管理",'width'=>"18%",'align'=>"center"),
+		'edit' => array('sort_name'=>"",'name'=>"修改管理",'width'=>"18%",'align'=>"center")
+	);
+?>
+  <div class="content"> <!-- div-2 -->
+    <form action="<?php echo base_url()?>index.php/eps/epsi04/delete" method="post" enctype="multipart/form-data" id="form">
+      <table class="list">      <!-- 表格開始 -->
+        <thead>
+          <tr>                          <!-- 表格表頭 -->
+            <td width="1%" style="text-align: center;">
+		    <input type="checkbox" onclick="$('input[name*=\'selected\']').attr('checked', this.checked);" />
+	        </td>
+	        <?php
+			foreach($title_array as $key => $val){
+				echo "<td width=".$val['width']." class='".$val['align']."'>";
+				echo $val['name'];
+				if(isset($val['use'])){
+					if($val['use'] == "disable"){
+						echo "</td>";continue;
+					}
+				}
+				if($val['sort_name'] == ""){
+					echo "</td>";continue;
+				}
+				
+				$str = "<img src='".base_url()."assets/image/asc.png' />";
+				echo anchor("eps/epsi04/display_search/".$this->uri->segment(4,0)."/order?val=".$val['sort_name']." asc",$str);
+				
+				$str = "<img src='".base_url()."assets/image/desc.png' />";
+				echo anchor("eps/epsi04/display_search/".$this->uri->segment(4,0)."/order?val=".$val['sort_name']." desc",$str);
+				
+				echo "</td>";
+			}
+		  ?>
+          </tr>
+        </thead>
+		
+		<?php 
+	$filter_array = array(
+		'rowid' => array('filter_name'=>"",'name'=>"序號",'size'=>"12",'align'=>"left",'use'=>"disable"),
+		'md001' => array('filter_name'=>"md001",'name'=>"客戶代號",'size'=>"10",'align'=>"left"),
+		'md002' => array('filter_name'=>"md002",'name'=>"麥頭代號",'size'=>"10",'align'=>"left"),
+		'md007' => array('filter_name'=>"md007",'name'=>"麥頭名稱",'size'=>"10",'align'=>"left"),
+		'md003' => array('filter_name'=>"md003",'name'=>"主要麥頭",'size'=>"10",'align'=>"left"),
+		'md004' => array('filter_name'=>"md004",'name'=>"正麥",'size'=>"10",'align'=>"left"),
+		'md005' => array('filter_name'=>"md005",'name'=>"側麥",'size'=>"10",'align'=>"left"),
+		'mb006' => array('filter_name'=>"mb006",'name'=>"備註",'size'=>"10",'align'=>"left",'use'=>"disable"),
+	);
+?>  
+        <tbody>     <!-- 表格內容輸入篩選查詢 第一,二欄 刪除選項及序號空白 -->
+	    <?php $filter_md025='*';$filter_md001='';$filter_md002='';$filter_md003='';$filter_md004='';$filter_md005='';$filter_md006='';$filter_md017='';$filter_create=''; ?>
+	     <tr class="filter">
+	      <td class="left"></td>
+	     <?php
+				foreach($filter_array as $key => $val){
+					echo "<td class='".$val['align']."'>";
+					if($val['filter_name']==""){echo "</td>";continue;} //filter_name = "" 為沒有使用
+					
+					echo "<div class='button-search'></div>";
+					
+					$ipt_str = "";
+					$ipt_str .= "<input type='text' id='".$val['filter_name']."' name='".$val['filter_name']."' class='filter_ipt' ";
+					if(isset($val['size'])){$ipt_str .= "size='".$val['size']."' ";}
+					if(isset($val['value'])){$ipt_str .= "value='".$val['value']."' ";}
+					if(isset($val['color'])){$ipt_str .= "style='background-color:".$val['color'].";' ";}
+					$ipt_str .= "/>";					
+					 echo $ipt_str;
+					echo "</td>"; 
+				}
+			?>
+	   
+	      <td align="center"><a onclick="filter();" accesskey="q" class="button">篩選 AND q</a></td>		
+		  <td align="center"><a onclick="filtera();" accesskey="w" class="button">篩選 OR w</a></td>  
+        </tr>
+			
+	    <?php $chkval=1; ?>               
+	    <?php foreach($results as $row ) : ?>
+        <tr>
+          <td style="text-align: center;"> <input type="checkbox" name="selected[]"   id="cbbox"  value="<?php echo $row->md001."/".trim($row->md001)?>" onclick="$('input[name=\'selected\']').attr('checked', this.checked);" /></td>
+          <td class="left"><?php echo  $chkval;?></td>
+          <td class="left"><?php echo  $row->md001;?></td>
+		  <td class="left"><?php echo  $row->md002;?></td>	  
+		  <td class="left"><?php echo  $row->md007;?></td>
+		  <td class="left"><?php echo  $row->md003;?></td>
+		  <td class="left"><?php echo  $row->md004;?></td>
+		  <td class="left"><?php echo  $row->md005;?></td>
+		  <td class="left"><?php echo  $row->md006;?></td>
+		  
+		  <!-- <td class="center"> <a onclick="return CheckForm();" href="<?php echo site_url('eps/epsi04/del/'.$row->md001."/".trim($row->md002))?>" id="delete1"  >[ 刪除 ]</a></td>  -->
+		  <td class="center"><a href="<?php echo site_url('eps/epsi04/see/'.$row->md001) ?>">[ 查看 </a><img src="<?php echo base_url()?>assets/image/png/eye.png" />]</td>
+          
+		  <?PHP if (substr($this->session->userdata('sysmg006'),2,1)=='Y') { ?>                 
+		    <td class="center"><a href="<?php echo site_url('eps/epsi04/updform/'.$row->md001)?>">[ 修改 </a><img src="<?php echo base_url()?>assets/image/png/modi.png" />]</td>
+	      <?PHP } ?>  
+		</tr>
+		<?php $chkval += 1; ?>
+		<?php endforeach;?>
+        </tbody>		 
+        </table>
+		      <!-- 修改時 留在原來那一筆資料使用 -->
+				<?php $this->session->set_userdata('epsi04_search',$this->uri->segment(3)."/".$this->uri->segment(4,0));
+				if($this->uri->segment(3)=="display" || $this->uri->segment(3)=="display_leave"){
+					$this->session->set_userdata('epsi04_search',$this->uri->segment(3)."/".$this->uri->segment(4)."/".$this->uri->segment(5)."/".$this->uri->segment(6,0));
+				} ?>
+			
+				<div class="pagination"><div class="results"><?php echo $pagination; ?></div></div>
+			<div class="success"><?php echo date("Y/m/d").'  提示訊息：'.$message.'<span>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'.'</span>'.
+'◎操作說明:[ 選欄位名稱自動排序, 欄位名稱項下輸入關鍵字按篩選查詢資料, 選取列項出現打勾可多筆刪除, 列印可自設網址列不印, 快速鍵Alt+.. ] '.'　　總數:'.ceil(($curpage+1)/$limit).'/'.ceil($page).' 頁, '.$numrow.' 筆' ?> </div>	
+      </form>
+     </div> <!-- div-2 -->
+    </div> <!-- div-1 --> 
+</div> <!-- div-0 -->	
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('.button-search').bind('click', function() {
+	    return true;
+	});
+});
+
+//改寫function filter 為and搜尋
+function filter() {
+	var where_str = "";
+	var key = "";
+	var val = "";
+	$('.filter_ipt').each(function(){
+		//$( this ).id()
+		if($( this ).val()){
+			if(key != ""){
+				key += ",";
+			}
+			key += this.id;
+			if(val != ""){
+				val += ",";
+			}
+			val += $( this ).val();
+			
+		}
+	});
+	url = '<?php echo base_url() ?>index.php/eps/epsi04/display_search/0/and_where?key=' + encodeURIComponent(key) + 
+	'&val=' + encodeURIComponent(val);
+	location = url;
+}
+
+function filtera() {
+	var where_str = "";
+	var key = "";
+	var val = "";
+	$('.filter_ipt').each(function(){
+		//$( this ).id()
+		if($( this ).val()){
+			if(key != ""){
+				key += ",";
+			}
+			key += this.id;
+			if(val != ""){
+				val += ",";
+			}
+			val += $( this ).val();
+			
+		}
+	});
+	url = '<?php echo base_url() ?>index.php/eps/epsi04/display_search/0/or_where?key=' + encodeURIComponent(key) + 
+	'&val=' + encodeURIComponent(val);
+	location = url;
+}
+</script>

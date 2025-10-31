@@ -1,0 +1,146 @@
+<div id="container"> <!-- div-1 -->
+  <div id="header"> <!-- div-2 -->
+    <div class="div1">
+      <!--<div class="div2"><a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main"><span >&nbsp;&nbsp;公司別：<?php echo $this->session->userdata('sysml002'); ?></span></a></a></div>
+        <div class="div3">
+	     <img src="<?php echo base_url()?>assets/image/user.png" style="position: relative; top: 6px;" />&nbsp;<span><?php echo $username ?></span> 已登錄 　
+	     <img src="<?php echo base_url()?>assets/image/category.png" style="position: relative; top: 3px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main">回主目錄</a>　
+	     <img src="<?php echo base_url()?>assets/image/exit.png" style="position: relative; top: 5px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php">退出系統</a>
+	    </div>-->
+		<?php  include_once("./application/views/funnew/fun_head_icon.html"); ?>
+    </div>
+
+<div id="content"> <!-- div-3 -->
+ <div class="box"> <!-- div-4 --><span>　　　　　　</span>
+    <div class="heading">
+      <h1><img src="<?php echo base_url()?>assets/image/order.png" alt="" /> 職務類別資料建立作業 - 查看　　　</h1>
+	  <div style="float:left;padding-top: 5px; ">
+	  <a  accesskey="x" onKeyPress="keyFunction()" id='cancel' name='cancel' href="<?php echo site_url('cms/cmsi09/display'); ?>" class="button" ><span>返 回Alt+x</span></a>
+	  </div>
+	  <form  class="cmxform" id="commentForm"  name="form" action="<?php echo base_url()?>index.php/cms/cmsi09/display"  method="post" enctype="multipart/form-data" >
+    </div>
+	
+    <div class="content"> <!-- div-5 -->
+	<!--<div id="htabs" class="htabs14"><span>編輯項目-查看</span></div>-->
+	<div id="tab-general"> <!-- div-6 -->
+	<?php $i=0; ?>
+	<?php foreach($result as $row) { ?>
+           <?php   $mj001=$row->mj001;?>
+          <?php   $mj002=$row->mj002;?>
+		  <?php   $mj003=$row->mj003;?>
+          <?php   $mj004=$row->mj004;?>
+		  		
+		 <!-- 明細 -->
+		   <?php   $mk001[]=$row->mk001;?>
+		   <?php   $mk002[]=$row->mk002;?>
+		   <?php   $mk003[]=$row->mk003;?>
+		   <?php   $mk004[]=$row->mk004;?>
+		   <?php   $mk005[]=$row->mk005;?>
+		   
+		    <?php   $flag=$row->flag;?>	
+		
+		   <?php   $mb991=' ';?>
+		   <?php   $mb992=' ';?>
+		   <?php   $mb999=' ';?>
+	<?php $i = $i + 1 ; }?>
+      
+	<table class="form14"  >     <!-- 頭部表格 -->
+	    <tr>
+	    <td class="normal14y" width="8%" ><span class="required">職務代號：</span> </td>
+        <td class="normal14a" width="42%" ><input   tabIndex="1" id="mj001" readonly="value"  onKeyPress="keyFunction()" onchange="startkey(this)" name="mj001" value="<?php echo $mj001; ?>" size="6" type="text" disabled="disabled"/>
+	        <span id="keydisp" ></span></td>
+		<td class="normal14y" width="8%" >職務名稱：</td>
+        <td class="normal14a" width="42%" ><input type="text" tabIndex="2"  onKeyPress="keyFunction()" size="16"  id="mj003" name="mj003" value="<?php echo $mj003; ?>"  disabled="disabled" /></td>
+	  </tr>
+	 
+	 <tr>
+	    <td class="normal14z" >職務分類： </td>
+        <td class="normal14" ><select  tabIndex="3" id="mj002" onKeyPress="keyFunction()"  name="mj002" disabled="disabled">
+             <option <?php if($mj002 == '1') echo 'selected="selected"';?> value='1'>1:物管</option>                                                                      
+		     <option <?php if($mj002 == '2') echo 'selected="selected"';?> value='2'>2:生管</option>
+			 <option <?php if($mj002 == '3') echo 'selected="selected"';?> value='3'>3:業務</option>                                                                        
+		     <option <?php if($mj002 == '4') echo 'selected="selected"';?> value='4'>4:採購</option>
+			 <option <?php if($mj002 == '5') echo 'selected="selected"';?> value='5'>5:會計</option>
+			 <option <?php if($mj002 == '6') echo 'selected="selected"';?> value='6'>6:出納</option>
+			 <option <?php if($mj002 == '7') echo 'selected="selected"';?> value='7'>7:倉庫</option>
+			 <option <?php if($mj002 == '8') echo 'selected="selected"';?> value='8'>8:研發</option>
+			 <option <?php if($mj002 == '9') echo 'selected="selected"';?> value="9">9:製造</option>
+			 <option <?php if($mj002 == 'A') echo 'selected="selected"';?> value="A">A:品管</option>
+			 <option <?php if($mj002 == 'B') echo 'selected="selected"';?> value="B">B:管理</option>
+			 <option <?php if($mj002 == 'C') echo 'selected="selected"';?> value="C">C:工程</option>
+			 <option <?php if($mj002 == 'D') echo 'selected="selected"';?> value="D">D:生技</option>	
+			 <option <?php if($mj002 == 'E') echo 'selected="selected"';?> value="E">E:船務</option>
+             <option <?php if($mj002 == 'F') echo 'selected="selected"';?> value="F">F:廠務</option>
+			 <option <?php if($mj002 == 'G') echo 'selected="selected"';?> value="G">G:貿易</option>
+			 <option <?php if($mj002 == 'H') echo 'selected="selected"';?> value="H">H:總務</option>	
+			 <option <?php if($mj002 == 'I') echo 'selected="selected"';?> value="I">I:人事</option>
+			 <option <?php if($mj002 == 'Z') echo 'selected="selected"';?> value="Z">Z:其他</option>
+
+			 
+		  </select>
+		<td class="normal14z">備註：</td>
+        <td class="normal14"><input type="text" tabIndex="4"  onKeyPress="keyFunction()" size="50"  id="mj004" name="mj004" value="<?php echo $mj004; ?>" disabled="disabled"  /></td>
+	  </tr>
+		
+	</table>
+	
+	
+	 <div>
+          <table id="order_product" class="list1">
+            <thead>
+               <tr>
+              <td width="5%"></td>			
+		      <td width="11%" class="center">人員代號</td>
+              <td width="15%" class="left">人員姓名</td>
+			  <td width="15%" class="left">備註</td>
+            </tr>
+            </thead>
+                  <tfoot>
+		<!--		品號品名(下拉選好按Tab鍵) :  
+        
+		<input type="text" onKeyPress="keyFunction()" name="printable_name" id="printable_name" onBlur="funpro1(this)" size="40" /><span id="mess"  /></span>	-->	 
+              <tr>
+                <td class="center" valign="top"><img src="<?php echo base_url()?>assets/image/add.png" title="增加" style="cursor: pointer;" onclick="addItem();" /></td>
+				<td class="left" colspan="12"></td>
+              </tr>
+			  
+		<!--   明細  -->
+		 
+		 <tbody id="product-row' + product_row + '">
+	     <?php $i=0; ?>
+		 <?php foreach($result as $row) { ?>
+  	     <tr>
+	     <td class="center"><img src="<?php echo base_url()?>assets/image/delete.png" title="移除" onclick="$(\'#product-row' + product_row + '\').remove();" /></td>
+  	    <input type="hidden"  name="order_product[<?php echo $i ?>][mk001]" value="<?php echo $mk001[$i]; ?>" />
+		 <input type="hidden"  name="order_product[<?php echo $i ?>][mk003]" value="<?php echo $mk003[$i]; ?>" />
+		 <td class="left"><input type="text"  tabIndex="5" <?php echo 'id='.'mk002'.$i ?>   name="order_product[<?php echo $i ?>][mk002]" value="<?php echo $mk002[$i]; ?>" size="20"  disabled="disabled" /></td>
+		
+	     <td class="left"><input type="text"  tabIndex="6" id="mk004" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][mk004]" value="<?php echo $mk004[$i]; ?>" size="20" style="text-align:left;" disabled="disabled" /></td>
+		 <td class="left"><input type="text"  tabIndex="7" id="mk005" onKeyPress="keyFunction()" name="order_product[<?php echo $i ?>][mk005]" value="<?php echo $mk005[$i]; ?>" size="60" style="text-align:left;" disabled="disabled" /></td>
+	     </tr>
+	     <?php $i=$i+1;  }?>
+        </tbody>
+            </tfoot>
+          </table>
+        </div>
+	
+	 </div>
+	</div>
+	<!--<div class="buttons">
+	<a  accesskey="x" onKeyPress="keyFunction()" id='cancel' name='cancel' href="<?php echo site_url('cms/cmsi09/display'); ?>" class="button" ><span>返 回Alt+x</span></a>
+	</div> -->
+	  
+      </form>
+	  <?php if ($message!=' ') { ?>
+	<div class="success"><?php echo '  提示訊息：'.$message.'<span>'.'</span>'.' ' ?> </div>  <?php } ?>  -->
+  
+     </div> <!-- div-6 -->
+  </div> <!-- div-5 -->
+</div> <!-- div-4 -->
+
+  <!--  <?php if ($message!=' ') { ?>
+	<div class="success"><?php echo '  提示訊息：'.$message.'<span>'.'</span>'.' ' ?> </div>  <?php } ?>  -->
+  </div> <!-- div-3 -->
+ </div> <!-- div-2 -->
+</div> <!-- div-1 -->
+<?php  include_once("./application/views/funnew/fun_disabled_v.php"); ?>

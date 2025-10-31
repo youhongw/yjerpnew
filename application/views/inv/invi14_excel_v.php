@@ -1,0 +1,79 @@
+<div id="container">
+  <div id="header">
+    <div class="div1">
+     <!-- <div class="div2"><a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main"><span >&nbsp;&nbsp;公司別：<?php echo $this->session->userdata('sysml002'); ?></span></a></div>
+        <div class="div3">
+	  <img src="<?php echo base_url()?>assets/image/user.png" style="position: relative; top: 6px;" />&nbsp;<span><?php echo $username ?></span> 已登錄 　
+	  <img src="<?php echo base_url()?>assets/image/category.png" style="position: relative; top: 3px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main">回主目錄</a>　
+	  <img src="<?php echo base_url()?>assets/image/exit.png" style="position: relative; top: 5px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php">退出系統</a>
+	</div>-->
+	<?php  include_once("./application/views/funnew/fun_head_icon.html"); ?>
+    </div>
+
+<div id="content">
+  <?php
+     $te1001c=$this->input->post('te1001c');
+     $te1002c=$this->input->post('te1002c');
+   
+   //$this->load->helper('url');	
+  ?>
+ <div class="box">
+    <div class="heading">
+      <h1><img src="<?php echo base_url()?>assets/image/order.png" alt="" /> 品號儲位建立作業 - 轉Excel　　　</h1>
+    <div style="float:left;padding-top: 5px; ">
+	<button style= "cursor:pointer" form="commentForm" onfocus="$('#te1001c').focus();" tabIndex="5" type='submit'  accesskey="l"  name='submit' class="button"  target="_new" value='轉excel檔F8'><span>excel檔Alt+l</span><img src="<?php echo base_url()?>assets/image/png/excel.png" /></button>&nbsp;&nbsp;
+	      <a  accesskey="x"  tabIndex="6" id='cancel' name='cancel' href="<?php echo site_url('inv/invi14/display'); ?>" class="button" ><span>返 回Alt+x</span><img src="<?php echo base_url()?>assets/image/png/cancle.png" /></a>
+	    
+	</div>
+     </div>
+    <div class="content">
+	<form class="cmxform" id="commentForm"  name="form" action="<?php echo base_url()?>index.php/inv/invi14/write"  method="post"  enctype="multipart/form-data" > 
+	<!--<div id="htabs" class="htabs14"><span>轉Excel-明細檔xls</span></div> -->
+	<div id="tab-general">
+	<?php
+	  $te1001c=$this->input->post('te1001c');
+	  $te1002c=$this->input->post('te1002c');
+	   $te1003c=$this->input->post('te1003c');
+	    $te1004c=$this->input->post('te1004c');
+	//$this->load->helper('url');	
+	?>
+	<table class="form14">
+          <tr>
+	    <td class="normal14y" width="11%">盤點底稿代號：</td>
+            <td class="normal14a" width="39%">
+		<input tabIndex="1" id="te1001c" onKeyPress="keyFunction()" type="text" name="te1001c"  value="<?php echo $te1001c; ?>"   /></td>
+	    </td>
+            <td class="normal14y" width="11%">庫別代號：</td>
+            <td class="normal14a" width="39%">
+		  <input tabIndex="2" id="te1002c" onKeyPress="keyFunction()" type="text" name="te1002c"  value="<?php echo $te1002c; ?>"   /></td>
+	    </td>
+	  </tr>
+		 <tr>
+	    <td class="normal14z" >起始儲位代號：</td>
+        <td class="normal14a" >
+		 <input tabIndex="3" id="te1003" onKeyPress="keyFunction()" type="text" name="te1003c"  value="<?php echo $te1003c; ?>"    /></td>
+	    <td class="normal14z" >截止儲位代號：</td>
+        <td class="normal14a" ><input tabIndex="4" id="te1004" onKeyPress="keyFunction()" type="text" name="te1004c"  value="<?php echo $te1004c; ?>"    /></td>
+	  </tr>
+	  </tr>
+	   
+		 
+        </table>
+		
+	   <!-- <div class="buttons">
+	      <button tabIndex="5" type='submit'  accesskey="l"  name='submit' class="button"  target="_new" value='轉excel檔F8'><span>excel檔Alt+l</span><img src="<?php echo base_url()?>assets/image/png/excel.png" /></button>&nbsp;&nbsp;&nbsp;&nbsp; 
+	      <a  accesskey="x"  tabIndex="6" id='cancel' name='cancel' href="<?php echo site_url('inv/invi14/display'); ?>" class="button" ><span>返 回Alt+x</span><img src="<?php echo base_url()?>assets/image/png/cancle.png" /></a>
+	    </div> -->
+		
+        </form>
+		<?php  if ($message!=' ') { ?>
+	<div class="success"><?php echo '  提示訊息：'.$message.'<span>'.'</span>'.
+'◎操作說明:[ 欄位名稱紅色代表必需輸入欄位,按Tab鍵或Enter鍵跳下一個欄位,按Shift+Tab鍵跳上一個欄位,Tab鍵停留在有選項欄位按上下鍵可選擇資料. ] ' ?> </div>  <?php } ?>
+   
+    </div> 
+  </div>
+</div>
+
+     </div>
+  </div>
+</div>

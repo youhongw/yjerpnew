@@ -1,0 +1,618 @@
+USE [DSDB]
+GO
+/****** Object:  StoredProcedure [dbo].[PRO_BOMMD_R]    Script Date: 2021/11/29 下午 07:24:06 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sandy
+-- Create date: 20210318
+-- Description:	多階標準成本表
+-- =============================================
+ALTER PROCEDURE [dbo].[PRO_BOMMD_R]
+@MC001 CHAR(20)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @MD001  CHAR(20)      --主件品號
+	DECLARE @MD003  CHAR(20)      --元件品號
+	DECLARE @COUNT  INT  
+	DECLARE @ROW_COUNT  INT 
+	DECLARE @STT  VARCHAR(40) 
+	DECLARE @Num  INT
+	DECLARE @Num1  INT
+	DECLARE @Num2  INT
+	
+	SET @Num = 2
+	SET @Num1 = 2
+	SET @Num2 = 20
+	SET @ROW_COUNT = 20        
+
+
+	TRUNCATE TABLE bommd_tmp
+	--DELETE bommd_tmp DBCC CHECKIDENT(bommd_tmp, RESEED, 0)
+	INSERT bommd_tmp(MD001,MD003,DP) VALUES (@MC001,@MC001,'0') 
+
+	--第1階
+	INSERT bommd_tmp(MD001,MD003,MD006,DP) 
+	Select  A.MD001,A.MD003,A.MD006,1 AS DP  FROM 
+   (Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y') A
+    WHERE  A.MD001 = @MC001
+
+	UPDATE bommd_tmp SET NODE = ID  WHERE DP = '1'
+
+	--2-20階
+	WHILE @Num <= @ROW_COUNT
+	BEGIN 
+		SET @STT = CAST(@Num-1 AS varchar(40))
+		
+		INSERT bommd_tmp(MD001,MD003,MD006,DP) 
+		 Select B.MD001,B.MD003,B.MD006,CAST(@Num AS varchar(40)) AS DP FROM 
+		(Select MD001 , MD003 From bommd_tmp WHERE DP = @STT) A, 
+		(Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y') B
+		WHERE A.MD003 = B.MD001 
+
+		UPDATE bommd_tmp SET NODE = A.NODE + '.'+CAST(bommd_tmp.ID AS varchar(40))
+		FROM (SELECT ID,MD001,MD003,NODE FROM bommd_tmp WHERE DP = @STT) A
+		WHERE bommd_tmp.DP = CAST(@Num AS varchar(40)) AND A.MD003 = bommd_tmp.MD001
+
+		SET @Num = @Num + 1
+
+	END
+
+
+	--算用量
+	WHILE @Num1 <= @ROW_COUNT --算標準用量由上滾到下
+	BEGIN 
+		SET @STT = CAST(@Num1-1 AS varchar(40))
+
+		UPDATE bommd_tmp SET bommd_tmp.MD006 = tmp.MD006
+		FROM
+		(SELECT A.MD001,A.MD003,B.MD006 * A.MD006 AS 'MD006' FROM bommd_tmp A,(SELECT MD001,MD003,MD006 FROM bommd_tmp B WHERE DP = @STT) B
+		WHERE B.MD003 = A.MD001 AND A.DP = CAST(@Num1 AS varchar(40)) ) tmp
+		WHERE bommd_tmp.MD001 = tmp.MD001 AND bommd_tmp.MD003 = tmp.MD003
+
+		SET @Num1 = @Num1 + 1
+
+	END
+
+	UPDATE bommd_tmp SET MD007 = BOMMC.MC004 --標準批量
+	FROM BOMMC
+	WHERE bommd_tmp.MD003 = BOMMC.MC001 
+
+	--先算基本成本
+	UPDATE bommd_tmp SET bommd_tmp.MB057 = bommd_tmp.MD006 * INVMB.MB057, bommd_tmp.MB058 = bommd_tmp.MD006 * INVMB.MB058, bommd_tmp.MB059 = bommd_tmp.MD006 * INVMB.MB059, bommd_tmp.MB060 = bommd_tmp.MD006 * INVMB.MB060, bommd_tmp.MB061 = bommd_tmp.MD006 * INVMB.MB061, bommd_tmp.MB062 = bommd_tmp.MD006 * INVMB.MB062, bommd_tmp.MB063 = bommd_tmp.MD006 * INVMB.MB063
+	FROM INVMB 
+	WHERE bommd_tmp.MD003 = INVMB.MB001 AND bommd_tmp.DP <> '0'
+	
+	--主件另外算本階成本
+	UPDATE bommd_tmp SET bommd_tmp.MB061 = bommd_tmp.MD007 * INVMB.MB061, bommd_tmp.MB062 = bommd_tmp.MD007 * INVMB.MB062, bommd_tmp.MB063 = bommd_tmp.MD007 * INVMB.MB063
+	FROM INVMB 
+	WHERE bommd_tmp.MD003 = INVMB.MB001 AND bommd_tmp.DP = '0'
+
+	--算累積成本
+	WHILE @Num2 <= @ROW_COUNT AND @Num2 <> 0 --算標準用量由下滾到上
+	BEGIN 
+		SET @STT = CAST(@Num2-1 AS varchar(40))
+
+		UPDATE bommd_tmp SET bommd_tmp.MB057 = A.MB057,bommd_tmp.MB058 = bommd_tmp.MB061+A.MB058,bommd_tmp.MB059 = bommd_tmp.MB062+A.MB059,bommd_tmp.MB060 = bommd_tmp.MB063+A.MB060
+		FROM (SELECT DISTINCT MD001,SUM(MB057) AS 'MB057',SUM(MB058) AS 'MB058',SUM(MB059) AS 'MB059',SUM(MB060) AS 'MB060',SUM(MB061) AS 'MB061',SUM(MB062) AS 'MB062',SUM(MB063) AS 'MB063' FROM bommd_tmp WHERE DP = @Num2 GROUP BY MD001) A
+		WHERE A.MD001 = bommd_tmp.MD003 AND bommd_tmp.DP = CAST(@STT AS varchar(40))
+
+		SET @Num2 = @Num2 - 1
+	END
+
+
+END
+
+===================
+USE [DSDB]
+GO
+/****** Object:  StoredProcedure [dbo].[PRO_BOMMD_PUR]    Script Date: 2021/11/29 下午 07:34:40 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sandy
+-- Create date: 20210401
+-- Description:	BOM轉請購
+-- =============================================
+ALTER PROCEDURE [dbo].[PRO_BOMMD_PUR]
+@MC001 CHAR(20),
+@TD008 CHAR(1),
+@TD009 CHAR(1)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @MD001  CHAR(20)      --主件品號
+	DECLARE @MD003  CHAR(20)      --元件品號
+	DECLARE @COUNT  INT  
+	DECLARE @ROW_COUNT  INT 
+	DECLARE @STT  VARCHAR(40) 
+	DECLARE @Num  INT
+	DECLARE @Num1  INT
+	DECLARE @Num2  INT
+	
+	SET @Num = 2
+	SET @Num1 = 2
+	SET @Num2 = 20
+	SET @ROW_COUNT = 20        
+
+
+	TRUNCATE TABLE bommd_pur
+	--DELETE bommd_pur DBCC CHECKIDENT(bommd_pur, RESEED, 0)
+	INSERT bommd_pur(MD001,MD003,DP) VALUES (@MC001,@MC001,'0') 
+	
+	IF @TD009 = '1' --展尾階
+	BEGIN
+
+		IF @TD008 = '0' --全部材料
+		BEGIN
+				--第1階
+				INSERT bommd_pur(MD001,MD003,MD006,DP) 
+				Select  A.MD001,A.MD003,A.MD006,1 AS DP  FROM 
+			   (Select MD001 , MD002, MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y') A
+				WHERE  A.MD001 = @MC001
+				ORDER BY A.MD002
+
+				UPDATE bommd_pur SET NODE = ID  WHERE DP = '1'
+
+				--2-20階
+				WHILE @Num <= @ROW_COUNT
+				BEGIN 
+					SET @STT = CAST(@Num-1 AS varchar(40))
+		
+					INSERT bommd_pur(MD001,MD003,MD006,DP) 
+					 Select B.MD001,B.MD003,B.MD006,CAST(@Num AS varchar(40)) AS DP FROM 
+					(Select MD001 , MD003 From bommd_pur WHERE DP = @STT) A, 
+					(Select MD001 , MD002,MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y') B
+					WHERE A.MD003 = B.MD001 
+					ORDER BY B.MD002
+
+					IF  @Num = 2 
+					BEGIN
+						UPDATE bommd_pur SET NODE = (CASE WHEN bommd_pur.ID >= 10 THEN A.NODE +'.A'+CAST(bommd_pur.ID AS varchar(40)) WHEN bommd_pur.ID >= 20 THEN A.NODE +'.B'+CAST(bommd_pur.ID AS varchar(40)) WHEN bommd_pur.ID >= 30 THEN A.NODE +'.C'+CAST(bommd_pur.ID AS varchar(40)) ELSE A.NODE +'.'+CAST(bommd_pur.ID AS varchar(40)) END)
+						FROM (SELECT ID,MD001,MD003,NODE FROM bommd_pur WHERE DP = '1') A
+						WHERE bommd_pur.DP = CAST('2' AS varchar(40)) AND A.MD003 = bommd_pur.MD001
+					END
+					ELSE
+					BEGIN
+						UPDATE bommd_pur SET NODE = A.NODE + '.'+CAST(bommd_pur.ID AS varchar(40))
+						FROM (SELECT ID,MD001,MD003,NODE FROM bommd_pur WHERE DP = @STT) A
+						WHERE bommd_pur.DP = CAST(@Num AS varchar(40)) AND A.MD003 = bommd_pur.MD001
+					END
+
+					SET @Num = @Num + 1
+
+				END
+
+
+				--算用量
+				WHILE @Num1 <= @ROW_COUNT --算標準用量由上滾到下
+				BEGIN 
+					SET @STT = CAST(@Num1-1 AS varchar(40))
+
+					UPDATE bommd_pur SET bommd_pur.MD006 = tmp.MD006
+					FROM
+					(SELECT A.MD001,A.MD003,B.MD006 * A.MD006 AS 'MD006' FROM bommd_pur A,(SELECT MD001,MD003,MD006 FROM bommd_pur B WHERE DP = @STT) B
+					WHERE B.MD003 = A.MD001 AND A.DP = CAST(@Num1 AS varchar(40)) ) tmp
+					WHERE bommd_pur.MD001 = tmp.MD001 AND bommd_pur.MD003 = tmp.MD003
+
+					SET @Num1 = @Num1 + 1
+
+				END
+
+				UPDATE bommd_pur SET MD007 = BOMMC.MC004 --標準批量
+				FROM BOMMC
+				WHERE bommd_pur.MD003 = BOMMC.MC001 
+
+				--先算基本成本
+				UPDATE bommd_pur SET bommd_pur.MB057 = bommd_pur.MD006 * INVMB.MB057, bommd_pur.MB058 = bommd_pur.MD006 * INVMB.MB058, bommd_pur.MB059 = bommd_pur.MD006 * INVMB.MB059, bommd_pur.MB060 = bommd_pur.MD006 * INVMB.MB060, bommd_pur.MB061 = bommd_pur.MD006 * INVMB.MB061, bommd_pur.MB062 = bommd_pur.MD006 * INVMB.MB062, bommd_pur.MB063 = bommd_pur.MD006 * INVMB.MB063
+				FROM INVMB 
+				WHERE bommd_pur.MD003 = INVMB.MB001 AND bommd_pur.DP <> '0'
+	
+				--主件另外算本階成本
+				UPDATE bommd_pur SET bommd_pur.MB061 = bommd_pur.MD007 * INVMB.MB061, bommd_pur.MB062 = bommd_pur.MD007 * INVMB.MB062, bommd_pur.MB063 = bommd_pur.MD007 * INVMB.MB063
+				FROM INVMB 
+				WHERE bommd_pur.MD003 = INVMB.MB001 AND bommd_pur.DP = '0'
+
+				--算累積成本
+				WHILE @Num2 <= @ROW_COUNT AND @Num2 <> 0 --算標準用量由下滾到上
+				BEGIN 
+					SET @STT = CAST(@Num2-1 AS varchar(40))
+
+					UPDATE bommd_pur SET bommd_pur.MB057 = A.MB057,bommd_pur.MB058 = bommd_pur.MB061+A.MB058,bommd_pur.MB059 = bommd_pur.MB062+A.MB059,bommd_pur.MB060 = bommd_pur.MB063+A.MB060
+					FROM (SELECT DISTINCT MD001,SUM(MB057) AS 'MB057',SUM(MB058) AS 'MB058',SUM(MB059) AS 'MB059',SUM(MB060) AS 'MB060',SUM(MB061) AS 'MB061',SUM(MB062) AS 'MB062',SUM(MB063) AS 'MB063' FROM bommd_pur WHERE DP = @Num2 GROUP BY MD001) A
+					WHERE A.MD001 = bommd_pur.MD003 AND bommd_pur.DP = CAST(@STT AS varchar(40))
+
+					SET @Num2 = @Num2 - 1
+				END
+			END 
+
+			ELSE --其他材料
+			BEGIN
+
+				--第1階
+				INSERT bommd_pur(MD001,MD003,MD006,DP) 
+				Select  A.MD001,A.MD003,A.MD006,1 AS DP  FROM 
+			   (Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y' AND MD017 = @TD008) A
+				WHERE  A.MD001 = @MC001
+
+				UPDATE bommd_pur SET NODE = ID  WHERE DP = '1'
+
+				--2-20階
+				WHILE @Num <= @ROW_COUNT
+				BEGIN 
+					SET @STT = CAST(@Num-1 AS varchar(40))
+		
+					INSERT bommd_pur(MD001,MD003,MD006,DP) 
+					 Select B.MD001,B.MD003,B.MD006,CAST(@Num AS varchar(40)) AS DP FROM 
+					(Select MD001 , MD003 From bommd_pur WHERE DP = @STT) A, 
+					(Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y' AND MD017 = @TD008) B
+					WHERE A.MD003 = B.MD001 
+
+					UPDATE bommd_pur SET NODE = A.NODE + '.'+CAST(bommd_pur.ID AS varchar(40))
+					FROM (SELECT ID,MD001,MD003,NODE FROM bommd_pur WHERE DP = @STT) A
+					WHERE bommd_pur.DP = CAST(@Num AS varchar(40)) AND A.MD003 = bommd_pur.MD001
+
+					SET @Num = @Num + 1
+
+				END
+
+
+				--算用量
+				WHILE @Num1 <= @ROW_COUNT --算標準用量由上滾到下
+				BEGIN 
+					SET @STT = CAST(@Num1-1 AS varchar(40))
+
+					UPDATE bommd_pur SET bommd_pur.MD006 = tmp.MD006
+					FROM
+					(SELECT A.MD001,A.MD003,B.MD006 * A.MD006 AS 'MD006' FROM bommd_pur A,(SELECT MD001,MD003,MD006 FROM bommd_pur B WHERE DP = @STT) B
+					WHERE B.MD003 = A.MD001 AND A.DP = CAST(@Num1 AS varchar(40)) ) tmp
+					WHERE bommd_pur.MD001 = tmp.MD001 AND bommd_pur.MD003 = tmp.MD003
+
+					SET @Num1 = @Num1 + 1
+
+				END
+
+				UPDATE bommd_pur SET MD007 = BOMMC.MC004 --標準批量
+				FROM BOMMC
+				WHERE bommd_pur.MD003 = BOMMC.MC001 
+
+				--先算基本成本
+				UPDATE bommd_pur SET bommd_pur.MB057 = bommd_pur.MD006 * INVMB.MB057, bommd_pur.MB058 = bommd_pur.MD006 * INVMB.MB058, bommd_pur.MB059 = bommd_pur.MD006 * INVMB.MB059, bommd_pur.MB060 = bommd_pur.MD006 * INVMB.MB060, bommd_pur.MB061 = bommd_pur.MD006 * INVMB.MB061, bommd_pur.MB062 = bommd_pur.MD006 * INVMB.MB062, bommd_pur.MB063 = bommd_pur.MD006 * INVMB.MB063
+				FROM INVMB 
+				WHERE bommd_pur.MD003 = INVMB.MB001 AND bommd_pur.DP <> '0'
+	
+				--主件另外算本階成本
+				UPDATE bommd_pur SET bommd_pur.MB061 = bommd_pur.MD007 * INVMB.MB061, bommd_pur.MB062 = bommd_pur.MD007 * INVMB.MB062, bommd_pur.MB063 = bommd_pur.MD007 * INVMB.MB063
+				FROM INVMB 
+				WHERE bommd_pur.MD003 = INVMB.MB001 AND bommd_pur.DP = '0'
+
+				--算累積成本
+				WHILE @Num2 <= @ROW_COUNT AND @Num2 <> 0 --算標準用量由下滾到上
+				BEGIN 
+					SET @STT = CAST(@Num2-1 AS varchar(40))
+
+					UPDATE bommd_pur SET bommd_pur.MB057 = A.MB057,bommd_pur.MB058 = bommd_pur.MB061+A.MB058,bommd_pur.MB059 = bommd_pur.MB062+A.MB059,bommd_pur.MB060 = bommd_pur.MB063+A.MB060
+					FROM (SELECT DISTINCT MD001,SUM(MB057) AS 'MB057',SUM(MB058) AS 'MB058',SUM(MB059) AS 'MB059',SUM(MB060) AS 'MB060',SUM(MB061) AS 'MB061',SUM(MB062) AS 'MB062',SUM(MB063) AS 'MB063' FROM bommd_pur WHERE DP = @Num2 GROUP BY MD001) A
+					WHERE A.MD001 = bommd_pur.MD003 AND bommd_pur.DP = CAST(@STT AS varchar(40))
+
+					SET @Num2 = @Num2 - 1
+				END
+
+			END
+
+		END
+
+	ELSE --單階
+	BEGIN
+
+		IF @TD008 = '0' --全部材料
+		BEGIN
+
+			INSERT bommd_pur(MD001,MD003,MD006,DP) 
+			Select  A.MD001,A.MD003,A.MD006,1 AS DP  FROM 
+		   (Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y') A
+			WHERE  A.MD001 = @MC001
+
+			UPDATE bommd_pur SET NODE = ID  WHERE DP = '1'
+		END
+
+		ELSE --其他材料
+		BEGIN
+
+			INSERT bommd_pur(MD001,MD003,MD006,DP) 
+			Select  A.MD001,A.MD003,A.MD006,1 AS DP  FROM 
+		   (Select MD001 , MD003,MD006,MD007 From BOMMD WHERE MD014 = 'Y' AND MD017 = @TD008) A
+			WHERE  A.MD001 = @MC001
+
+			UPDATE bommd_pur SET NODE = ID  WHERE DP = '1'
+
+		END
+
+	END
+	
+
+END
+========================
+USE [DSDB]
+GO
+/****** Object:  StoredProcedure [dbo].[PRO_COPTD_CHK]    Script Date: 2021/11/29 下午 07:35:10 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sandy
+-- Create date: 20210426
+-- Description:	訂單轉製令回復結案狀態(避免用戶更新錯訂單狀態)
+-- 20210804 更新去重複寫法，避免COPTH數量累加並減掉銷退數量
+-- =============================================
+ALTER PROCEDURE [dbo].[PRO_COPTD_CHK]
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @TD001  VARCHAR(4)   --訂單單別
+	DECLARE @TD002  VARCHAR(11)  --訂單單號
+	DECLARE @TD003  VARCHAR(4)   --訂單序號
+	DECLARE @TD009  NUMERIC(11,3)  --已交數量
+	DECLARE @TD016  CHAR(1)      --結案碼
+	DECLARE @CNT    INT 
+
+	SELECT @CNT = COUNT(*) FROM coptd_temp
+
+	IF @CNT > 0 
+	BEGIN 
+		
+		
+		UPDATE COPTD SET TD009 = A.TD009 ,TD016 = A.TD016
+		FROM (SELECT coptd_temp.TD001,coptd_temp.TD002,coptd_temp.TD003,CASE WHEN SUM(COPTH.TH008) IS NULL THEN 0 ELSE SUM(COPTH.TH008) END  - CASE WHEN TJ007_1 IS NULL THEN 0 ELSE TJ007_1 END AS TD009 ,
+			CASE WHEN CASE WHEN SUM(COPTH.TH008) IS NULL THEN 0 ELSE SUM(COPTH.TH008) END-CASE WHEN TJ007_1 IS NULL THEN 0 ELSE TJ007_1 END  = COPTD.TD008 THEN 'Y' ELSE 'N' END AS TD016
+			FROM  (SELECT DISTINCT TD001,TD002,TD003 FROM coptd_temp) coptd_temp
+			JOIN COPTD ON (coptd_temp.TD001 = COPTD.TD001 AND coptd_temp.TD002 = COPTD.TD002 AND coptd_temp.TD003 = COPTD.TD003 AND TD016 <> 'y')
+			LEFT JOIN COPTH ON (COPTH.TH014 = COPTD.TD001 AND COPTH.TH015 = COPTD.TD002 AND COPTH.TH016 = COPTD.TD003 AND COPTH.TH020 = 'Y')
+			LEFT JOIN V_COPTJ ON (V_COPTJ.TH014 = coptd_temp.TD001 AND  V_COPTJ.TH015 = coptd_temp.TD002 AND  V_COPTJ.TH016 = coptd_temp.TD003 )
+
+			GROUP BY coptd_temp.TD001,coptd_temp.TD002,coptd_temp.TD003,COPTD.TD008,TJ007_1) A
+
+		WHERE COPTD.TD001 = A.TD001 AND COPTD.TD002 = A.TD002 AND COPTD.TD003 = A.TD003
+
+		DELETE coptd_temp
+	END
+
+END
+=======================
+USE [DSDB]
+GO
+/****** Object:  StoredProcedure [dbo].[PRO_PURTB_TH]    Script Date: 2021/11/29 下午 07:35:35 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		Sandy
+-- Create date: 20210312
+-- Description:	請購明細表_for PHP查詢歷史進貨(撈取進貨/託外進貨最新進貨單價、數量)
+-- =============================================
+ALTER PROCEDURE [dbo].[PRO_PURTB_TH]
+@TB001 CHAR(4),
+@TB002 CHAR(11),
+@TB003 CHAR(4)
+
+AS
+BEGIN
+	SET NOCOUNT ON;
+	DECLARE @TH002  VARCHAR(11)   --進貨單號
+	DECLARE @TH003  VARCHAR(4)    --進貨序號
+	DECLARE @TH014  VARCHAR(8)    --驗收日
+	DECLARE @TG005  VARCHAR(10)   --廠商代號
+	DECLARE @MA002  VARCHAR(30)   --廠商簡稱
+	DECLARE @TH015  NUMERIC(16,0) --驗收數量
+	DECLARE @TH018  NUMERIC(21,3) --原幣進價
+	DECLARE @COUNT  INT  
+	DECLARE @CNT  INT
+	DECLARE @COUNT_CHK  INT  
+	DECLARE @ROW_COUNT  INT  
+	DECLARE @Num  INT           
+
+	SET @COUNT = (SELECT  CAST(MAX(TB003) AS INT) FROM PURTB WHERE TB001 =  @TB001 AND TB002 = @TB002)
+
+	SET @CNT = (SELECT COUNT(*) FROM PURTB WHERE TB001 =  @TB001 AND TB002 = @TB002 AND TB003 = @TB003)
+
+	IF @CNT = 0
+	BEGIN 
+		SET @Num = 1
+
+	END
+	ELSE  
+	BEGIN
+
+		SET @Num = (SELECT  CAST(TB003 AS INT) FROM PURTB WHERE TB001 =  @TB001 AND TB002 = @TB002 AND TB003 = @TB003)
+	END
+
+	DELETE coptb_temp
+
+	WHILE @Num <= @COUNT
+	BEGIN 
+		
+		SELECT TOP 1 @TH002 = TH002,@TH003 = TH003 , @TH014 = TH014 ,@TG005 = TG005,@MA002 = MA002,@TH015 = TH015,@TH018 = ROUND(TH018,3)
+		FROM (SELECT TH002,TH003 ,TH014 ,TG005,MA002,TH015, TH018 FROM (SELECT  TOP 1 TH002,TH003 ,MAX(PURTH.TH014) AS TH014 ,TG005,MA002,TH015, TH018
+						FROM PURTB,PURTG,PURMA,PURTH 
+						WHERE TB001 = @TB001 AND TB002 = @TB002 AND TB003 = replace(str(@Num,4,0),' ','0')  AND TG001 = TH001 AND TG002 = TH002 AND TG005 = MA001 AND TH004 = TB004 AND TH004 NOT IN ('5810001','4999')
+						GROUP BY TH002,TH003,TH014 ,TG005,MA002,TH015,TH018
+						ORDER BY TH014 DESC) TH
+			UNION
+ 
+			SELECT  TI002 ,TI003 ,TH003 ,TH005 ,MA002,TI019,TI024  FROM (SELECT  TOP 1 TI002  ,TI003 ,MAX(MOCTH.TH003) AS TH003 ,TH005  ,MA002,TI019 , TI024
+						FROM PURTB,MOCTH,PURMA,MOCTI 
+						WHERE TB001 = @TB001 AND TB002 = @TB002 AND TB003 = replace(str(@Num,4,0),' ','0')  AND TH001 = TI001 AND TH002 = TI002 AND TH005 = MA001 AND TI004 = TB004 AND TI004 NOT IN ('5810001','4999')
+						GROUP BY TI002 ,TI003 ,TH003 ,TH005 ,MA002,TI019,TI024
+						ORDER BY TH003 DESC) TJ) B
+
+		ORDER BY TH014 DESC
+
+		
+		SET @ROW_COUNT = (SELECT COUNT(*) FROM (SELECT TH002,TH003 ,TH014 ,TG005,MA002,TH015, TH018 FROM (SELECT  TOP 1 TH002,TH003 ,MAX(PURTH.TH014) AS TH014 ,TG005,MA002,TH015, TH018
+						FROM PURTB,PURTG,PURMA,PURTH 
+						WHERE TB001 = @TB001 AND TB002 = @TB002 AND TB003 = replace(str(@Num,4,0),' ','0')  AND TG001 = TH001 AND TG002 = TH002 AND TG005 = MA001 AND TH004 = TB004 AND TH004 NOT IN ('5810001','4999')
+						GROUP BY TH002,TH003,TH014 ,TG005,MA002,TH015,TH018
+						ORDER BY TH014 DESC) TH
+
+
+						UNION
+ 
+						SELECT  TI002 ,TI003 ,TH003 ,TH005 ,MA002,TI019,TI024  FROM (SELECT  TOP 1 TI002  ,TI003 ,MAX(MOCTH.TH003) AS TH003 ,TH005  ,MA002,TI019 , TI024
+							FROM PURTB,MOCTH,PURMA,MOCTI 
+							WHERE TB001 = @TB001 AND TB002 = @TB002 AND TB003 = replace(str(@Num,4,0),' ','0')  AND TH001 = TI001 AND TH002 = TI002 AND TH005 = MA001 AND TI004 = TB004 AND TI004 NOT IN ('5810001','4999')
+							GROUP BY TI002 ,TI003 ,TH003 ,TH005 ,MA002,TI019,TI024
+							ORDER BY TH003 DESC) TJ) A)
+
+		SELECT @COUNT_CHK = (SELECT COUNT(*) FROM PURTB WHERE TB001 = @TB001 AND TB002 = @TB002 AND TB003 = replace(str(@Num,4,0),' ','0')) --為了避免序號跳號，新增判斷當有找到序號項次才寫
+
+
+
+		IF @ROW_COUNT = 0 AND @COUNT_CHK > 0
+		BEGIN
+			
+			INSERT INTO coptb_temp VALUES(@TB001,@TB002,replace(str(@Num,4,0),' ','0'),'','','','','','','')
+		END
+
+		ELSE IF @ROW_COUNT > 0 AND @COUNT_CHK > 0
+		BEGIN
+
+			INSERT INTO coptb_temp VALUES(@TB001,@TB002,replace(str(@Num,4,0),' ','0'),@TH002,@TH003,@TH014,@TG005,@MA002,@TH015,@TH018)
+
+		END;
+
+		SET @Num = @Num + 1
+	END
+  
+
+
+
+END
+=============================
+create view 
+CSTMI
+SELECT  COMPANY, MG002, MG003, MG004, MG005, SUM(MG008) AS MG008, SUM(MG009) AS MG009, SUM(MG010) AS MG010, 
+                   SUM(MG011) AS MG011
+FROM      dbo.CSTMG
+GROUP BY COMPANY, MG002, MG003, MG004, MG005
+=================
+CSTMJ
+SELECT  A.COMPANY, A.MK002, A.MK003, A.MK004, A.MK005, SUM(A.MK008) AS MK008, SUM(A.MK009) AS MK009, SUM(B.MC007) 
+                   AS MC007, SUM(B.MC007) - SUM(A.MK009) AS QTY
+FROM      dbo.CSTMK AS A INNER JOIN
+                   dbo.INVMC AS B ON A.MK002 = B.MC001
+WHERE   (B.MC002 = '111')
+GROUP BY A.COMPANY, A.MK002, A.MK003, A.MK004, A.MK005
+
+====================
+CSTML
+SELECT  A.COMPANY, A.MG001, A.MG002, A.MG003, A.MG004, A.MG005, A.MG006, A.MG007, A.MG008, A.MG009, A.MG010, A.MG011, 
+                   A.MG012, A.MG013, B.MD003
+FROM      dbo.CSTMG AS A INNER JOIN
+                   dbo.BOMMD AS B ON A.MG002 = B.MD001
+==================
+CSTMM
+SELECT  A.COMPANY, A.MG001, A.MG002, A.MG003, A.MG004, A.MG005, A.MG006, A.MG007, A.MG008, A.MG009, A.MG010, A.MG011, 
+                   A.MG012, A.MG013, A.MD003, B.MD003 AS M004
+FROM      dbo.CSTML AS A INNER JOIN
+                   dbo.BOMMD AS B ON A.MD003 = B.MD001
+==================
+SCAINV
+SELECT  B.COMPANY, B.MA001, B.MA002, B.MA003, B.MA004, A.MC007, B.MA005, B.MA006
+FROM      dbo.INVMC AS A RIGHT OUTER JOIN
+                   dbo.SCAMA AS B ON A.MC001 = B.MA001
+WHERE   (B.MA006 = 'Y') AND (A.MC002 = '111')
+=======================
+USGRPRV00
+SELECT  '使用者' UORG, A.COMPANY, SYSID, PROGID, A.USERID UGID, B.USERNM UGNM, QUR, INS, UPD, DEL, PRN
+FROM      USPRT00 A, USERT00 B
+WHERE   A.USERID = B.USERID AND A.COMPANY = B.COMPANY
+UNION
+SELECT  '群組' UORG, A.COMPANY, SYSID, PROGID, A.GROUPID UGID, B.GROUPNM UGNM, QUR, INS, UPD, DEL, PRN
+FROM      GRPRT00 A, GROUPT00 B
+WHERE   A.GROUPID = B.GROUPID AND A.COMPANY = B.COMPANY)
+
+=====================
+BOMMD_R
+SELECT  TOP 100 PERCENT A.MD001, A.MD003, CASE WHEN D .DOT + A.DP IS NULL THEN '' ELSE D .DOT + A.DP END AS DP, 
+                   C.MB002, C.MB003, C.MB004, CASE WHEN B.MD005 IS NULL THEN '' ELSE B.MD005 END AS MD005, 
+                   (CASE C.MB025 WHEN 'P' THEN '採購件' WHEN 'M' THEN '自製件' WHEN 'S' THEN '託外加工件' WHEN 'Y' THEN '虛設品號' WHEN
+                    'F' THEN 'Feature件' ELSE 'Option件' END) AS MB025, A.MD007, A.MD006, A.MB057, A.MB058, A.MB061, A.MB059, A.MB062, 
+                   A.MB060, A.MB063, A.MB057 + A.MB058 + A.MB059 + A.MB060 AS MB064, A.MB061 + A.MB062 + A.MB063 AS MB065
+FROM      dbo.bommd_tmp AS A LEFT OUTER JOIN
+                   dbo.BOMMD AS B ON A.MD001 = B.MD001 AND A.MD003 = B.MD003 LEFT OUTER JOIN
+                   dbo.INVMB AS C ON A.MD003 = C.MB001 LEFT OUTER JOIN
+                   dbo.bommd_tmp_dp AS D ON A.DP = D.DP
+ORDER BY A.NODE
+==================
+V_COPTD
+SELECT DISTINCT B.TD004, B.TD005, B.TD006
+FROM      dbo.COPTC AS A INNER JOIN
+                   dbo.COPTD AS B ON A.TC001 = B.TD001 AND A.TC002 = B.TD002
+WHERE   (B.TD004 <> '5810001') AND (SUBSTRING(B.TD004, 1, 1) <> '3') AND (SUBSTRING(B.TD004, 1, 1) <> '4') AND 
+                   (SUBSTRING(B.TD004, 1, 2) <> '13') AND (A.TC039 >= '20070124') AND (A.TC039 <= '20070131')
+=================================
+V_COPTJ
+SELECT  COPTH.TH014, COPTH.TH015, COPTH.TH016, CASE WHEN SUM(T1.TJ007) IS NULL THEN 0 ELSE SUM(T1.TJ007) 
+                   END AS TJ007_1
+FROM      COPTH, COPTJ T1,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp) coptd_temp
+WHERE   COPTH.TH014 = coptd_temp.TD001 AND COPTH.TH015 = coptd_temp.TD002 AND COPTH.TH016 = coptd_temp.TD003 AND 
+                   COPTH.TH001 = TJ015 AND COPTH.TH002 = TJ016 AND COPTH.TH003 = TJ017 AND TJ018 = '' AND TJ021 = 'Y'
+GROUP BY COPTH.TH014, COPTH.TH015, COPTH.TH016
+UNION
+SELECT  TJ018, TJ019, TJ020, CASE WHEN SUM(T2.TJ007) IS NULL THEN 0 ELSE SUM(T2.TJ007) END AS TJ007_2
+FROM      COPTJ T2,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp) coptd_temp
+WHERE   TJ018 = coptd_temp.TD001 AND TJ019 = coptd_temp.TD002 AND TJ020 = coptd_temp.TD003 AND TJ015 = '' AND 
+                   TJ021 = 'Y'
+GROUP BY TJ018, TJ019, TJ020
+UNION
+SELECT  TJ018, TJ019, TJ020, CASE WHEN SUM(T3.TJ007) IS NULL THEN 0 ELSE SUM(T3.TJ007) END AS TJ007_2
+FROM      COPTH, COPTJ T3,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp) coptd_temp
+WHERE   COPTH.TH001 = TJ015 AND COPTH.TH002 = TJ016 AND COPTH.TH003 = TJ017 AND TJ018 = coptd_temp.TD001 AND 
+                   TJ019 = coptd_temp.TD002 AND TJ020 = coptd_temp.TD003 AND TJ021 = 'Y'
+GROUP BY TJ018, TJ019, TJ020
+=============================
+V_COPTJ_TEST
+SELECT  COPTH.TH014, COPTH.TH015, COPTH.TH016, CASE WHEN SUM(T1.TJ007) IS NULL THEN 0 ELSE SUM(T1.TJ007) 
+                   END AS TJ007_1
+FROM      COPTH, COPTJ T1,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp_bak) coptd_temp_bak
+WHERE   COPTH.TH014 = coptd_temp_bak.TD001 AND COPTH.TH015 = coptd_temp_bak.TD002 AND 
+                   COPTH.TH016 = coptd_temp_bak.TD003 AND COPTH.TH001 = TJ015 AND COPTH.TH002 = TJ016 AND 
+                   COPTH.TH003 = TJ017 AND TJ018 = '' AND TJ021 = 'Y'
+GROUP BY COPTH.TH014, COPTH.TH015, COPTH.TH016
+UNION
+SELECT  TJ018, TJ019, TJ020, CASE WHEN SUM(T2.TJ007) IS NULL THEN 0 ELSE SUM(T2.TJ007) END AS TJ007_2
+FROM      COPTJ T2,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp_bak) coptd_temp_bak
+WHERE   TJ018 = coptd_temp_bak.TD001 AND TJ019 = coptd_temp_bak.TD002 AND TJ020 = coptd_temp_bak.TD003 AND 
+                   TJ015 = '' AND TJ021 = 'Y'
+GROUP BY TJ018, TJ019, TJ020
+UNION
+SELECT  TJ018, TJ019, TJ020, CASE WHEN SUM(T3.TJ007) IS NULL THEN 0 ELSE SUM(T3.TJ007) END AS TJ007_2
+FROM      COPTH, COPTJ T3,
+                       (SELECT DISTINCT TD001, TD002, TD003
+                        FROM       coptd_temp_bak) coptd_temp_bak
+WHERE   COPTH.TH001 = TJ015 AND COPTH.TH002 = TJ016 AND COPTH.TH003 = TJ017 AND TJ018 = coptd_temp_bak.TD001 AND 
+                   TJ019 = coptd_temp_bak.TD002 AND TJ020 = coptd_temp_bak.TD003 AND TJ021 = 'Y'
+GROUP BY TJ018, TJ019, TJ020
+======================
+
+				  

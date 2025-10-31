@@ -1,0 +1,152 @@
+<div id="container"> <!-- div-1 -->
+  <div id="header"> <!-- div-2 -->
+    <div class="div1">
+      <div class="div2"><a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main"><?php echo $systitle ?></a></div>
+        <div class="div3">
+		  <img src="<?php echo base_url()?>assets/image/user.png" style="position: relative; top: 6px;" />&nbsp;<span><?php echo $username ?></span> 已登錄 　
+	      <img src="<?php echo base_url()?>assets/image/category.png" style="position: relative; top: 3px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php/main">回主目錄</a>　
+		  <img src="<?php echo base_url()?>assets/image/exit.png" style="position: relative; top: 5px;" />&nbsp;<a style="text-decoration: none; color: #FFFFFF;" href="<?php echo base_url()?>index.php">退出系統</a>
+	    </div>
+    </div>
+
+<div id="content">  <!-- div-3 -->
+  <div class="box"> <!-- div-4 -->
+    <div class="heading">
+      <h1><img src="<?php echo base_url()?>assets/image/order.png" alt="" /> 請假單資料建立作業 - 多筆新增</h1>
+    </div>
+	
+    <div class="content"> <!-- div-5 -->
+	<form   class="cmxform" id="commentForm"  name="form"  method="post" enctype="multipart/form-data"  action="<?php echo base_url()?>index.php/pal/pali54/savemult" >	
+	<!-- <div id="htabs" class="htabs14"  ><span>編輯項目-新增</span></div> -->
+	<div id="tab-general"> <!-- div-6 -->
+	<?php
+	  $date=date("Ymd");
+	  if(!isset($tg001)){$tg001=$this->input->post('tg001');}
+	  if(!isset($tg002)){$tg002=$this->input->post('tg002');}
+	  if(!isset($palq01a)){$palq01a=$tg001;}
+	  if(!isset($cmsq05a)){$cmsq05a=$tg002;}
+	  $palq01adisp=$this->input->post('tg001');
+	  $cmsq05adisp=$this->input->post('tg002');
+
+	   if (!isset($tg003)) { $tg003o=date("Y/m/d");$tg003c=date("Y/m/d");}
+	   if (!isset($tg004)) { $tg004=0;} else { $tg004=$this->input->post('tg004');}
+	   if (!isset($tg005)) { $tg005=0;} else { $tg005=$this->input->post('tg005');}
+	   if (!isset($tg006)) { $tg006=0;} else { $tg006=$this->input->post('tg006');}
+	   if (!isset($tg007)) { $tg007=0;} else { $tg007=$this->input->post('tg007');}
+	   if (!isset($tg008)) { $tg008=0;} else { $tg008=$this->input->post('tg008');}
+	   if (!isset($tg009)) { $tg009=0;} else { $tg009=$this->input->post('tg009');}
+	   if (!isset($tg010)) { $tg010=0;} else { $tg010=$this->input->post('tg010');}
+	   if (!isset($tg011)) { $tg011=0;} else { $tg011=$this->input->post('tg011');}
+	   if (!isset($tg012)) { $tg012=0;} else { $tg012=$this->input->post('tg012');}
+	   if (!isset($tg013)) { $tg013=0;} else { $tg013=$this->input->post('tg013');}
+	   if (!isset($tg014)) { $tg014=0;} else { $tg014=$this->input->post('tg014');}
+	   if (!isset($tg015)) { $tg015=0;} else { $tg015=$this->input->post('tg015');}
+	   if (!isset($tg016)) { $tg016=0;} else { $tg016=$this->input->post('tg016');}
+	   if (!isset($tg017)) { $tg017=0;} else { $tg017=$this->input->post('tg017');}
+	   if (!isset($tg018)) { $tg018=0;} else { $tg018=$this->input->post('tg018');}
+	   if (!isset($tg019)) { $tg019=0;} else { $tg019=$this->input->post('tg019');}
+	   if (!isset($tg020)) { $tg020=0;} else { $tg020=$this->input->post('tg020');}
+	   if (!isset($tg021)) { $tg021=0;} else { $tg021=$this->input->post('tg021');}
+	   if (!isset($tg022)) { $tg022=0;} else { $tg022=$this->input->post('tg022');}
+	   if (!isset($tg023)) { $tg023='';} else { $tg023=$this->input->post('tg023');}
+	
+	//  if (!isset($tg014)) { $tg014=date("Y/m/d");}
+	
+	  
+	?>
+
+	<table class="form14">     <!-- 表格 -->
+	  <tr>
+	    <td class="start14a" width="15%"><span class="required">員工代號：</span></td>
+        <td class="normal14a" width="20%" ><input tabIndex="1" id="tg001" onKeyPress="keyFunction()" onchange="startpalq01a(this)" name="palq01a" value="<?php echo $palq01a; ?>"  type="text" required /><img id="Showpalq01a" src="<?php echo base_url()?>assets/image/png/person.png" alt="" align="top"/></a>
+         <span id="palq01adisp"> <?php echo $palq01adisp; ?> </span></td>
+	    <td class="start14a" width="15%"><span class="required">部門代號：</span></td>
+        <td class="normal14a"  width="20%"> <input tabIndex="2" id="tg002" onKeyPress="keyFunction()" onchange="startcmsq05a(this)" name="cmsq05a" value="<?php echo $cmsq05a; ?>"  type="text" required /><img id="Showcmsq05a" src="<?php echo base_url()?>assets/image/png/linedo.png" alt="" align="top"/></a>
+         <span id="cmsq05adisp"> <?php    echo $cmsq05adisp; ?> </span></td>
+		<td class="start14a" width="15%"></td>
+		<td class="normal14a" width="20%"></td>
+	  </tr>	
+	  <tr>
+		<td class="normal14a">請假起始日期： </td>
+        <td class="normal14"><input tabIndex="3" onKeyPress="keyFunction()" onclick="scwShow(this,event);" onchange="dateformat_ymd(this);" id="tg003o" name="tg003o"  value="<?php echo $tg003o; ?>"  type="text" style="background-color:#E7EFEF" /></td>
+		<td class="normal14a">請假結束日期： </td>
+        <td class="normal14"><input tabIndex="3" onKeyPress="keyFunction()" onclick="scwShow(this,event);" onchange="dateformat_ymd(this);" id="tg003c" name="tg003c"  value="<?php echo $tg003c; ?>"  type="text" style="background-color:#E7EFEF" /></td>
+		<td class="normal14a"></td>
+		<td class="normal14"></td>
+	  </tr>
+	  <tr>
+        <td class="normal14">遲到早退次：</td>
+		<td class="normal14"><input tabIndex="4" onKeyPress="keyFunction()"  id="tg004" name="tg004" value="<?php echo $tg004; ?>"  type="text"  /></td>	   
+		<td class="normal14">未刷卡補正次：</td>
+        <td class="normal14"><input type="text" tabIndex="5" id="tg005" onKeyPress="keyFunction()" name="tg005" value="<?php echo $tg005; ?>"  /></td>	  
+	    <td class="normal14">事假小時：</td>		
+        <td class="normal14"><input type="text" tabIndex="6" id="tg006" onKeyPress="keyFunction()" name="tg006" value="<?php echo $tg006; ?>"  /></td>
+	  </tr>
+	   <tr>
+	    <td class="normal14">病假小時：</td>
+        <td class="normal14"><input type="text" tabIndex="7" id="tg007" onKeyPress="keyFunction()" name="tg007" value="<?php echo $tg007; ?>"  /></td>	  
+	    <td class="normal14a">特休小時：</td>		
+        <td class="normal14"><input type="text" tabIndex="8" id="tg008" onKeyPress="keyFunction()" name="tg008" value="<?php echo $tg008; ?>"  /></td>
+	    <td class="normal14">喪假天：</td>
+        <td class="normal14"><input type="text" tabIndex="9" id="tg009" onKeyPress="keyFunction()" name="tg009" value="<?php echo $tg009; ?>" /></td>	
+	  </tr>
+	   
+	  <tr>
+	    <td class="normal14">無薪假小時：</td>		
+        <td class="normal14"><input type="text" tabIndex="10" id="tg010" onKeyPress="keyFunction()" name="tg010" value="<?php echo $tg010; ?>"  /></td>
+		<td class="normal14">產假天：</td>
+        <td class="normal14"><input type="text" tabIndex="11" id="tg011" onKeyPress="keyFunction()" name="tg011" value="<?php echo $tg011; ?>" /></td>	  
+	    <td class="normal14">陪產假天：</td>		
+        <td class="normal14"><input type="text" tabIndex="12" id="tg012" onKeyPress="keyFunction()" name="tg012" value="<?php echo $tg012; ?>"  /></td>
+	  </tr>
+	  <tr>
+	    <td class="normal14">婚假天：</td>
+        <td class="normal14"><input type="text" tabIndex="13" id="tg013" onKeyPress="keyFunction()" name="tg013" value="<?php echo $tg013; ?>" /></td>	  
+	    <td class="normal14">公偒假天：</td>		
+        <td class="normal14"><input type="text" tabIndex="14" id="tg014" onKeyPress="keyFunction()" name="tg014" value="<?php echo $tg014; ?>"  /></td>
+	    <td class="normal14">曠職天：</td>
+        <td class="normal14"><input type="text" tabIndex="15" id="tg015" onKeyPress="keyFunction()" name="tg015" value="<?php echo $tg015; ?>" /></td>	
+	  </tr>	  
+	   <tr>
+        <td class="normal14">公假天：</td>		
+        <td class="normal14"><input type="text" tabIndex="16" id="tg016" onKeyPress="keyFunction()" name="tg016" value="<?php echo $tg016; ?>"  /></td>	   
+	    <td class="normal14a">平常加班時：</td>
+        <td class="normal14"><input type="text" tabIndex="17" id="tg017" onKeyPress="keyFunction()" name="tg017" value="<?php echo $tg017; ?>"  /></td>	  
+	    <td class="normal14">平常加班2小時上：</td>		
+        <td class="normal14"><input type="text" tabIndex="18" id="tg018" onKeyPress="keyFunction()" name="tg018" value="<?php echo $tg018; ?>"  /></td>
+	  </tr>
+	  <tr>
+        <td class="normal14">六加班時：</td>		
+        <td class="normal14"><input type="text" tabIndex="19" id="tg019" onKeyPress="keyFunction()" name="tg019" value="<?php echo $tg019; ?>"  /></td>	   
+	    <td class="normal14a">六加班8小時上：</td>
+        <td class="normal14"><input type="text" tabIndex="20" id="tg020" onKeyPress="keyFunction()" name="tg020" value="<?php echo $tg020; ?>"  /></td>	  
+	    <td class="normal14">假日加班時：</td>		
+        <td class="normal14"><input type="text" tabIndex="21" id="tg021" onKeyPress="keyFunction()" name="tg021" value="<?php echo $tg021; ?>"  /></td>
+	  </tr>
+	   <tr>
+	    <td class="normal14">假日加班8小時上：</td>		
+        <td class="normal14"><input type="text" tabIndex="22" id="tg022" onKeyPress="keyFunction()" name="tg022" value="<?php echo $tg022; ?>"  /></td>
+		<td class="normal14">備註：</td>
+        <td class="normal14" colspan="2" ><input type="text" tabIndex="23" id="tg023" onKeyPress="keyFunction()"    name="tg023" value="<?php echo $tg023; ?>"  size="60"/></td>
+        <td class="normal14"></td>		
+        <td class="normal14"></td>
+	  </tr>
+	</table>
+	      
+	<div class="buttons">
+	<button tabIndex="8" type='submit' accesskey="s"   name='submit' class="button" value='&nbsp;儲存F8&nbsp;'><span>儲 存Alt+s</span><img src="<?php echo base_url()?>assets/image/png/save.png" /></button>&nbsp;&nbsp;&nbsp;&nbsp;
+	<a accesskey="x" tabIndex="9" id='cancel' name='cancel' href="<?php echo site_url('pal/pali54/display'); ?>" class="button" ><span>返 回Alt+x</span><img src="<?php echo base_url()?>assets/image/png/cancle.png" /></a>
+	</div> 
+	  
+    </form>
+   </div> <!-- div-6 --> 
+    </div> <!-- div-5 -->	
+</div> <!-- div-4 -->
+
+  <?php	if ($message!=' ') { ?>
+	<div class="success"><?php echo '  提示訊息：'.$message.'<span>'.'</span>'.
+'◎操作說明:[ 欄位名稱紅色代表必需輸入欄位,按Tab鍵或Enter鍵跳下一個欄位,按Shift+Tab鍵跳上一個欄位,Tab鍵停留在有選項欄位按上下鍵可選擇資料. ] ' ?> </div>  <?php } ?>
+    </div>  <!-- div-3 -->
+  </div>  <!-- div-2 -->
+</div>  <!-- div-1 -->
+ <?php include("./application/views/fun/pali54_funjs_v.php"); ?> 

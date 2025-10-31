@@ -1,0 +1,66 @@
+-- phpMyAdmin SQL Dump
+-- version 3.4.11.1
+-- http://www.phpmyadmin.net
+--
+-- 主機: localhost
+-- 產生日期: 2013 年 08 月 20 日 01:04
+-- 伺服器版本: 5.5.23
+-- PHP 版本: 5.2.17
+
+
+--
+-- 資料庫: `hwhsinn3_der`
+--
+
+-- --------------------------------------------------------
+檔案代碼:ADMMF        ( `deridno` int(10) unsigned NOT NULL DEFAULT '1',)
+檔案名稱:使用者資料  
+類    型:7 (1.主檔單頭 2.主檔單身 3.交易單頭 4.交易單身 5.交易記錄 6.月檔/統計 7.系統檔 8.其它)
+轉檔完成:Y
+PRIMARY :MF001
+===============================================================================================
+序號 欄位代號 欄位名稱                  TYPE 長度  備註
+===============================================================================================
+     COMPANY                              C   10   公司簡稱
+     CREATOR                              C   10   建立者代號
+     USR_GROUP                            C   10   使用者群組代號
+     CREATE_DATE                          C    8   建立日期
+     MODIFIER                             C   10   修改者代號
+     MODI_DATE                            C    8   修改者代號
+     FLAG                                 N    5   列印次數
+0001 MF001    使用者代碼                  C   10   使用者代碼
+0002 MF002    使用者名稱                  C   10   使用者名稱
+0003 MF003    使用者密碼                  C   10   使用者密碼
+0004 MF004    群組代碼                    C   10   群組代碼
+0005 MF005    超級使用者                  C   01   Y/N
+0006 MF006    備註                        V  255   備註說明 VARCHAR
+0007 MF007    部門                        C   06   部門 &&88-06-28 ADD
+
+
+--
+-- 表的結構 `admmf`
+--
+
+CREATE TABLE IF NOT EXISTS `admmf` (
+  `company` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `creator` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `usr_group` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `create_date` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `modifier` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `modi_date` char(8) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `flag`  float  COLLATE utf8_unicode_ci NOT NULL DEFAULT 0,
+
+  `mf001` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf002` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf003` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf004` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf005` char(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'N',
+  `mf006` varchar(255) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  `mf007` char(6) COLLATE utf8_unicode_ci NOT NULL DEFAULT '',
+  
+  PRIMARY KEY (`mf001`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+--
+-- 轉存資料表中的資料 `admmf`
+--

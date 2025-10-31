@@ -1,0 +1,52 @@
+/* .TitleName{
+    font-family:Times New Roman,細明體;
+    font-size:28px;
+}
+tr {
+    height:20px;
+}
+td {
+    border:0px solid red;
+    height:25px;
+}
+div {
+    font-family:Times New Roman,細明體;
+}
+tbody div{
+    font-size:14px; 
+} */
+/*
+.TitleName3{
+    font-size:8px; 
+    -webkit-transform:scale(0.66);
+    display:inline-block;
+}
+scale(0.91) 裡面的數值是以 chrome 
+最小字型 12px 去計算轉換倍率，例如：9px 為
+9/12 = 0.75 這樣。
+*/
+
+@page { 
+    margin-top: 1cm;
+    margin-right: 0.5cm;
+    margin-bottom:0.3cm;
+    margin-left: 0.5cm;
+    /* margin: 0; */
+    size: letterhalf 5.5in 8.5in portrait;
+    /*
+ size:landscape;1170 portrait 810  w950 h360 px letter1/2 品質最高306x180 縮放比例80% 邊界自訂上10mm,下3mm,左右5mm
+    -webkit-transform: rotate(-90deg); -moz-transform:rotate(-90deg);
+    filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+    */
+};
+@media print {  /*强制分页*/
+  .print-page {
+    page-break-after: always;
+  }
+  #print {
+    display: none;
+  }
+  #screen {
+    display: none;
+  }
+}

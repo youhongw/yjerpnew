@@ -1,0 +1,277 @@
+<!-- 不更新網頁 自動提示方框資料前置小工具 --> 
+<script type="text/javascript"><!--       
+$.widget('custom.catcomplete', $.ui.autocomplete, {
+	_renderMenu: function(ul, items) {
+		var self = this, currentCategory = '';
+						
+		$.each(items, function(index, item) {
+			if (item.category != currentCategory) {
+				ul.append('<li class="ui-autocomplete-category">' + item.category + '</li>');
+								
+				currentCategory = item.category;
+			}
+							
+			self._renderItem(ul, item);
+		});
+	}
+});	
+//--></script>
+<script language="javascript"   >   //不更新網頁, 帶出資料
+ 
+var xmlHttp;
+function createXMLHttpRequest(){          //不更新網頁 判斷適用各種流覽器 共用 (全域)
+	if(window.ActiveXObject)
+		xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+	else if(window.XMLHttpRequest)
+		xmlHttp = new XMLHttpRequest();
+}
+function showcmsi03(sText){   //不更新網頁 6  庫別 
+	var oSpan = document.getElementById("cmsi03disp");
+		 oSpan.innerHTML = "<span style='color:black'>"+sText+"</span>"; 	
+	 if (!sText) { 
+	      var cmsi03 = document.getElementById("cmsi03");
+		  startcmsq03a(cmsi03);		
+	 }
+	  if (sText=='') {
+		  oSpan.innerHTML = "<span style='color:red'>無此資料!</span>"; }	
+}
+
+function startcmsq03a(oInput){         //不更新網頁 6 庫別
+	//建立非同步請求
+    
+	createXMLHttpRequest();
+   	var sUrl = "<?php echo base_url()?>index.php/cms/cmsi03/checkcmsi03/" + encodeURIComponent(oInput.value)+ "/" + new Date().getTime();   
+	var QueryString = encodeURIComponent(oInput.value);
+	
+	//xmlHttp.open("GET",sUrl,true);	
+	xmlHttp.open("POST",sUrl);	
+	xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xmlHttp.send(QueryString);
+			
+	xmlHttp.onreadystatechange = function(){	    
+		if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		showcmsi03(xmlHttp.responseText);	}//顯示服務器結果	
+	}
+	//xmlHttp.send(null);
+}
+//生產線別
+function showcmsi04(sText){   //不更新網頁 6  生產線別 
+	var oSpan = document.getElementById("cmsi04disp");
+		 oSpan.innerHTML = "<span style='color:black'>"+sText+"</span>"; 	
+	 if (!sText) { 
+	      var cmsi04 = document.getElementById("cmsi04");
+		  startcmsi04(cmsi04);		
+	 }
+	  if (sText=='') {
+		  oSpan.innerHTML = "<span style='color:red'>無此資料!</span>"; }	
+}
+
+function startcmsi04(oInput){         //不更新網頁 6 生產線別
+	//建立非同步請求
+    
+	createXMLHttpRequest();
+   	var sUrl = "<?php echo base_url()?>index.php/cms/cmsi04/checkcmsi04/" + encodeURIComponent(oInput.value)+ "/" + new Date().getTime();   
+	var QueryString = encodeURIComponent(oInput.value);
+	
+	//xmlHttp.open("GET",sUrl,true);	
+	xmlHttp.open("POST",sUrl);	
+	xmlHttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+	xmlHttp.send(QueryString);
+			
+	xmlHttp.onreadystatechange = function(){	    
+		if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+		showcmsi04(xmlHttp.responseText);	}//顯示服務器結果	
+	}
+	//xmlHttp.send(null);
+}
+</script>	
+<script type="text/javascript"> 	
+//查詢庫別開視窗cmsi03 //下拉選單$('.close').click($.unblockUI);
+$(document).ready(function(){
+	$("#Showcmsi03disp").click(function() {
+	$.blockUI({
+		css: {
+			top: '15%',
+			left: '25%',
+			height: '70%',
+			width: '50%',
+			overflow:'hidden',
+			'-webkit-border-radius': '10px',
+			'-moz-border-radius': '10px',
+			'-khtml-border-radius': '10px',
+			'border-radius': '10px',
+		},
+		message: $('#divFcmsi03'),
+		onOverlayClick: clear_cmsi03disp_sql
+	});
+	  $('.close').click($.unblockUI);
+	});
+    $('#cmsi03').catcomplete({
+        autoFocus: true,
+		delay: 1000,
+        minLength: 1,  		
+		source:
+		function(req, add){
+			var smb001= $('#cmsi03').val();
+			console.log(smb001);
+            $.ajax({
+                url: '<?php echo base_url(); ?>index.php/cms/cmsi03/lookup1_cmsi03/'+encodeURIComponent(smb001), 
+                cache: false, 				
+                dataType: 'json',  
+                type: 'POST',  
+                data: req,
+                success:      
+				function(data){  
+					if(data.response =="true"){
+						add(data.message);
+					}
+				}
+			});
+		},  
+		select: function(event, ui) {
+			if(ui.item.value!="查無資料"){
+				$('#cmsi03').val(ui.item.value1);
+				$('#cmsi03disp').text(ui.item.value2);
+				console.log($('#cmsi03').val());
+				return false;
+			}else{
+				$('#cmsi03disp').text("查無資料");
+				return false;
+			}
+			
+		},
+		focus: function(event, ui) {
+			return false;
+		}
+	});
+});
+function addcmsi03disp(mb001,mb002){
+	$('#cmsi03').val(mb001);
+	$('#cmsi03disp').text(mb002);
+	$.ajax({
+		method: "POST",
+		url: "<?php echo base_url() ?>index.php/cms/cmsi03/clear_sql"
+	});
+}
+function clear_cmsi03disp_sql(){
+	$.unblockUI();
+	$.ajax({
+		method: "POST",
+		url: "<?php echo base_url() ?>index.php/cms/cmsi03/clear_sql"
+	});
+}
+//按enter 自動找到名稱
+function check_cmsi03(row_obj){
+	var smb001= $('#cmsi03').val();
+	if(!smb001){$('#cmsi03disp').text("");return;}
+	$.ajax({
+		url: '<?php echo base_url(); ?>index.php/cms/cmsi03/lookup2_cmsi03/'+encodeURIComponent(smb001), 
+		cache: false, 				
+		dataType: 'json',  
+		type: 'POST',  
+		data: {mb001:row_obj.value},
+		success:      
+		function(data){
+			if(data.response == "true"){
+				if(data.message[0].value=="查無資料"){
+					$('#cmsi03').val("");
+					$('#cmsi03disp').text("查無資料");
+				}
+				$('#cmsi03').val(data.message[0].value1);
+				//$('#cmsi03').val(smb001);
+				$('#cmsi03disp').text(data.message[0].value2);
+			}else{
+				$('#cmsi03').val("");
+				$('#cmsi03disp').text("查無資料");
+			}
+		}
+	});
+}
+</script>	   
+<div id="divFcmsi03" style="display:none;width:100%;height:100%;">
+<div style="float:right;"><input type="button" class="close" value="close" /></div> 
+<iframe src="<?php echo base_url()?>index.php/cms/cmsi03/display_child" allowTransparency="flase" name="ifmain" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe> 	   
+</div>
+
+
+<script type="text/javascript"> 	
+//查詢生產線別開視窗cmsi04 //下拉選單$('.close').click($.unblockUI);
+$(document).ready(function(){
+	$("#Showcmsi04disp").click(function() {
+	$.blockUI({
+		css: {
+			top: '15%',
+			left: '25%',
+			height: '70%',
+			width: '50%',
+			overflow:'hidden',
+			'-webkit-border-radius': '10px',
+			'-moz-border-radius': '10px',
+			'-khtml-border-radius': '10px',
+			'border-radius': '10px',
+		},
+		message: $('#divFcmsi04'),
+		onOverlayClick: clear_cmsi04disp_sql
+	});
+	  $('.close').click($.unblockUI);
+	});
+    $('#cmsi04').catcomplete({
+        autoFocus: true,
+		delay: 1000,
+        minLength: 1,  		
+		source:
+		function(req, add){
+			var smb001= $('#cmsi04').val();
+			console.log(smb001);
+            $.ajax({
+                url: '<?php echo base_url(); ?>index.php/cms/cmsi04/lookup1_cmsi04/'+encodeURIComponent(smb001), 
+                cache: false, 				
+                dataType: 'json',  
+                type: 'POST',  
+                data: req,
+                success:      
+				function(data){  
+					if(data.response =="true"){
+						add(data.message);
+					}
+				}
+			});
+		},  
+		select: function(event, ui) {
+			if(ui.item.value!="查無資料"){
+				$('#cmsi04').val(ui.item.value1);
+				$('#cmsi04disp').text(ui.item.value2);
+				//console.log($('#cmsi04').val());
+				return false;
+			}else{
+				$('#cmsi04disp').text("查無資料");
+				return false;
+			}
+			
+		},
+		focus: function(event, ui) {
+			return false;
+		}
+	});
+});
+function addcmsi04disp(smb001,smb002){
+	$('#cmsi04').val(smb001);
+	$('#cmsi04disp').text(smb002);
+	$.ajax({
+		method: "POST",
+		url: "<?php echo base_url() ?>index.php/cms/cmsi04/clear_sql"
+	});
+}
+function clear_cmsi04disp_sql(){
+	$.unblockUI();
+	$.ajax({
+		method: "POST",
+		url: "<?php echo base_url() ?>index.php/cms/cmsi04/clear_sql"
+	});
+}
+
+</script>	   
+<div id="divFcmsi04" style="display:none;width:100%;height:100%;">
+<div style="float:right;"><input type="button" class="close" value="close" /></div> 
+<iframe src="<?php echo base_url()?>index.php/cms/cmsi04/display_child" allowTransparency="flase" name="ifmain" width="100%" height="100%" marginwidth="0" marginheight="0" frameborder="0"></iframe> 	   
+</div>
