@@ -74,12 +74,12 @@ $active_group = 'default';
 $query_builder = false;
 
 $db['default'] = array(
-	'dsn'	=> 'TEST_YJ2TO4',
-	'hostname' => '192.168.100.210',
+	'dsn'	=> 'YJ',
+	'hostname' => '132.147.160.1',
 	'port' => '1433',
 	'username' => 'sa',
-	'password' => 'D!g!w!n@2023',
-	'database' => 'TEST_YJ2TO4',
+	'password' => 'dersheng8365911',
+	'database' => 'YJ',
 	'dbdriver' => 'odbc',
 	'dbprefix' => '',
 	'pconnect' => TRUE,

@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class sfci05a_model extends CI_Model
+class sfci05_model extends CI_Model
 {
 
 	function __construct()
@@ -8,18 +8,54 @@ class sfci05a_model extends CI_Model
 		parent::__construct();      //重載ci底層程式 自動執行父類別
 	}
 
+	//查詢 table 表所有資料-舊版 	 
+	function selbrowse($num, $offset)
+	{
+		$this->db->select('TB001, TB002, TB003, TB004, TB0011, TB0019,TB020, create_date');
+		$this->db->from('sfctb');
+		//$this->db->order_by('id', 'DESC');                //排序  單欄
+		$this->db->order_by('TB001 desc, TB002 desc');    //排序  單欄以上 asc 由小至大 desc預設由大至小
+		$this->db->limit($num, $offset);   // 每頁15筆
+		$ret['rows'] = $this->db->get()->result();
+		$this->db->select('COUNT(*) as count');    //查詢總筆數
+		$this->db->from('sfctb');
+		$query = $this->db->get();
+		$tmp = $query->result();
+		$ret['num_rows'] = $tmp[0]->count;
+		return $ret;
+	}
+
+	//欄位表頭排序流覽資料-舊版
+	function search($limit, $offset, $sort_by, $sort_order)
+	{
+		$sort_order = (substr($sort_order, 0, 3) == 'asc') ? 'asc' : 'desc';
+		$sort_columns = array('a.TB001', 'a.TB002', 'a.TB003', 'a.TB004', 'a.TB011', 'a.TB019', 'a.TB030', 'b.ma002', 'a.create_date');
+		$sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'TB001';  //檢查排序欄位是否在 table 內
+		$query = $this->db->select('a.TB001, a.TB002, a.TB003, a.TB004, b.ma002,  a.TB029, a.TB030,a.create_date')
+			->from('sfctb as a')
+			->join('copma as b', 'a.TB004 = b.ma001', 'left')
+			->order_by($sort_by, $sort_order)
+			->limit($limit, $offset);
+		$ret['rows'] = $query->get()->result();
+
+		$query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
+			->from('sfctb');
+		$num = $query->get()->result();
+		$ret['num_rows'] = $num[0]->count;
+		return $ret;
+	}
 
 	//建構SQL字串 新增純粹以sql做查詢的方法
 	function construct_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci05a_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci05_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci05a']['search']);
+			unset($_SESSION['sfci05']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -34,7 +70,7 @@ class sfci05a_model extends CI_Model
 		}
 
 		$default_where = ""; //在這裡塞入一些預設條件，如不顯示離職員工等等
-		$default_order = " TB002 desc, TB001 "; //在這裡塞入一些預設排序
+		$default_order = "TB001 asc,TB002 desc"; //在這裡塞入一些預設排序
 
 		/* where 處理區域 */
 		if ($default_where) {
@@ -43,11 +79,11 @@ class sfci05a_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci05a']['search']['where'])) {
+		if (isset($_SESSION['sfci05']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci05a']['search']['where'];
+			$where .= $_SESSION['sfci05']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -68,18 +104,14 @@ class sfci05a_model extends CI_Model
 				if ($value != "") {
 					$value .= " and ";
 				}
-				//$value .= $val." like '%".$val_ary[$key]."%' ";
-
-				if ($val != "chkbx") {
-					$value .= $val . " like '%" . $val_ary[$key] . "%' ";
-				}
+				$value .= $val . " like '" . $val_ary[$key] . "%' ";  //%% 合部搜尋 先一個 like '%
 			}
 			$where .= "(" . $value . ")";
 		}
 
 		if ($func == "or_where" && @strlen($key) + @strlen($val) != 0) {
 			if ($where) {
-				$where .= " and ";
+				$where .= " or ";
 			}
 			$key_ary = explode(",", $key);
 			$val_ary = explode(",", $val);
@@ -88,7 +120,7 @@ class sfci05a_model extends CI_Model
 				if ($value != "") {
 					$value .= " or ";
 				}
-				$value .= $val . " like '%" . $val_ary[$key] . "%' ";
+				$value .= $val . " like '" . $val_ary[$key] . "%' ";
 			}
 			$where .= "(" . $value . ")";
 		}
@@ -112,129 +144,38 @@ class sfci05a_model extends CI_Model
 			$order = "";
 		}
 
-		// MS-SQL 新增，因為重複會出錯   原mysql 不用加---------------
-		//$default_order = " TA002, TA001 ";
-		if ($order == 'TB001 desc') {
-			$default_order = " TB002 DESC,TB001 desc ";
-		} else if ($order == 'TB002 asc') {
-			$default_order = " TA002 asc, TA001 ";
-		}
-		// MS-SQL 新增，因為重複會出錯   原mysql 不用加---------------end
-
-		if ($order) {
-			// MS-SQL 新增，因為重複會出錯   原只有一行 $order .= " , "; ---------------
-			if ($order == 'TB001 asc' || $order == 'TB001 desc' || $order == 'TB002 asc' || $order == 'TB002 desc')
-				$order = ' ';
-			else
+		if (isset($_SESSION['sfci05']['search']['order'])) {
+			if ($order) {
 				$order .= " , ";
-			// MS-SQL 新增，因為重複會出錯   原只有一行 $order .= " , "; ---------------end
+			}
+			$order .= $_SESSION['sfci05']['search']['order'];
 		}
-		$order .= $default_order;
+
+		if (!isset($_SESSION['sfci05']['search']['order']) && $default_order) {
+			if ($order) {
+				$order .= " , ";
+			}
+			$order .= $default_order;
+		}
 		/* order end */
 
 		/* Data SQL */
-		if ($this->uri->segment(5)) {
-			$seq1 = $where;
-			$_SESSION['sfci05a']['search']['seq1'] = $where;
-		} else {
-			if (isset($_SESSION['sfci05a']['search']['seq1']))
-				$seq1 = $_SESSION['sfci05a']['search']['seq1'];
-			else
-				$seq1 = '';
-		}
-
-		if (!isset($_SESSION['sfci05a']['search']['where'])) {
-			$where = iconv('utf-8', 'BIG5//ignore', $where);
-		}
-
+		// $query = $this->db->select('a.*,c.mq002')
+		// 	->from('sfctb as a')
+		// 	->join('cmsmq as c', 'a.TB001 = c.mq001', 'left')
+		// 	->order_by($order);
+		// if ($where) {
+		// 	$query->where($where);
+		// }
+		// $ret['data'] = $query->get()->result();
 
 		$vday = date('Ymd', strtotime(' -180 day')); //處理當日前6個月的資料
-
-		/*$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE  $where and a.TB003 >='$vday' and TB002 IN 
-					(SELECT TOP $limit TB002 FROM SFCTB WHERE $where and a.TB003 >='$vday' and TB002 NOT IN
-						(SELECT TOP $offset  TB002 FROM SFCTB WHERE $where and a.TB003 >='$vday' ORDER BY $order)
-					ORDER BY $order)
-				ORDER BY $order 
-				"; */
-		$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE  $where and a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
-				";
-		if ($where == "") {
-			/*$sql = " SELECT a.*,c.MQ002 
-							FROM SFCTB as a 
-							left join  CMSMQ as c on a.TB001 = c.MQ001
-							WHERE a.TB003 >='$vday' and TB002 IN 
-					(SELECT TOP $limit TB002 FROM SFCTB WHERE a.TB003 >='$vday' and TB002 NOT IN
-						(SELECT TOP $offset TB002 FROM SFCTB 
-							WHERE a.TB003 >='$vday'
-						ORDER BY $order)
-					ORDER BY $order)
-				ORDER BY $order
-				"; */
-				$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE   a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
-				";
-		}
-
-
-		if ($this->uri->segment(3) == "display_search" && ($seq1)) {
-			/*$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE $seq1 and $where and a.TB003 >='$vday' and TB002 IN 
-					(SELECT TOP $limit TB002 FROM SFCTB WHERE $seq1 and $where and a.TB003 >='$vday' and TB002 NOT IN
-						(SELECT TOP $offset  TB002 FROM SFCTB WHERE $seq1 and $where and a.TB003 >='$vday' ORDER BY $order)
-					ORDER BY $order)
-				ORDER BY $order 
-				"; */
-			$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE  $where and a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
-				";
-			if ($where == "") {
-				/*$sql = " SELECT a.*,c.MQ002 
-							FROM SFCTB as a 
-							left join  CMSMQ as c on a.TB001 = c.MQ001
-							WHERE $seq1 and a.TB003 >='$vday' and TB002 IN 
-					(SELECT TOP $limit TB002 FROM SFCTB WHERE $seq1 and a.TB003 >='$vday' and TB002 NOT IN
-						(SELECT TOP $offset TB002 FROM SFCTB 
-							WHERE $seq1 and a.TB003 >='$vday'
-						ORDER BY $order)
-					ORDER BY $order)
-				ORDER BY $order
-				";*/
-				$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE   a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
-				";
-			}
-		}
-
-		// echo "<pre>";
-		// var_dump($sql);
-		// exit;
-		$query = $this->db->query($sql);
+		$query = $this->db->query(" select  a.*,c.MQ002
+										from SFCTB as a 
+										left join  CMSMQ as c on a.TB001 = c.MQ001 
+										where a.TB003 >='$vday'
+										order by a.TB002 DESC,a.TB001 DESC 
+										");
 		$ret['data'] = $query->result();
 
 
@@ -251,36 +192,23 @@ class sfci05a_model extends CI_Model
 		// }
 		// $ret['data'] = $query->get()->result();
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci05a']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci05']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
-		$sql = " SELECT count(*) as total_num from SFCTB 
-					left join CMSMQ on TB001 = MQ001 
-					WHERE $where ";
-		if ($where == "") {
-			$sql = " SELECT count(*) as total_num from SFCTB 
-						left join CMSMQ on TB001 = MQ001 
-					 ";
-		}
-
-		if ($this->uri->segment(3) == "display_search" && ($seq1)) {
-			$sql = " SELECT count(*) as total_num from SFCTB 
-						left join CMSMQ on TB001 = MQ001 
-					WHERE $seq1 and $where  ";
-			if ($where == "") {
-				$sql = " SELECT count(*) as total_num from SFCTB 
-							left join CMSMQ on TB001 = MQ001 
-						WHERE $seq1  ";
-			}
-		}
-		$query = $this->db->query($sql);
-		$ret['num_sql'] = $this->db->last_query();
-		$ret['num'] =  $query->result()[0]->total_num;
+		// $query = $this->db->select('COUNT(*) as total_num')
+		// 	->from('sfctb as a')
+		// 	->join('cmsmq as c', 'a.TB001 = c.mq001', 'left');
+		// if ($where) {
+		// 	$query->where($where);
+		// }
+		// $ret['num'] = $query->get()->result();
+		// $ret['num'] = $ret['num'][0]->total_num;
+		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci05a']['search']['where'] = $where;
-		$_SESSION['sfci05a']['search']['order'] = $order;
-		$_SESSION['sfci05a']['search']['offset'] = $offset;
+		$_SESSION['sfci05']['search']['where'] = $where;
+		$_SESSION['sfci05']['search']['order'] = $order;
+		$_SESSION['sfci05']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -306,9 +234,9 @@ class sfci05a_model extends CI_Model
 			$view_array[$key_str] = $key;
 			$index_array[$key] = $key_str;
 		}
-		$_SESSION['sfci05a']['search']['view'] = $view_array;
-		$_SESSION['sfci05a']['search']['index'] = $index_array;
-		//echo "<pre>";var_dump($_SESSION['sfci05a']['search']['view']);exit;
+		$_SESSION['sfci05']['search']['view'] = $view_array;
+		$_SESSION['sfci05']['search']['index'] = $index_array;
+		//echo "<pre>";var_dump($_SESSION['sfci05']['search']['view']);exit;
 	}
 
 	//查詢一筆 修改用   
@@ -462,11 +390,11 @@ class sfci05a_model extends CI_Model
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
-		if (@$_SESSION['sfci05a_sql_term']) {
-			$seq32 = $_SESSION['sfci05a_sql_term'];
+		if (@$_SESSION['sfci05_sql_term']) {
+			$seq32 = $_SESSION['sfci05_sql_term'];
 		}
-		if (@$_SESSION['sfci05a_sql_sort']) {
-			$seq33 = $_SESSION['sfci05a_sql_sort'];
+		if (@$_SESSION['sfci05_sql_sort']) {
+			$seq33 = $_SESSION['sfci05_sql_sort'];
 		}
 
 		$sort_order = (substr($sort_order, 0, 3) == 'asc') ? 'asc' : 'desc';
@@ -572,7 +500,7 @@ class sfci05a_model extends CI_Model
 		$TB002 = trim($this->input->post('TB002'));			//移轉單號
 		// $TB002no = $TB002;   //明細用再新增一筆時加1
 		//檢查資料是否已存在 若存在加1
-		// while ($this->sfci05a_model->selone1($TB001, $TB002) > 0) {
+		// while ($this->sfci05_model->selone1($TB001, $TB002) > 0) {
 		$TB002 = $this->check_title_no($TB001, $TB003);
 		// $TB002no = $TB002;
 		// }
@@ -636,6 +564,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 					// $TC048 = iconv("utf-8", "BIG5", $TC048);		//產品品名
 					// $TC049 = iconv("utf-8", "BIG5", $TC049);		//產品規格
 					// $TC010 = iconv("utf-8", "BIG5", $TC010);		//單位
+					$TC031 = iconv("utf-8", "BIG5", $TC031);		//備註
 					if (substr($TB001, 0, 2) == 'D1') {
 						$TC013 = '6';								//型態
 						if ($TB013 == 'Y') {
@@ -722,9 +651,9 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 
 					$sql98 = " INSERT INTO dbo.SFCTC 
 				(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TC001, TC002, TC003, TC004, TC005, TC006, TC007, TC008, TC009, TC010,
-				 TC013, TC014, TC015, TC016, TC022, TC023, TC026, TC027, TC031, TC035, TC036, TC037, TC038, TC039, TC041, TC047, TC048, TC049)
+				 TC013, TC014, TC015, TC016, TC022, TC023, TC026, TC027, TC031, TC035, TC036, TC037, TC038, TC039, TC041, TC047, TC048, TC049, TC201)
 		VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002', '$TC003', '$TC004', '$TC005', '$TC006', '$TC007', '$TC008', '$TC009', '', 
-				 '$TC013', '$TC014', '$TC014', '$TC016', '$TB013', '$TB005', 'N', 'N', '$TC031', '$TC035', '$TC036', '$TC037', '$TC038', '$TC039', '$TB008', '$TC047', '', ''); 
+				 '$TC013', '$TC014', '$TC014', '$TC016', '$TB013', '$TB005', 'N', 'N', '$TC031', '$TC035', '$TC036', '$TC037', '$TC038', '$TC039', '$TB008', '$TC047', '', '', '$TC201'); 
 				 ";
 
 					$this->db->query($sql98);
@@ -759,6 +688,9 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 							";
 						$this->db->query($sql92);
 						//生產入庫單身檔---------------------------------end
+
+
+
 
 						//INVLA 異動明細資料檔---------------------------						
 						preg_match_all('/\d/S', $this->input->post('TB015'), $matches);  //處理日期字串
@@ -1055,7 +987,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 			'TB049' => $TB049, 'TB050' => $TB050, 'TB051' => $TB051
 		);
 
-		$exist = $this->sfci05a_model->selone1($seq1, $seq2);  //檢查單頭是否重複
+		$exist = $this->sfci05_model->selone1($seq1, $seq2);  //檢查單頭是否重複
 		if ($exist) {
 			return 'exist';
 		}
@@ -1382,7 +1314,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 
 				//更新製令單頭 已領料數量-------------------------
 				$sqld0 = " UPDATE MOCTA 
-									SET TA016 = TA017 - TD006   
+									SET TA016 = TA016 - TD006   
 								FROM MOCTA
 									LEFT JOIN MOCTD ON TA001=TD003 AND TA002=TD004
 									LEFT JOIN MOCTC ON TD001=TC001 AND TD002=TC002
@@ -1447,7 +1379,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 				// $TC048 = iconv("utf-8", "BIG5", $TC048);		//產品品名
 				// $TC049 = iconv("utf-8", "BIG5", $TC049);		//產品規格
 				// $TC010 = iconv("utf-8", "BIG5", $TC010);		//單位
-
+				$TC031 = iconv("utf-8", "BIG5", $TC031);		//備註
 				// doOne 只做一次的意思 --------下面指先扣TC014後  看後面insert or updata 就直接加---------------
 				if ($doOne == 'Y' && $oTB013 == 'Y') {
 					$sql95 = " SELECT *
@@ -1524,7 +1456,6 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 									//修改製令狀態碼-------------------------------END
 
 
-
 								}
 							}
 						}
@@ -1553,23 +1484,21 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 					$sql98 = " UPDATE  dbo.SFCTC 
 							SET	MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TC004='$TC004', TC005='$TC005', TC006='$TC006', TC007='$TC007', TC008='$TC008', TC009='$TC009',
 								TC013='$TC013', TC014='$TC014', TC015='$TC014', TC016='$TC016', TC022='$TB013', TC023='$TB005', TC031='$TC031', TC035='$TC035', TC036='$TC036', TC037='$TC037', TC038='$TC038',
-								TC039='$TC039', TC041='$TB008', TC047='$TC047'
+								TC039='$TC039', TC041='$TB008', TC047='$TC047', TC201='$TC201'
 						   where TC001='$TB001' and TC002='$TB002' and TC003='$TC003' 
 						   ";
 				} else {
 					$sql98 = " INSERT INTO dbo.SFCTC 
 					(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TC001, TC002, TC003, TC004, TC005, TC006, TC007, TC008, TC009, TC010,
-					 TC013, TC014, TC015, TC016, TC022, TC023, TC026, TC027, TC031, TC035, TC036, TC037, TC038, TC039, TC041, TC047, TC048, TC049)
+					 TC013, TC014, TC015, TC016, TC022, TC023, TC026, TC027, TC031, TC035, TC036, TC037, TC038, TC039, TC041, TC047, TC048, TC049, TC201)
 			VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '0', '$TB001', '$TB002', '$TC003', '$TC004', '$TC005', '$TC006', '$TC007', '$TC008', '$TC009', '', 
-					 '$TC013', '$TC014', '$TC014', '$TC016', '$TB013', '$TB005', 'N', 'N', '$TC031', '$TC035', '$TC036', '$TC037', '$TC038', '$TC039', '$TB008', '$TC047', '', ''); ";
+					 '$TC013', '$TC014', '$TC014', '$TC016', '$TB013', '$TB005', 'N', 'N', '$TC031', '$TC035', '$TC036', '$TC037', '$TC038', '$TC039', '$TB008', '$TC047', '', '', '$TC201'); ";
 				}
 
 				$this->db->query($sql98);
 				// insert 、updata 有就修改，沒有就新增-------END--------------------------
 
 				if ($insert_TG == 'Y') {
-
-
 					$sql90 = " UPDATE  MOCTA
 									SET  TA017 = TA017 + '$TC014', TA018 = TA018 + '$TC016'
 								WHERE TA001 ='$TC004' and TA002='$TC005'				
@@ -1596,8 +1525,6 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 								";
 					$this->db->query($sql87);
 					//修改製令狀態碼-------------------------------END
-
-
 				}
 
 
@@ -1645,7 +1572,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 				$this->db->query($sql99);
 
 				if ($insert_TG == 'Y') {
-					//生產入庫單頭檔---------------------------------
+					//生產入庫單身檔---------------------------------
 					$sql91 = " INSERT INTO dbo.MOCTG 
 									(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TG001, TG002, TG003, TG004, TG005, TG006, TG007, TG008, TG009, TG010,
 											TG011, TG012, TG013, TG014, TG015, TG016, TG017, TG018, TG019, TG020, TG021, TG022, TG023, TG024)
@@ -1663,7 +1590,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 							WHERE c.TG001 ='$TB001' and c.TG002='$TB002' and c.TG003='$TC003'				
 							";
 					$this->db->query($sql92);
-					//生產入庫單頭檔---------------------------------end
+					//生產入庫單身檔---------------------------------end
 
 
 					$sql90 = " UPDATE  MOCTA
@@ -1689,7 +1616,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 					$sql87 = " UPDATE  MOCTA
 										SET  TA011 = '1'
 									WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 =0				
-							";
+								";
 					$this->db->query($sql87);
 					//修改製令狀態碼-------------------------------END
 
@@ -1744,6 +1671,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 											'$TC031', '54', 'N', '0', 'N', '1', 'Y', '$TB003', '$TB016', 'N', '$TB001', '$TB002', '$TC003'); 
 									";
 
+						// echo "<pre>";var_dump($sql89);exit;
 						$this->db->query($sql89);
 						//自動生成領料 單頭----------------------------------END
 
@@ -1821,6 +1749,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 								WHERE TA001='$TC004' AND TA002='$TC005' AND TA006='$TC047'
 								";
 						$query = $this->db->query($sql89a);
+
+						// echo "<pre>";var_dump($sql89a);exit;
 
 						if ($query->num_rows() > 0) {
 
@@ -1940,7 +1870,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 
 				//更新製令單頭 已領料數量-------------------------
 				$sqld0 = " UPDATE MOCTA 
-									SET TA016 = TA017 - TD006 
+									SET TA016 = TA016 - TD006 
 								FROM MOCTA
 									LEFT JOIN MOCTD ON TA001=TD003 AND TA002=TD004
 									LEFT JOIN MOCTC ON TD001=TC001 AND TD002=TC002
@@ -2145,7 +2075,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 
 							//更新製令單頭 已領料數量-------------------------
 							$sqld0 = " UPDATE MOCTA 
-												SET TA016 = TA017 - TD006  
+												SET TA016 = TA016 - TD006  
 											FROM MOCTA
 												LEFT JOIN MOCTD ON TA001=TD003 AND TA002=TD004
 												LEFT JOIN MOCTC ON TD001=TC001 AND TD002=TC002
@@ -2295,7 +2225,6 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TB001', '$TB002'
 					$querydelTC = $this->db->query(" DELETE FROM SFCTC WHERE TC001='$seq1' AND TC002='$seq2' ");
 
 					$this->session->set_userdata('msg1', "未確認已刪除");
-					$_SESSION['message1'] = "未確認已刪除";
 				} else {
 					$this->session->set_userdata('msg1', "已確認不可刪除");
 					$_SESSION['message1'] = "已確認不可刪除";

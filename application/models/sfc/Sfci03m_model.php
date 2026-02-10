@@ -1,13 +1,13 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class sfci03_model extends CI_Model
+class sfci03m_model extends CI_Model
 {
 
 	function __construct()
 	{
 		parent::__construct();      //重載ci底層程式 自動執行父類別
 	}
-
+//SFCTDM  SFCTEM MODI M
 	private $cellArray = array(
 		1 => 'A', 2 => 'B', 3 => 'C', 4 => 'D', 5 => 'E',
 		6 => 'F', 7 => 'G', 8 => 'H', 9 => 'I', 10 => 'J',
@@ -44,13 +44,13 @@ class sfci03_model extends CI_Model
 	function selbrowse($num, $offset)
 	{
 		$this->db->select('td001, td002, td003, td004, td0011, td0019,td020, create_date');
-		$this->db->from('sfctd');
+		$this->db->from('SFCTDM');
 		//$this->db->order_by('id', 'DESC');                //排序  單欄
 		$this->db->order_by('td001 desc, td002 desc');    //排序  單欄以上 asc 由小至大 desc預設由大至小
 		$this->db->limit($num, $offset);   // 每頁15筆
 		$ret['rows'] = $this->db->get()->result();
 		$this->db->select('COUNT(*) as count');    //查詢總筆數
-		$this->db->from('sfctd');
+		$this->db->from('SFCTDM');
 		$query = $this->db->get();
 		$tmp = $query->result();
 		$ret['num_rows'] = $tmp[0]->count;
@@ -64,14 +64,14 @@ class sfci03_model extends CI_Model
 		$sort_columns = array('a.td001', 'a.td002', 'a.td003', 'a.td004', 'a.td011', 'a.td019', 'a.td030', 'b.ma002', 'a.create_date');
 		$sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否在 table 內
 		$query = $this->db->select('a.td001, a.td002, a.td003, a.td004, b.ma002,  a.td029, a.td030,a.create_date')
-			->from('sfctd as a')
+			->from('SFCTDM as a')
 			->join('copma as b', 'a.td004 = b.ma001', 'left')
 			->order_by($sort_by, $sort_order)
 			->limit($limit, $offset);
 		$ret['rows'] = $query->get()->result();
 
 		$query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
-			->from('sfctd');
+			->from('SFCTDM');
 		$num = $query->get()->result();
 		$ret['num_rows'] = $num[0]->count;
 		return $ret;
@@ -80,14 +80,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法
 	function construct_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03m_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -111,11 +111,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -176,14 +176,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -193,7 +193,7 @@ class sfci03_model extends CI_Model
 
 		/* Data SQL */
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order);
@@ -201,18 +201,19 @@ class sfci03_model extends CI_Model
 		// 	$query->where($where);
 		// }
 		$vday = date('Ymd', strtotime(' -180 day')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday'
-										order by a.TD002 DESC 
+										order by a.TD002 DESC
+                                        OFFSET $offset ROWS FETCH NEXT $limit ROWS ONLY										
 										");
 		$ret['data'] = $query->result();
 		// //建構暫存view 1060614 上一頁,下一頁使用
 		// $this->construct_view($ret['data']);
 
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order)
@@ -222,11 +223,11 @@ class sfci03_model extends CI_Model
 		// }
 		// $ret['data'] = $query->get()->result();
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -236,9 +237,9 @@ class sfci03_model extends CI_Model
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -246,14 +247,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 a  鑄造報工
 	function constructa_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03a_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03ma_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03a']['search']);
+			unset($_SESSION['sfci03ma']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -277,11 +278,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03a']['search']['where'])) {
+		if (isset($_SESSION['sfci03ma']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03a']['search']['where'];
+			$where .= $_SESSION['sfci03ma']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -342,14 +343,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03a']['search']['order'])) {
+		if (isset($_SESSION['sfci03ma']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03a']['search']['order'];
+			$order .= $_SESSION['sfci03ma']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03a']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03ma']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -358,7 +359,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D401' or a.TD001='D501')
@@ -367,16 +368,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03a']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03ma']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03a']['search']['where'] = $where;
-		$_SESSION['sfci03a']['search']['order'] = $order;
-		$_SESSION['sfci03a']['search']['offset'] = $offset;
+		$_SESSION['sfci03ma']['search']['where'] = $where;
+		$_SESSION['sfci03ma']['search']['order'] = $order;
+		$_SESSION['sfci03ma']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -384,14 +385,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 b  車削報工
 	function constructb_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03b_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mb_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03b']['search']);
+			unset($_SESSION['sfci03mb']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -415,11 +416,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03b']['search']['where'])) {
+		if (isset($_SESSION['sfci03mb']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03b']['search']['where'];
+			$where .= $_SESSION['sfci03mb']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -480,14 +481,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03b']['search']['order'])) {
+		if (isset($_SESSION['sfci03mb']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03b']['search']['order'];
+			$order .= $_SESSION['sfci03mb']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03b']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mb']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -496,7 +497,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D402' or a.TD001='D502')
@@ -505,16 +506,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03b']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mb']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03b']['search']['where'] = $where;
-		$_SESSION['sfci03b']['search']['order'] = $order;
-		$_SESSION['sfci03b']['search']['offset'] = $offset;
+		$_SESSION['sfci03mb']['search']['where'] = $where;
+		$_SESSION['sfci03mb']['search']['order'] = $order;
+		$_SESSION['sfci03mb']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -522,14 +523,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 c  橡膠報工
 	function constructc_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03c_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mc_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03c']['search']);
+			unset($_SESSION['sfci03mc']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -553,11 +554,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03c']['search']['where'])) {
+		if (isset($_SESSION['sfci03mc']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03c']['search']['where'];
+			$where .= $_SESSION['sfci03mc']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -618,14 +619,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03c']['search']['order'])) {
+		if (isset($_SESSION['sfci03mc']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03c']['search']['order'];
+			$order .= $_SESSION['sfci03mc']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03c']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mc']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -634,7 +635,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and a.TD001='D403'
@@ -643,30 +644,30 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03c']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mc']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03c']['search']['where'] = $where;
-		$_SESSION['sfci03c']['search']['order'] = $order;
-		$_SESSION['sfci03c']['search']['offset'] = $offset;
+		$_SESSION['sfci03mc']['search']['where'] = $where;
+		$_SESSION['sfci03mc']['search']['order'] = $order;
+		$_SESSION['sfci03mc']['search']['offset'] = $offset;
 
 		return $ret;
 	}
 
 	function constructc1_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03c1_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mc1_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03c1']['search']);
+			unset($_SESSION['sfci03mc1']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -690,11 +691,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03c1']['search']['where'])) {
+		if (isset($_SESSION['sfci03mc1']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03c1']['search']['where'];
+			$where .= $_SESSION['sfci03mc1']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -755,14 +756,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03c1']['search']['order'])) {
+		if (isset($_SESSION['sfci03mc1']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03c1']['search']['order'];
+			$order .= $_SESSION['sfci03mc1']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03c1']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mc1']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -771,7 +772,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and a.TD001='D503'
@@ -780,16 +781,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03c1']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mc1']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03c1']['search']['where'] = $where;
-		$_SESSION['sfci03c1']['search']['order'] = $order;
-		$_SESSION['sfci03c1']['search']['offset'] = $offset;
+		$_SESSION['sfci03mc1']['search']['where'] = $where;
+		$_SESSION['sfci03mc1']['search']['order'] = $order;
+		$_SESSION['sfci03mc1']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -797,14 +798,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 d  注塑報工
 	function constructd_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03d_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03md_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03d']['search']);
+			unset($_SESSION['sfci03md']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -828,11 +829,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03d']['search']['where'])) {
+		if (isset($_SESSION['sfci03md']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03d']['search']['where'];
+			$where .= $_SESSION['sfci03md']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -893,14 +894,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03d']['search']['order'])) {
+		if (isset($_SESSION['sfci03md']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03d']['search']['order'];
+			$order .= $_SESSION['sfci03md']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03d']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03md']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -909,7 +910,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D404' or a.TD001='D504')
@@ -918,16 +919,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03d']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03md']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03d']['search']['where'] = $where;
-		$_SESSION['sfci03d']['search']['order'] = $order;
-		$_SESSION['sfci03d']['search']['offset'] = $offset;
+		$_SESSION['sfci03md']['search']['where'] = $where;
+		$_SESSION['sfci03md']['search']['order'] = $order;
+		$_SESSION['sfci03md']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -935,14 +936,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 e  PU報工
 	function constructe_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03e_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03me_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03e']['search']);
+			unset($_SESSION['sfci03me']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -966,11 +967,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03e']['search']['where'])) {
+		if (isset($_SESSION['sfci03me']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03e']['search']['where'];
+			$where .= $_SESSION['sfci03me']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1031,14 +1032,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03e']['search']['order'])) {
+		if (isset($_SESSION['sfci03me']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03e']['search']['order'];
+			$order .= $_SESSION['sfci03me']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03e']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03me']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1047,7 +1048,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D405' or a.TD001='D505')
@@ -1056,16 +1057,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03e']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03me']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03e']['search']['where'] = $where;
-		$_SESSION['sfci03e']['search']['order'] = $order;
-		$_SESSION['sfci03e']['search']['offset'] = $offset;
+		$_SESSION['sfci03me']['search']['where'] = $where;
+		$_SESSION['sfci03me']['search']['order'] = $order;
+		$_SESSION['sfci03me']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1073,14 +1074,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 f  噴漆報工
 	function constructf_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03f_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mf_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03f']['search']);
+			unset($_SESSION['sfci03mf']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1104,11 +1105,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03f']['search']['where'])) {
+		if (isset($_SESSION['sfci03mf']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03f']['search']['where'];
+			$where .= $_SESSION['sfci03mf']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1169,14 +1170,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03f']['search']['order'])) {
+		if (isset($_SESSION['sfci03mf']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03f']['search']['order'];
+			$order .= $_SESSION['sfci03mf']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03f']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mf']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1185,7 +1186,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D406' or a.TD001='D506')
@@ -1194,16 +1195,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03f']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mf']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03f']['search']['where'] = $where;
-		$_SESSION['sfci03f']['search']['order'] = $order;
-		$_SESSION['sfci03f']['search']['offset'] = $offset;
+		$_SESSION['sfci03mf']['search']['where'] = $where;
+		$_SESSION['sfci03mf']['search']['order'] = $order;
+		$_SESSION['sfci03mf']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1211,14 +1212,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 g  衝壓報工
 	function constructg_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03g_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mg_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03g']['search']);
+			unset($_SESSION['sfci03mg']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1242,11 +1243,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03g']['search']['where'])) {
+		if (isset($_SESSION['sfci03mg']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03g']['search']['where'];
+			$where .= $_SESSION['sfci03mg']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1307,14 +1308,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03g']['search']['order'])) {
+		if (isset($_SESSION['sfci03mg']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03g']['search']['order'];
+			$order .= $_SESSION['sfci03mg']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03g']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mg']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1323,7 +1324,7 @@ class sfci03_model extends CI_Model
 		/* order end */
         $vday ='20250101';
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D407' or a.TD001='D507')
@@ -1332,16 +1333,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03g']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mg']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03g']['search']['where'] = $where;
-		$_SESSION['sfci03g']['search']['order'] = $order;
-		$_SESSION['sfci03g']['search']['offset'] = $offset;
+		$_SESSION['sfci03mg']['search']['where'] = $where;
+		$_SESSION['sfci03mg']['search']['order'] = $order;
+		$_SESSION['sfci03mg']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1349,14 +1350,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 h  緊固件
 	function constructh_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03h_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mh_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03h']['search']);
+			unset($_SESSION['sfci03mh']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1380,11 +1381,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03h']['search']['where'])) {
+		if (isset($_SESSION['sfci03mh']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03h']['search']['where'];
+			$where .= $_SESSION['sfci03mh']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1445,14 +1446,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03h']['search']['order'])) {
+		if (isset($_SESSION['sfci03mh']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03h']['search']['order'];
+			$order .= $_SESSION['sfci03mh']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03h']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mh']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1461,7 +1462,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D408' or a.TD001='D508')
@@ -1470,16 +1471,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03h']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mh']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03h']['search']['where'] = $where;
-		$_SESSION['sfci03h']['search']['order'] = $order;
-		$_SESSION['sfci03h']['search']['offset'] = $offset;
+		$_SESSION['sfci03mh']['search']['where'] = $where;
+		$_SESSION['sfci03mh']['search']['order'] = $order;
+		$_SESSION['sfci03mh']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1487,14 +1488,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 i  衝壓報工
 	function constructi_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03i_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mi_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03i']['search']);
+			unset($_SESSION['sfci03mi']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1518,11 +1519,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03i']['search']['where'])) {
+		if (isset($_SESSION['sfci03mi']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03i']['search']['where'];
+			$where .= $_SESSION['sfci03mi']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1583,14 +1584,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03i']['search']['order'])) {
+		if (isset($_SESSION['sfci03mi']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03i']['search']['order'];
+			$order .= $_SESSION['sfci03mi']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03i']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mi']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1599,7 +1600,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D409' or a.TD001='D509')
@@ -1608,16 +1609,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03i']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mi']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03i']['search']['where'] = $where;
-		$_SESSION['sfci03i']['search']['order'] = $order;
-		$_SESSION['sfci03i']['search']['offset'] = $offset;
+		$_SESSION['sfci03mi']['search']['where'] = $where;
+		$_SESSION['sfci03mi']['search']['order'] = $order;
+		$_SESSION['sfci03mi']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1625,14 +1626,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 j  鉚合報工
 	function constructj_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03j_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mj_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03j']['search']);
+			unset($_SESSION['sfci03mj']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1656,11 +1657,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03j']['search']['where'])) {
+		if (isset($_SESSION['sfci03mj']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03j']['search']['where'];
+			$where .= $_SESSION['sfci03mj']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1721,14 +1722,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03j']['search']['order'])) {
+		if (isset($_SESSION['sfci03mj']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03j']['search']['order'];
+			$order .= $_SESSION['sfci03mj']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03j']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mj']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1737,7 +1738,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D410' or a.TD001='D510')
@@ -1746,16 +1747,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03j']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mj']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03j']['search']['where'] = $where;
-		$_SESSION['sfci03j']['search']['order'] = $order;
-		$_SESSION['sfci03j']['search']['offset'] = $offset;
+		$_SESSION['sfci03mj']['search']['where'] = $where;
+		$_SESSION['sfci03mj']['search']['order'] = $order;
+		$_SESSION['sfci03mj']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1763,14 +1764,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 k  裝配報工
 	function constructk_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03k_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03mk_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03k']['search']);
+			unset($_SESSION['sfci03mk']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1794,11 +1795,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03k']['search']['where'])) {
+		if (isset($_SESSION['sfci03mk']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03k']['search']['where'];
+			$where .= $_SESSION['sfci03mk']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1859,14 +1860,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03k']['search']['order'])) {
+		if (isset($_SESSION['sfci03mk']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03k']['search']['order'];
+			$order .= $_SESSION['sfci03mk']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03k']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03mk']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -1875,7 +1876,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D411' or a.TD001='D511')
@@ -1884,16 +1885,16 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03k']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03mk']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03k']['search']['where'] = $where;
-		$_SESSION['sfci03k']['search']['order'] = $order;
-		$_SESSION['sfci03k']['search']['offset'] = $offset;
+		$_SESSION['sfci03mk']['search']['where'] = $where;
+		$_SESSION['sfci03mk']['search']['order'] = $order;
+		$_SESSION['sfci03mk']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -1901,14 +1902,14 @@ class sfci03_model extends CI_Model
 	//建構SQL字串 新增純粹以sql做查詢的方法 h  緊固件
 	function constructl_sql($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03l_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03ml_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03l']['search']);
+			unset($_SESSION['sfci03ml']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -1932,11 +1933,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03l']['search']['where'])) {
+		if (isset($_SESSION['sfci03ml']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03l']['search']['where'];
+			$where .= $_SESSION['sfci03ml']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -1997,14 +1998,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03l']['search']['order'])) {
+		if (isset($_SESSION['sfci03ml']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03l']['search']['order'];
+			$order .= $_SESSION['sfci03ml']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03l']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03ml']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -2013,7 +2014,7 @@ class sfci03_model extends CI_Model
 		/* order end */
 
 		$vday = date('Ymd', strtotime(' -2 year')); //處理當日前6個月的資料
-		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTD as a 
+		$query = $this->db->query(" select  a.*,c.MQ002  as td001disp,b.MD002 as td004disp from SFCTDM as a 
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D412' or a.TD001='D512')
@@ -2022,23 +2023,23 @@ class sfci03_model extends CI_Model
 		$ret['data'] = $query->result();
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03l']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03ml']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03l']['search']['where'] = $where;
-		$_SESSION['sfci03l']['search']['order'] = $order;
-		$_SESSION['sfci03l']['search']['offset'] = $offset;
+		$_SESSION['sfci03ml']['search']['where'] = $where;
+		$_SESSION['sfci03ml']['search']['order'] = $order;
+		$_SESSION['sfci03ml']['search']['offset'] = $offset;
 
 		return $ret;
 	}
 
     function sqlrd()
 	{
-     $sqla = "DELETE FROM SFCI03GP WHERE 1=1 ";
+     $sqla = "DELETE FROM sfci03mGP WHERE 1=1 ";
 		$this->db->query($sqla);
 	$sqlb = "SELECT *  FROM CMSMDD WHERE convert(float,MD013)>0 
 	              ORDER BY MD001,MD011  ";
@@ -2047,7 +2048,7 @@ class sfci03_model extends CI_Model
 			 $MD001=$row->MD001;
 			 $MD011=$row->MD011;
 			 $MD013=$row->MD013;
-			 $sql21= "UPDATE  SFCTD set TD011='$MD013'
+			 $sql21= "UPDATE  SFCTDM set TD011='$MD013'
 					    where  TD004='$MD001'  and TD008>='$MD011'   ";
 				$this->db->query($sql21);
 		}
@@ -2055,14 +2056,14 @@ class sfci03_model extends CI_Model
 	}
 	function construct_sqlr($limit = 15, $offset = 0, $func = "", $vno = "%")
 	{
-		$this->session->set_userdata('sfci03_searchr', "display_searchr/" . $offset);
+		$this->session->set_userdata('sfci03m_searchr', "display_searchr/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -2086,11 +2087,11 @@ class sfci03_model extends CI_Model
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -2151,14 +2152,14 @@ class sfci03_model extends CI_Model
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -2169,22 +2170,22 @@ class sfci03_model extends CI_Model
 		/* Data SQL */
 
 		$vday = date('Ymd', strtotime(' -60 day')); //處理當日前3個月的資料 TD008 生產日期
-		//$sqla = "DELETE FROM SFCI03GP WHERE 1=1 ";
+		//$sqla = "DELETE FROM sfci03mGP WHERE 1=1 ";
 		//$this->db->query($sqla); TD011 AS MD013m  i.MD013 as MD13m
-		/*$sql = " insert into SFCI03GP 
+		/*$sql = " insert into sfci03mGP 
 		select b.TD008, e.MX001, e.MX003 as TE005disp,a.TE004 as TE004disp,(LEN(a.TE030) - LEN(REPLACE(a.TE030,';',''))) / LEN(';')+1 AS TE030disp,
 						a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,(rtrim(a.TE022)+'~'+ COALESCE( CASE when a.TE027='' then null else rtrim(a.TE027) END ,
 						CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 						SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2) as TE013,
 						convert(varchar(25),convert(int,a.TE011)) as TE011, 
 						convert(varchar(25),convert(int,c.TA015)) as TA015,
-						convert(varchar(25),(select sum(TE011) FROM SFCTE	WHERE TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002)) as TA011, 
+						convert(varchar(25),(select sum(TE011) FROM SFCTEM	WHERE TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002)) as TA011, 
 						convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, 
 						convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 						a.TE028,a.TE031,g.da005, g.da004,
 						N'產能85%' as da0051, N'生產效率' as da0052, i.MD001 ,i.MD002,a.TE030 AS TE030dispN,b.TD011 as MD013m, a.TE001, g.da015,g.da010, a.TE029,a.TE040					
-					from SFCTE	as a
-						left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+					from SFCTEM	as a
+						left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 						left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 						left join CMSMV as d on a.TE004=d.MV001
 						left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -2195,7 +2196,7 @@ class sfci03_model extends CI_Model
 					where b.TD008>='$vday' and a.TE001 like '$vno'
 					order by b.TD008 desc, e.MX001
 				";*/
-/*	$sql = "			INSERT INTO SFCI03GP
+/*	$sql = "			INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -2215,7 +2216,7 @@ SELECT
     SUBSTRING(RIGHT('0000' + CAST(a.TE013 AS VARCHAR), 4), 1, 2) + ':' + SUBSTRING(RIGHT('0000' + CAST(a.TE013 AS VARCHAR), 4), 3, 2) AS TE013,
     CONVERT(VARCHAR(25), CONVERT(INT, a.TE011)) AS TE011,
     CONVERT(VARCHAR(25), CONVERT(INT, c.TA015)) AS TA015,
-    CONVERT(VARCHAR(25), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) AS TA011,
+    CONVERT(VARCHAR(25), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) AS TA011,
     CONVERT(INT, a.TE011) - CONVERT(INT, a.TE028) - CONVERT(INT, a.TE031) AS TE0312,
     CONVERT(INT, a.TE028) + CONVERT(INT, a.TE031) AS TE0311,
     a.TE028,
@@ -2234,8 +2235,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -2255,7 +2256,7 @@ ORDER BY
 	$da0051=iconv("utf-8", "BIG5//IGNORE", '產能85%');
 	$da0052=iconv("utf-8", "BIG5//IGNORE", '生產效率');
 	
-$sql = "	INSERT INTO SFCI03GP
+$sql = "	INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -2282,7 +2283,7 @@ SELECT
         ELSE 0
     END AS TA015,
     CASE
-        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
+        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
         ELSE 0
     END AS TA011,
     CASE
@@ -2324,8 +2325,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -2340,7 +2341,7 @@ ORDER BY
     e.MX001; ";
 		// echo "<pre>";var_dump($sql);exit;
 		$this->db->query($sql);
-		$sql = "select * from SFCI03GP ";
+		$sql = "select * from sfci03mGP ";
 		$query = $this->db->query($sql);
 
 		$ret['data'] = $query->result();
@@ -2415,11 +2416,11 @@ ORDER BY
 		// $this->construct_view($ret['data']);
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -2429,22 +2430,22 @@ ORDER BY
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
 function construct_sqlrnew($limit = 15, $offset = 0, $func = "", $vno = "%")
 	{
-		$this->session->set_userdata('sfci03_searchr', "display_searchr/" . $offset);
+		$this->session->set_userdata('sfci03m_searchr', "display_searchr/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -2468,11 +2469,11 @@ function construct_sqlrnew($limit = 15, $offset = 0, $func = "", $vno = "%")
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -2533,14 +2534,14 @@ function construct_sqlrnew($limit = 15, $offset = 0, $func = "", $vno = "%")
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -2557,7 +2558,7 @@ function construct_sqlrnew($limit = 15, $offset = 0, $func = "", $vno = "%")
 	$da0051=iconv("utf-8", "BIG5//IGNORE", '產能85%');
 	$da0052=iconv("utf-8", "BIG5//IGNORE", '生產效率');
 	
-/*$sql = "	INSERT INTO SFCI03GP
+/*$sql = "	INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -2584,7 +2585,7 @@ SELECT
         ELSE 0
     END AS TA015,
     CASE
-        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
+        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
         ELSE 0
     END AS TA011,
     CASE
@@ -2626,8 +2627,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -2652,8 +2653,8 @@ CASE
         WHEN ISNUMERIC(b.TD011) = 1 THEN CONVERT(DECIMAL(16, 4), b.TD011)
         ELSE 0
     END AS MD013m
-	 FROM SFCTE as a
-LEFT JOIN  SFCTD as b ON  a.TE001=b.TD001 AND a.TE002=b.TD002
+	 FROM SFCTEM as a
+LEFT JOIN  SFCTDM as b ON  a.TE001=b.TD001 AND a.TE002=b.TD002
 LEFT JOIN molda AS g ON a.TE017 = g.da001 AND a.TE009 = g.da013 AND a.TE029 = g.da014
 WHERE b.TD008>='$vday' AND (a.TE001='D411' OR a.TE001='D511')
 ORDER BY b.TD008 DESC 
@@ -2661,7 +2662,7 @@ ORDER BY b.TD008 DESC
 $sql = "	
 SELECT a.TC001 AS TE001,a.TC002  AS TE002,b.TB003 AS TD008,a.TC004 AS TE006,a.TC005 AS TE007,a.TC047 AS TE017,a.TC048 AS TE018,a.TC049 AS TE019,a.TC013 AS TE029,a.TC015 AS TE004disp,a.TC014 AS TE040,
  TC013 AS TE030disp,
- a.TC014 AS TE013,a.TC015 AS TE011,isnull(pk002,4.9) as da005, isnull(pk003,1.4) as da015, isnull(pk003,1.3) as da010,isnull(pk004,1.1) as da004,
+ a.TC014 AS TE013,a.TC015 AS TE011,isnull(pk002,0) as da005, isnull(pk003,1.4) as da015, isnull(pk003,1.3) as da010,isnull(pk004,1.1) as da004,
 TC036 AS TE0312, isnull(pk004,1.4) AS MD013m
  FROM SFCTC as a
 LEFT JOIN  SFCTB as b ON  a.TC001=b.TB001 AND a.TC002=b.TB002
@@ -2673,7 +2674,7 @@ ORDER BY b.TB003 DESC
 		//1140129 (a.TE001='D411' OR a.TE001='D511')TC006 AS MD013m
 		// echo "<pre>";var_dump($sql);exit;
 		$this->db->query($sql);
-	//	$sql = "select * from SFCI03GP ";
+	//	$sql = "select * from sfci03mGP ";
 		$query = $this->db->query($sql);
 
 		$ret['data'] = $query->result();
@@ -2728,11 +2729,11 @@ ORDER BY b.TB003 DESC
 		// $this->construct_view($ret['data']);
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -2742,22 +2743,22 @@ ORDER BY b.TB003 DESC
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
 	function constructgj_sqlr($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03_searchr', "display_searchr/" . $offset);
+		$this->session->set_userdata('sfci03m_searchr', "display_searchr/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -2781,11 +2782,11 @@ ORDER BY b.TB003 DESC
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -2846,14 +2847,14 @@ ORDER BY b.TB003 DESC
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -2871,11 +2872,11 @@ ORDER BY b.TB003 DESC
 		-- 				TE030 AS TE030dispN , MW003 as TE009disp,convert(int,TE011)-convert(int,TE028)-convert(int,TE031) as TE0312
 				 FROM SFCTC 
 					LEFT JOIN SFCTB ON TC001=TB001 AND TC002=TB002
-					-- LEFT JOIN SFCTE ON TC004=TE006 AND TC005=TE007
+					-- LEFT JOIN SFCTEM ON TC004=TE006 AND TC005=TE007
 					LEFT JOIN sfcpg ON TC047=pg001 AND TC201=pg002
 					-- left join molda on TE017=da001 and TE009=da013 and TE029=da014
 					-- left join CMSMW on TE009=MW001 
-					-- left join SFCTD on TE001=TD001 and TE002=TD002 		
+					-- left join SFCTDM on TE001=TD001 and TE002=TD002 		
 					-- left join CMSMX on TE005=MX001 and TD004=MX002
 				 WHERE TB001='D310' and TB003>='$vday'
 					order by TB003 desc, TC047
@@ -2896,11 +2897,11 @@ ORDER BY b.TB003 DESC
 		// $this->construct_view($ret['data']);
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -2910,9 +2911,9 @@ ORDER BY b.TB003 DESC
 		$ret['num'] = count($ret['data']);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -2920,18 +2921,18 @@ ORDER BY b.TB003 DESC
 
 	function construct_sql_sfcta($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03m_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if ($this->uri->segment(3, 0) == "clear_sql_sfcta") {
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -2946,19 +2947,19 @@ ORDER BY b.TB003 DESC
 		}
 		if ($this->uri->segment(6)) {
 			$seq1 = trim($this->uri->segment(6));
-			$_SESSION['sfci03']['search']['seq1'] = trim($this->uri->segment(6));
+			$_SESSION['sfci03m']['search']['seq1'] = trim($this->uri->segment(6));
 		} else {
-			if (isset($_SESSION['sfci03']['search']['seq1']))
-				$seq1 = $_SESSION['sfci03']['search']['seq1'];
+			if (isset($_SESSION['sfci03m']['search']['seq1']))
+				$seq1 = $_SESSION['sfci03m']['search']['seq1'];
 			else
 				$seq1 = '';
 		}
 		if ($this->uri->segment(7)) {
 			$seq2 = trim($this->uri->segment(7));
-			$_SESSION['sfci03']['search']['seq2'] = trim($this->uri->segment(7));
+			$_SESSION['sfci03m']['search']['seq2'] = trim($this->uri->segment(7));
 		} else {
-			if (isset($_SESSION['sfci03']['search']['seq2']))
-				$seq2 = $_SESSION['sfci03']['search']['seq2'];
+			if (isset($_SESSION['sfci03m']['search']['seq2']))
+				$seq2 = $_SESSION['sfci03m']['search']['seq2'];
 			else
 				$seq2 = '';
 		}
@@ -2978,11 +2979,11 @@ ORDER BY b.TB003 DESC
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -3043,14 +3044,14 @@ ORDER BY b.TB003 DESC
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -3061,7 +3062,7 @@ ORDER BY b.TB003 DESC
 
 		/* Data SQL */
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order);
@@ -3073,7 +3074,7 @@ ORDER BY b.TB003 DESC
 		// $this->construct_view($ret['data']);
 
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order)
@@ -3085,7 +3086,7 @@ ORDER BY b.TB003 DESC
 
 
 
-		$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+		$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3101,10 +3102,10 @@ ORDER BY b.TB003 DESC
 								left join CMSMW as d on a.TA004 = d.MW001 
 								WHERE b.TA013 !='V' and $where ORDER BY a.TA002, a.TA003)
 					ORDER BY a.TA002, a.TA003)
-				ORDER BY a.TA002, a.TA003 
+				ORDER BY a.TA002 desc, a.TA003 asc
 		 ";
 		if ($where == "") {
-			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001 
@@ -3119,13 +3120,13 @@ ORDER BY b.TB003 DESC
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001 
 									WHERE b.TA013 !='V' ORDER BY a.TA002, a.TA003)
-						ORDER BY a.TA002, a.TA003)
-					ORDER BY a.TA002, a.TA003
+						ORDER BY a.TA002 desc, a.TA003 asc)
+					ORDER BY a.TA002  desc, a.TA003 asc
 			";
 		}
 
 		if ($this->uri->segment(3) == "display_child" && ($seq1)) {
-			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3141,10 +3142,10 @@ ORDER BY b.TB003 DESC
 								left join CMSMW as d on a.TA004 = d.MW001 
 									WHERE b.TA013 !='V' and $where and a.TA001 = '$seq1' ORDER BY a.TA002, a.TA003)
 							ORDER BY a.TA002, a.TA003)
-						ORDER BY a.TA002, a.TA003
+						ORDER BY a.TA002 desc, a.TA003 asc
 						";
 			if ($where == "") {
-				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3160,11 +3161,11 @@ ORDER BY b.TB003 DESC
 								left join CMSMW as d on a.TA004 = d.MW001 
 									WHERE b.TA013 !='V' and a.TA001 = '$seq1' ORDER BY a.TA002, a.TA003)
 							ORDER BY a.TA002, a.TA003)
-						ORDER BY a.TA002, a.TA003
+						ORDER BY a.TA002 desc, a.TA003 asc
 						";
 			}
 			if ($seq2) {
-				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001
@@ -3180,10 +3181,10 @@ ORDER BY b.TB003 DESC
 									left join CMSMW as d on a.TA004 = d.MW001 
 											WHERE b.TA013 !='V' and $where and a.TA001 = '$seq1' and a.TA002 like '%$seq2%'   ORDER BY a.TA002, a.TA003)
 								ORDER BY a.TA002, a.TA003)
-							ORDER BY a.TA002, a.TA003
+							ORDER BY a.TA002 desc, a.TA003 asc
 						";
 				if ($where == "") {
-					$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
+					$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 as MW003,b.TA015,a.TA010-a.TA011-a.TA012 as TA0101,a.TA008 from  SFCTA as a 
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001
@@ -3199,7 +3200,7 @@ ORDER BY b.TB003 DESC
 									left join CMSMW as d on a.TA004 = d.MW001 
 											WHERE b.TA013 !='V' and a.TA001 = '$seq1' and a.TA002 like '%$seq2%' ORDER BY a.TA002, a.TA003)
 								ORDER BY a.TA002, a.TA003)
-							ORDER BY a.TA002, a.TA003
+							ORDER BY a.TA002 desc, a.TA003 asc
 						";
 				}
 			}
@@ -3235,11 +3236,11 @@ ORDER BY b.TB003 DESC
 		// }
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -3302,27 +3303,27 @@ ORDER BY b.TB003 DESC
 		$ret['num'] = intval($query->result()[0]->total_num);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
 
 	function construct_sqla($limit = 15, $offset = 0, $func = "")
 	{
-		$this->session->set_userdata('sfci03_search', "display_search/" . $offset);
+		$this->session->set_userdata('sfci03m_search', "display_search/" . $offset);
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
 
 		if ($func == "and_where" or $func == "or_where")   //重新下條件清除原session 1060805
 		{
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if ($this->uri->segment(3, 0) == "clear_sqla") {
-			unset($_SESSION['sfci03']['search']);
+			unset($_SESSION['sfci03m']['search']);
 		}
 
 		if (is_array($this->input->get())) {
@@ -3337,21 +3338,21 @@ ORDER BY b.TB003 DESC
 		}
 		if ($this->uri->segment(6)) {
 			$seq1 = trim($this->uri->segment(6));
-			$_SESSION['sfci03']['search']['seq1'] = trim($this->uri->segment(6));
+			$_SESSION['sfci03m']['search']['seq1'] = trim($this->uri->segment(6));
 		} else {
-			if (isset($_SESSION['sfci03']['search']['seq1']))
-				$seq1 = $_SESSION['sfci03']['search']['seq1'];
+			if (isset($_SESSION['sfci03m']['search']['seq1']))
+				$seq1 = $_SESSION['sfci03m']['search']['seq1'];
 			else
 				$seq1 = '';
 		}
 		if ($this->uri->segment(7) != 'a') {
 			// var_dump('comein 1');
 			$seq2 = trim($this->uri->segment(7));
-			$_SESSION['sfci03']['search']['seq2'] = trim($this->uri->segment(7));
+			$_SESSION['sfci03m']['search']['seq2'] = trim($this->uri->segment(7));
 		} else {
 			// var_dump('comein 2');
-			if (isset($_SESSION['sfci03']['search']['seq2']))
-				$seq2 = $_SESSION['sfci03']['search']['seq2'];
+			if (isset($_SESSION['sfci03m']['search']['seq2']))
+				$seq2 = $_SESSION['sfci03m']['search']['seq2'];
 			else
 				$seq2 = '';
 		}
@@ -3382,11 +3383,11 @@ ORDER BY b.TB003 DESC
 			$where = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['where'])) {
+		if (isset($_SESSION['sfci03m']['search']['where'])) {
 			if ($where) {
 				$where .= " and ";
 			}
-			$where .= $_SESSION['sfci03']['search']['where'];
+			$where .= $_SESSION['sfci03m']['search']['where'];
 		}
 
 		if ($this->input->post('find005')) {
@@ -3447,14 +3448,14 @@ ORDER BY b.TB003 DESC
 			$order = "";
 		}
 
-		if (isset($_SESSION['sfci03']['search']['order'])) {
+		if (isset($_SESSION['sfci03m']['search']['order'])) {
 			if ($order) {
 				$order .= " , ";
 			}
-			$order .= $_SESSION['sfci03']['search']['order'];
+			$order .= $_SESSION['sfci03m']['search']['order'];
 		}
 
-		if (!isset($_SESSION['sfci03']['search']['order']) && $default_order) {
+		if (!isset($_SESSION['sfci03m']['search']['order']) && $default_order) {
 			if ($order) {
 				$order .= " , ";
 			}
@@ -3465,7 +3466,7 @@ ORDER BY b.TB003 DESC
 
 		/* Data SQL */
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order);
@@ -3477,7 +3478,7 @@ ORDER BY b.TB003 DESC
 		// $this->construct_view($ret['data']);
 
 		// $query = $this->db->select('a.*,c.mq002,b.mw002 as td004disp')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmw as b', 'a.td004 = b.mw001', 'left')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left')
 		// 	->order_by($order)
@@ -3489,7 +3490,7 @@ ORDER BY b.TB003 DESC
 
 
 
-		$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+		$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3502,11 +3503,11 @@ ORDER BY b.TB003 DESC
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and $where and b.TA013 !='V' ORDER BY a.TA002 )
-					ORDER BY a.TA002 )
-				ORDER BY a.TA002  
+					ORDER BY a.TA002 DESC,a.TA003 ASC )
+				ORDER BY a.TA002 DESC,a.TA003 ASC  
 		 ";
 		if ($where == "") {
-			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001 
@@ -3519,13 +3520,13 @@ ORDER BY b.TB003 DESC
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and b.TA013 !='V' ORDER BY a.TA002 )
-						ORDER BY a.TA002 )
-					ORDER BY a.TA002 
+						ORDER BY a.TA002 DESC,a.TA003 ASC )
+					ORDER BY a.TA002 DESC,a.TA003 ASC  
 			";
 		}
 
 		if ($this->uri->segment(3) == "display_childa" && ($seq1)) {
-			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+			$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3538,11 +3539,11 @@ ORDER BY b.TB003 DESC
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and $where and b.TA013 !='V' and a.TA001 = '$seq1' ORDER BY a.TA002 )
-							ORDER BY a.TA002 )
-						ORDER BY a.TA002 
+							ORDER BY a.TA002 DESC,a.TA003 ASC )
+						ORDER BY a.TA002 DESC,a.TA003 ASC 
 						";
 			if ($where == "") {
-				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 							left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 							left join INVMB as c on b.TA006 = c.MB001
 							left join CMSMW as d on a.TA004 = d.MW001
@@ -3555,12 +3556,12 @@ ORDER BY b.TB003 DESC
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and a.TA001 = '$seq1' and b.TA013 !='V' ORDER BY a.TA002 )
-							ORDER BY a.TA002 )
-						ORDER BY a.TA002 
+							ORDER BY a.TA002 DESC,a.TA003 ASC )
+						ORDER BY a.TA002 DESC,a.TA003 ASC 
 						";
 			}
 			if ($seq2) {
-				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+				$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001
@@ -3573,11 +3574,11 @@ ORDER BY b.TB003 DESC
 									left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 									left join INVMB as c on b.TA006 = c.MB001
 									left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and $where and a.TA001 = '$seq1' and a.TA002 like '%$seq2%' and b.TA013 !='V'  ORDER BY a.TA002 )
-								ORDER BY a.TA002 )
-							ORDER BY a.TA002 
+								ORDER BY a.TA002 DESC,a.TA003 ASC )
+							ORDER BY a.TA002 DESC,a.TA003 ASC 
 						";
 				if ($where == "") {
-					$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
+					$sql = " SELECT a.TA001, a.TA002, a.TA003,b.TA006,c.MB002,c.MB003,c.MB004,a.TA004,d.MW002 AS MW003,b.TA015,b.TA015-$seq3 as TA0101,a.TA008 from  SFCTA as a 
 								left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 								left join INVMB as c on b.TA006 = c.MB001
 								left join CMSMW as d on a.TA004 = d.MW001
@@ -3590,8 +3591,8 @@ ORDER BY b.TB003 DESC
 									left join MOCTA as b on a.TA001 = b.TA001 and a.TA002 = b.TA002 
 									left join INVMB as c on b.TA006 = c.MB001
 									left join CMSMW as d on a.TA004 = d.MW001 WHERE b.TA011 !='Y' and b.TA011 !='y' and b.TA013 ='Y' and a.TA001 = '$seq1' and a.TA002 like '%$seq2%' and b.TA013 !='V' ORDER BY a.TA002 )
-								ORDER BY a.TA002 )
-							ORDER BY a.TA002 
+								ORDER BY a.TA002 DESC,a.TA003 ASC )
+							ORDER BY a.TA002 DESC,a.TA003 ASC 
 						";
 				}
 			}
@@ -3627,11 +3628,11 @@ ORDER BY b.TB003 DESC
 		// }
 
 		//儲存sql 語法回傳查詢字串
-		$_SESSION['sfci03']['search']['sql'] = $this->db->last_query();
+		$_SESSION['sfci03m']['search']['sql'] = $this->db->last_query();
 
 		/* Num SQL 1060803*/
 		// $query = $this->db->select('COUNT(*) as total_num')
-		// 	->from('sfctd as a')
+		// 	->from('SFCTDM as a')
 		// 	->join('cmsmq as c', 'a.td001 = c.mq001', 'left');
 		// if ($where) {
 		// 	$query->where($where);
@@ -3694,9 +3695,9 @@ ORDER BY b.TB003 DESC
 		$ret['num'] = intval($query->result()[0]->total_num);
 
 		//儲存where與order
-		$_SESSION['sfci03']['search']['where'] = $where;
-		$_SESSION['sfci03']['search']['order'] = $order;
-		$_SESSION['sfci03']['search']['offset'] = $offset;
+		$_SESSION['sfci03m']['search']['where'] = $where;
+		$_SESSION['sfci03m']['search']['order'] = $order;
+		$_SESSION['sfci03m']['search']['offset'] = $offset;
 
 		return $ret;
 	}
@@ -3722,20 +3723,20 @@ ORDER BY b.TB003 DESC
 			$view_array[$key_str] = $key;
 			$index_array[$key] = $key_str;
 		}
-		$_SESSION['sfci03']['search']['view'] = $view_array;
-		$_SESSION['sfci03']['search']['index'] = $index_array;
-		//echo "<pre>";var_dump($_SESSION['sfci03']['search']['view']);exit;
+		$_SESSION['sfci03m']['search']['view'] = $view_array;
+		$_SESSION['sfci03m']['search']['index'] = $index_array;
+		//echo "<pre>";var_dump($_SESSION['sfci03m']['search']['view']);exit;
 	}
 
-	//查詢一筆 修改用   
+	//查詢一筆 修改用   1141025 
 	function selone($seq1, $seq2)
 	{
 		// $this->db->select('a.TD001,a.TD002,a.TD003,a.TD004,a.TD005,a.TD006,a.TD007,a.TD008,a.TD009,a.TD010,
 		//                d.MD002 as td004disp,c.MQ002 AS td001disp,e.MV002 as cmsi09ddisp,f.MX003 as te005disp,
 		//                g.MW002 as te009disp,b.* ');
 
-		// $this->db->from('SFCTD as a');
-		// $this->db->join('SFCTE as b', 'a.TD001 = b.TE001  and a.TD002=b.TE002 ', 'left');	//單身	
+		// $this->db->from('SFCTDM as a');
+		// $this->db->join('SFCTEM as b', 'a.TD001 = b.TE001  and a.TD002=b.TE002 ', 'left');	//單身	
 		// $this->db->join('CMSMQ as c', 'a.TD001 = c.MQ001  ', 'left');  //單別sfci01
 		// $this->db->join('CMSMD as d', 'a.TD004 = d.MD001 ', 'left');   //生產線別 cmsi04 
 		// $this->db->join('CMSMV as e', 'b.TE004 = e.MV001 ', 'left');   //員工
@@ -3748,7 +3749,7 @@ ORDER BY b.TB003 DESC
 		// $query = $this->db->get();
 
 		$sql98 = " select a.TD001,b.MQ002 AS TD001disp ,a.TD002,a.TD003,a.TD004,c.MD002 as TD004disp,a.TD005,a.TD006,a.TD007,a.TD008,a.TD009,a.TD010,a.FLAG
-					from SFCTD as a
+					from SFCTDM as a
 					left join CMSMQ as b on a.TD001 = b.MQ001 
 					left join CMSMD as c on a.TD004 = c.MD001 
 					where a.TD001 ='$seq1' and a.TD002='$seq2' ";
@@ -3762,26 +3763,27 @@ ORDER BY b.TB003 DESC
 
 		// $this->db->select('b.*,b.te004 as cmsi09d,e.mv002 as cmsi09ddisp,f.mx003 as te005disp,
 		//                g.mw002 as te009disp')
-		// 	->from('sfcte as b')
+		// 	->from('SFCTEM as b')
 		// 	->join('cmsmv as e', 'b.te004 = e.mv001 ', 'left')
 		// 	->join('cmsmx as f', 'b.te005 = f.mx001 ', 'left')
 		// 	->join('cmsmw as g', 'b.te009 = g.mw001 ', 'left')
 		// 	->where('b.te001', $seq1)
 		// 	->where('b.te002', $seq2);
 		// $query = $this->db->get();
-		//Right('000000' + Cast(123 as varchar),6) 補0用法
+		//Right('000000' + Cast(123 as varchar),6) 補0用法Right('0000' + Cast(a.TE012 as varchar),4) as TE012,
+				//		  Right('0000' + Cast(a.TE013 as varchar),4) as TE013
 
 
 		$sql99 = " select a.TE001,a.TE002,a.TE003,a.TE004,a.TE005,a.TE006,a.TE007,a.TE008,a.TE009,a.TE010,
-						  convert(varchar(25),convert(int,a.TE011)) as TE011,Right('0000' + Cast(a.TE012 as varchar),4) as TE012,
-						  Right('0000' + Cast(a.TE013 as varchar),4) as TE013,a.TE014,a.TE015,a.TE016,a.TE017,a.TE018,a.TE019,a.TE020,
+						  convert(varchar(25),convert(int,a.TE011)) as TE011, a.TE012,
+						   a.TE013,a.TE014,a.TE015,a.TE016,a.TE017,a.TE018,a.TE019,a.TE020,
 						  a.TE021,a.TE022,a.TE023,a.TE024,a.TE025,a.TE026,a.TE027,a.TE028,a.TE029,a.TE030,
-						  a.TE004 as cmsi09d, c.MV002 as cmsi09ddisp, d.MX003 as TE005disp, e.MW003 as TE009disp,a.TE031, a.TE032, a.TE033,
+						  a.TE004 as cmsi09d, c.MV002 as cmsi09ddisp, d.MX003 as TE005disp, e.MW002 as TE009disp,a.TE031, a.TE032, a.TE033,
 						  a.TE034, a.TE035, a.TE036, a.TE037, a.TE038, a.TE039, a.TE040, a.TE041, a.TE042, a.TE043, a.TE044, a.TE045,
 						  a.TE046, a.TE047, a.TE048, a.TE049, a.TE050, a.TE051, a.TE052, a.TE053, a.TE054, a.TE055, a.TE056, a.TE057, a.TE058,
 						  a.TE059, a.TE060, a.TE061, a.TE062, a.TE063, a.TE064, a.TE065
-					from SFCTE as a 
-					left join SFCTD as b on a.TE001 =b.TD001 and a.TE002 =b.TD002
+					from SFCTEM as a 
+					left join SFCTDM as b on a.TE001 =b.TD001 and a.TE002 =b.TD002
 					left join CMSMV as c on a.TE004 = c.MV001
 					left join CMSMX as d on a.TE005 = d.MX001 and b.TD004=d.MX002
 					left join CMSMW as e on a.TE009 = e.MW001 
@@ -3815,8 +3817,8 @@ ORDER BY b.TB003 DESC
 		  ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
 		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
 
-		$this->db->from('sfctd as a');
-		$this->db->join('sfcte as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
+		$this->db->from('SFCTDM as a');
+		$this->db->join('SFCTEM as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
 		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ', 'left');  //單別
 		$this->db->join('cmsmb as d', 'a.td007 = d.mb001 ', 'left');    //廠別
 		$this->db->join('cmsmf as e', 'a.td008 = e.mf001 ', 'left');		//幣別
@@ -3840,7 +3842,7 @@ ORDER BY b.TB003 DESC
 	//ajax 下拉視窗查詢類 google 下拉 明細 品號品名	15 改 10  1060815
 	function lookup($keyword)
 	{
-		$this->db->select('mb001, mb002, mb003,mb004')->from('sfctd');
+		$this->db->select('mb001, mb002, mb003,mb004')->from('SFCTDM');
 		$this->db->like('mb001', urldecode(urldecode($this->uri->segment(4))), 'after');
 		$this->db->or_like('mb002', urldecode(urldecode($this->uri->segment(4))), 'after');
 		$this->db->limit('10');
@@ -3863,8 +3865,8 @@ ORDER BY b.TB003 DESC
 	function findf($limit, $offset, $sort_by, $sort_order)
 	{
 		//$seq5='';$seq51='';$seq7='';$seq71='';		  
-		$seq11 = "SELECT COUNT(*) as count  FROM `sfctd` ";
-		$seq1 = "td001, td002, td003, td004, td004 as td004disp,td005, td006,td007,td08,td010,td011,td012,td029,td030, create_date FROM `sfctd` ";
+		$seq11 = "SELECT COUNT(*) as count  FROM `SFCTDM` ";
+		$seq1 = "td001, td002, td003, td004, td004 as td004disp,td005, td006,td007,td08,td010,td011,td012,td029,td030, create_date FROM `SFCTDM` ";
 		$seq2 = "WHERE `a.create_date` >=' ' ";
 		$seq32 = "`a.create_date` >='' ";
 		$seq33 = 'a.td001 desc';
@@ -3898,19 +3900,19 @@ ORDER BY b.TB003 DESC
 		if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		}
-		if (@$_SESSION['sfci03_sql_term']) {
-			$seq32 = $_SESSION['sfci03_sql_term'];
+		if (@$_SESSION['sfci03m_sql_term']) {
+			$seq32 = $_SESSION['sfci03m_sql_term'];
 		}
-		if (@$_SESSION['sfci03_sql_sort']) {
-			$seq33 = $_SESSION['sfci03_sql_sort'];
+		if (@$_SESSION['sfci03m_sql_sort']) {
+			$seq33 = $_SESSION['sfci03m_sql_sort'];
 		}
 
 		$sort_order = (substr($sort_order, 0, 3) == 'asc') ? 'asc' : 'desc';
 		$sort_columns = array('td001', 'td002', 'td003', 'td004', 'td004disp', 'b.ma002', 'td005', 'td006', 'td007', 'td008', 'td010', 'td011', 'td012', 'td019', 'td027', 'a.create_date');
 		$sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否在 table 內
 		$query = $this->db->select(' a.*,e.mw002 as td004disp')
-			->from('sfctd as a')
-			->join('sfcte as b', 'a.td001 = b.te001 and a.td002 = b.te002', 'left')
+			->from('SFCTDM as a')
+			->join('SFCTEM as b', 'a.td001 = b.te001 and a.td002 = b.te002', 'left')
 			->join('cmsmw as e', 'a.td004 = e.mw001 ', 'left')
 			->where($seq32)
 			->order_by($seq33)
@@ -3918,7 +3920,7 @@ ORDER BY b.TB003 DESC
 		$ret['rows'] = $query->get()->result();
 
 		$query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
-			->from('sfctd as a')
+			->from('SFCTDM as a')
 			->where($seq32);
 		$num = $query->get()->result();
 		$ret['num_rows'] = $num[0]->count;
@@ -3936,7 +3938,7 @@ ORDER BY b.TB003 DESC
 		$sort_columns = array('a.td001', 'a.td002', 'a.td003', 'a.td004', 'b.ma002', 'a.td029', 'a.td030', 'a.create_date');
 		$sort_by = (in_array($sort_by, $sort_columns)) ? $sort_by : 'td001';  //檢查排序欄位是否為 table
 		$this->db->select('a.td001, a.td002, a.td003, a.td004,b.ma002,  a.td029,a.td030, a.create_date');
-		$this->db->from('sfctd as a');
+		$this->db->from('SFCTDM as a');
 		$this->db->join('copma as b', 'a.td004 = b.ma001 ', 'left');
 		$this->db->like($sort_by, $seq4, 'after');
 		$this->db->order_by($sort_by, $sort_order);
@@ -3946,7 +3948,7 @@ ORDER BY b.TB003 DESC
 		$ret['rows'] = $query->result();
 
 		$this->db->select('COUNT(*) as count');    // 計算筆數	
-		$this->db->from('sfctd as a');
+		$this->db->from('SFCTDM as a');
 		$this->db->join('copma as b', 'a.td004 = b.ma001 ', 'left');
 		$this->db->like($sort_by, $seq4, 'after');
 		$query = $this->db->get();
@@ -3960,9 +3962,9 @@ ORDER BY b.TB003 DESC
 	{
 		// $this->db->where('td001', $seg1);
 		// $this->db->where('td002', $seg2);
-		// $query = $this->db->get('sfctd');
+		// $query = $this->db->get('SFCTDM');
 		// return $query->num_rows();
-		$sql98 = " select * from SFCTD where TD001='$seq1' and TD002='$seq2' ";
+		$sql98 = " select * from SFCTDM where TD001='$seq1' and TD002='$seq2' ";
 		$query = $this->db->query($sql98);
 		return $query->num_rows();
 	}
@@ -3973,12 +3975,12 @@ ORDER BY b.TB003 DESC
 		$this->db->where('te001', $seg1);
 		$this->db->where('te002', $seg2);
 		$this->db->where('te003', $seg3);
-		$query = $this->db->get('sfcte');
+		$query = $this->db->get('SFCTEM');
 		return $query->num_rows();
 	}
 
-	//新增一筆 檔頭  sfctd	
-	function insertf()    //新增一筆 檔頭  sfctd
+	//新增一筆 檔頭  SFCTDM	
+	function insertf()    //新增一筆 檔頭  SFCTDM
 	{
 		//刪日期 / 符號
 		preg_match_all('/\d/S', $this->input->post('td003'), $matches);  //處理日期字串
@@ -4003,9 +4005,11 @@ ORDER BY b.TB003 DESC
 
 		$td001 = trim($this->input->post('td001'));
 		$td002 = trim($this->input->post('td002'));
+		$TD001 = trim($this->input->post('td001'));
+		$TD002 = trim($this->input->post('td002'));
 		// $td002no = $td002;   //明細用再新增一筆時加1
 		//檢查資料是否已存在 若存在加1
-		// while ($this->sfci03_model->selone1($td001, $td002) > 0) {
+		// while ($this->sfci03m_model->selone1($td001, $td002) > 0) {
 		$TD002 = $this->check_title_no($td001, $td008);
 		// $td002no = $td002;
 		// }
@@ -4018,6 +4022,7 @@ ORDER BY b.TB003 DESC
 		// $vtd003 = iconv("utf-8", "BIG5", $vtd003);
 		$td004 = trim($this->input->post('td004'));
 		$td005 = trim($this->input->post('td005'));
+		$TD005 = trim($this->input->post('td005'));
 		$td006 = trim($this->input->post('td006'));
 		$td006 = iconv("utf-8", "BIG5", $td006);
 		$td007 = trim($this->input->post('td007'));
@@ -4026,7 +4031,7 @@ ORDER BY b.TB003 DESC
 		$td010 = trim($this->input->post('td010'));
 		$cmsi04 = trim($this->input->post('cmsi04'));
 
-		$sql = " INSERT INTO dbo.SFCTD
+		$sql = " INSERT INTO dbo.SFCTDM
 		(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TD001, TD002, TD003, TD004, TD005, TD006, TD007, TD008, TD009, TD010)
 VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$td003', '$td004', '$td005', '$td006', '$td007', '$td008', '$td009', '$td010'); ";
 
@@ -4043,7 +4048,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 			}
 		}
 
-		// 新增明細 sfcte  
+		// 新增明細 SFCTEM  
 		// $vte003 = '0010';   //流水號重新排序
 		if (isset($order_product)) {
 			foreach ($order_product as $key => $val) {
@@ -4055,9 +4060,55 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 					// $TE020 = iconv("utf-8", "BIG5", $TE020);		//單位
 					$TE015 = iconv("utf-8", "BIG5", $TE015);		//備註
 					$td003 = date('Ymd', strtotime($td003));         //日期處理
-
+					 //1141101 hh mm  
+				$str12 = str_pad($TE012, 4, "0", STR_PAD_LEFT);
+				$str13 = str_pad($TE013, 4, "0", STR_PAD_LEFT);
+				//echo var_dump($str13);
+				//var_dump(SUBSTR(trim($str12),0,2));
+				//var_dump(SUBSTR(trim($str12),2,2));
+				//exit;
+				//$hour = intval(substr($timeStr, 0, 2));  // 取前2碼 小時
+               //  $min  = intval(substr($timeStr, 2, 2));  // 取後2碼 分鐘
+               //   $seconds = $hour * 3600 + $min * 60;     // 轉換成秒
+			//   $seconds = 4200;   // 1 小時 10 分鐘
+            //      $hour = floor($seconds / 3600);    // 轉回時、分
+            //   $min  = floor(($seconds % 3600) / 60);
+             //$timeStr = sprintf("%02d%02d", $hour, $min);   // 格式化成 4 碼字串，例如 0110
+         //   <input type="text" name="TE012" value="<PHP?= htmlspecialchars($timeStr)
+         //		 " maxlength="4">
+				
+                $TE012A=intval(SUBSTR($str12,0,2));
+                $TE012B=intval(SUBSTR($str12,2,2));
+				$TE012=($TE012A*3600)+($TE012B*60);
+				
+				$TE013A=intval(SUBSTR($str13,0,2));
+                $TE013B=intval(SUBSTR($str13,2,2));
+				$TE013=($TE013A*3600)+($TE013B*60);
+				// insert 、updata 有就修改，沒有就新增 1141215
+				$TE014 ='Y';
+				        $TE008 = $TE008 ?? '0090';
+						$TE030 = $TE030 ?? '';
+						$TE016 = $TE016 ?? 0;     // 若 $te016 為 null → 給 0
+                        $TE021 = $TE021 ?? '';    // 若 $te017 為 null → 給空字串
+						$TE041 = $TE041 ?? '';
+						$TE058 = $TE058 ?? '';
+						$TE061 = $TE061 ?? '';
+						$TE062 = $TE062 ?? '';
+						$TE063 = $TE063 ?? '';
+						//1141204
+						$TE049 = $TE049 ?? '';
+						$TE052 = $TE052 ?? '';
+						$TE053 = $TE053 ?? '';
+						$TE054 = $TE054 ?? '';
+						$TE055 = $TE055 ?? '';
+						$TE056 = $TE056 ?? '';
+						$TE057 = $TE057 ?? '';
+						$TE059 = $TE059 ?? '';
+						$TE060 = $TE060 ?? '';
+                        $flag=0;
+						$modifier='a001';
 					if ($td001 == 'D404' || $td001 == 'D504') {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 								(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 								TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE029, TE030,
 								TE032, TE033, TE034, TE035, TE036, TE037, TE038, TE039, TE040, TE041, TE042, TE043, TE044, TE045, TE049, TE052,
@@ -4082,7 +4133,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						$this->db->query($sql95);
 						//invra 異動明細資料檔---------------------------end
 					} else if ($td001 == 'D403') {	//橡膠
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 											(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 											TE011,TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, 
 											TE029, TE030, TE032, TE035, TE040, TE041, TE050, TE051)
@@ -4099,7 +4150,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						$this->db->query($sql95);
 						//invra 異動明細資料檔---------------------------end		
 					} else if ($td001 == 'D503') {	//萬馬力
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 											(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 											TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, 
 											TE029, TE032)
@@ -4114,13 +4165,27 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 									VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$TE017', '$td003', '-1', '$td001', '$TD002', '$TE003', 'A203', '3', '$TE015', 'D503'); 				
 									";
 						$this->db->query($sql95);
-						//invra 異動明細資料檔---------------------------end				
+						//invra 異動明細資料檔---------------'$TE032', '$TE046'----------'$TE047' 1141025--end				
 					} else if ($td001 == 'D401' || $td001 == 'D501') {
-						$sql98 = " INSERT INTO dbo.SFCTE 
-						(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE005, TE006, TE007, TE008, TE009, TE010,
+						//1141117
+						/*$sql98 = " INSERT INTO dbo.SFCTEM 
+						(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003,TE004, TE005, TE006, TE007, TE008, TE009, TE010,
+						 TE011, TE012, TE013,TE028, TE031, TE0311,TE0312,
+						 TE022, TE023, TE024,TE025, TE026, TE027,
 						 TE014, TE015, TE017, TE018, TE019, TE020, TE029, TE032, TE046, TE047)
-				VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$TE003', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-						 '$td005', '$TE015', '$TE017', '', '', '', '$TE029', '$TE032', '$TE046', '$TE047'); ";
+				VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$TE003','$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
+						 '$TE011', '$TE012', '$TE013','$TE028', '$TE031', '$TE0311','$TE0312',
+						 '$TE022', '$TE023', '$TE024','$TE025', '$TE026', '$TE027',
+						 '$td005', '$TE015', '$TE017', '', '', '', '$TE029', '', '', ''); "; , TE064, TE065*/
+					//1141226 insertf ok	 
+						 $sql98 = " INSERT INTO dbo.SFCTEM 
+								(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
+								TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049,
+								TE052, TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063)
+							VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
+								'$TE011', '$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
+								'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041',  '$TE049', 
+								'$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061', '$TE062', '$TE063'); ";
 					} else if ($td001 == 'D402' || $td001 == 'D502') {
 
 						if ($td004 == 'CR004') {
@@ -4138,39 +4203,41 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						}
 
 						// if ($td001 == 'D402') {
-						// $sql98 = " INSERT INTO dbo.SFCTE 
+						// $sql98 = " INSERT INTO dbo.SFCTEM 
 						// 		(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 						// 		TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049)
 						// VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
 						// 		'$TE011', '$TE012', '$TE013', '$td005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
 						// 		'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041', '$TE049'); ";
 						// } else {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 									(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010, TE041,
-									TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE049, TE052,
+									TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040,TE041, TE049, TE052,
 									TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063, TE064, TE065)
 							VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010',  '$TE041',
 									'$TE011', '$TE012', '$TE013', '$td005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
-									'$TE029', '$TE030', '$TE031', '$TE0312', '$TE049', '$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061',
+									'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041', '$TE049', '$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061',
 									'$TE062', '$TE063', '$TE064', '$TE065'); ";
 						// }
 					} else {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 									(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
-									TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040)
+									TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025,
+									TE026, TE027, TE028, TE029, TE030,
+									TE031, TE0312, TE041)
 							VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-									'$TE011', '$TE012', '$TE013', '$td005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
-									'$TE029', '$TE030', '$TE031', '$TE0312'); ";
+									'$TE011', '$TE012', '$TE013', '$td005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025',
+									'$TE026', '$TE027', '$TE028','$TE029', '$TE030',
+									'$TE031', '$TE0312', '$TE041') ";
 					}
-
-					// echo "<pre>";
-					// var_dump($sql98);
-					// exit;
+				//	 echo "<pre>";
+				//	 var_dump($sql98);
+				//	 exit;
 					$this->db->query($sql98);
 
-					$sql99 = " UPDATE  SFCTE
-									SET  SFCTE.TE018 = t.MB002,SFCTE.TE019 = t.MB003,SFCTE.TE020 = t.MB004
-								FROM SFCTE c 
+					$sql99 = " UPDATE  SFCTEM
+									SET  SFCTEM.TE018 = t.MB002,SFCTEM.TE019 = t.MB003,SFCTEM.TE020 = t.MB004
+								FROM SFCTEM c 
 									INNER JOIN INVMB t
 										ON c.TE017=t.MB001
 								WHERE c.TE001 ='$td001' and c.TE002='$TD002' and c.TE003='$TE003'				
@@ -4200,7 +4267,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
         { 
 	      $this->db->where('td001', $this->input->post('td001c')); 
           $this->db->where('td002', $this->input->post('td002c'));
-	      $query = $this->db->get('sfctd');
+	      $query = $this->db->get('SFCTDM');
 	      return $query->num_rows() ; 
 	    } */
 
@@ -4209,7 +4276,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 	{
 		$this->db->where('td001', $this->input->post('td001o'));
 		$this->db->where('td002', $this->input->post('td002o'));
-		$query = $this->db->get('sfctd');
+		$query = $this->db->get('SFCTDM');
 		$exist = $query->num_rows();
 		if (!$exist) {
 			return 'exist';
@@ -4270,7 +4337,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 			endforeach;
 		}
 
-		$seq1 = $this->input->post('td001c');    //主鍵一筆檔頭sfctd
+		$seq1 = $this->input->post('td001c');    //主鍵一筆檔頭SFCTDM
 		$seq2 = $this->input->post('td002c');
 		$data = array(
 			'company' => $this->session->userdata('syscompany'),
@@ -4290,16 +4357,16 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 			'td049' => $td049, 'td050' => $td050, 'td051' => $td051
 		);
 
-		$exist = $this->sfci03_model->selone1($seq1, $seq2);  //檢查單頭是否重複
+		$exist = $this->sfci03m_model->selone1($seq1, $seq2);  //檢查單頭是否重複
 		if ($exist) {
 			return 'exist';
 		}
-		$this->db->insert('sfctd', $data);      //複製一筆  
+		$this->db->insert('SFCTDM', $data);      //複製一筆  
 
 		//複製一筆明細
 		$this->db->where('te001', $this->input->post('td001o'));
 		$this->db->where('te002', $this->input->post('td002o'));
-		$query = $this->db->get('sfcte');
+		$query = $this->db->get('SFCTEM');
 		$exist = $query->num_rows();
 		if (!$exist) {
 			return 'exist';
@@ -4347,7 +4414,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 				$i++;
 			endforeach;
 		}
-		$seq1 = $this->input->post('td001c');    //主鍵一筆明細sfcte
+		$seq1 = $this->input->post('td001c');    //主鍵一筆明細SFCTEM
 		$seq2 = $this->input->post('td002c');
 		$i = 0;
 		while ($i < $num) {
@@ -4367,7 +4434,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 				'te033' => $te033[$i], 'te034' => $te034[$i], 'te035' => $te035[$i], 'te036' => $te036[$i]
 			);
 
-			$this->db->insert('sfcte', $data_array);      //複製一筆 
+			$this->db->insert('SFCTEM', $data_array);      //複製一筆 
 			$i++;
 		}
 		return true;
@@ -4391,12 +4458,12 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 						SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 						as TE013, '生產衝次' as TE0131,'產能85%' as da0051, a.TE011, '累積衝次' as TE0132, 
-						(select sum(TE011) FROM SFCTE	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TE002 <=a.TE002) as TA011dis, c.TA015, 
+						(select sum(TE011) FROM SFCTEM	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TE002 <=a.TE002) as TA011dis, c.TA015, 
 						convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 						a.TE028,a.TE031, '生產效率' as da0052, g.da015, a.TE015
 					
-					from SFCTE	as a
-						left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+					from SFCTEM	as a
+						left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 						left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 						left join CMSMV as d on a.TE004=d.MV001
 						left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4417,8 +4484,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 				// j.MB002
 				$sql = " SELECT (CASE when TE022>='0800'and TE022<'2000' then '1' else '2' END) as TE022disp,
 								b.TD008, a.TE022, e.MX003 as TE005disp, a.TE049, a.TE007, a.TE017, a.TE018, a.TE019, c.TA015, 
-									(select sum(convert(int,TE040)) FROM SFCTE	
-											left join SFCTD on TE001=TD001 and TE002=TD002
+									(select sum(convert(int,TE040)) FROM SFCTEM	
+											left join SFCTDM on TE001=TD001 and TE002=TD002
 										WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TD008 <=b.TD008) as TA011dis,
 									'aaa' as TA011div, h.MB002, g.da005, a.TE032, g.da010, g.da006, g.da007, a.TE033, a.TE034, 'bbb' as TE033dis, 'ccc' as TE033mul, 
 									a.TE004 as TE004disp, (rtrim(a.TE022)+'~'+ COALESCE( CASE when a.TE027='' then null else rtrim(a.TE027) END ,
@@ -4427,8 +4494,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 									'dddd' as TE0133, 'eeee' as TE0135, 'ffff' as TE0136, 'gggg' as TE0137, a.TE035, a.TE036, TE037, a.TE038, a.TE039,
 									'' as TE0421, a.TE042, a.TE043, a.TE044, a.TE045,
 									'hhhh' as TE0351, 'iiii' as TE0352, 'jjjj' as TE0353, a.TE041, a.TE015, a.TE040						
-								from SFCTE as a
-									left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+								from SFCTEM as a
+									left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 									left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 									
 									left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4442,8 +4509,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 
 				$sql = " SELECT b.TD008,a.TE017, h.MB002, h.MB003, a.TE046, a.TE047, a.TE032, 'aaaa' as TE0461, g.da006, g.da008, a.TE048, 'bbbb' as TE0471, 'cccc' as TE0472,
 									'dddd' as TE0473, 'eeee' as TE0474,	'ffff' as TE0475, a.TE029, g.da005, g.da014, g.da007
-								from SFCTE as a
-									left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+								from SFCTEM as a
+									left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 									left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 									
 									left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4459,11 +4526,11 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 							CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 							SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 							as TE013, '生產衝次' as TE0131,'產能85%' as da0051, a.TE011, '累積衝次' as TE0132, 
-							(select sum(TE011) FROM SFCTE	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
+							(select sum(TE011) FROM SFCTEM	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
 							convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 							a.TE028,a.TE031, '生產效率' as da0052, g.da015, a.TE015, a.TE029						
-						from SFCTE	as a
-							left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+						from SFCTEM	as a
+							left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 							left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 							left join CMSMV as d on a.TE004=d.MV001
 							left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4480,8 +4547,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 											SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 											as TE013, a.TE011, '標準時間' as stime, '生產效率' as pt, a.TE015,
 											TE002,TE005,TE022,TE023,TE024,TE025,TE026,TE027, g.da004						
-										from SFCTE	as a
-											left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 
+										from SFCTEM	as a
+											left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 
 											left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 											left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
 											left join CMSMW as f on a.TE009=f.MW001 
@@ -4496,11 +4563,11 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 							CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 							SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 							as TE013, '生產衝次' as TE0131,'產能85%' as da0051, a.TE011, '累積衝次' as TE0132, 
-							(select sum(TE011) FROM SFCTE	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
+							(select sum(TE011) FROM SFCTEM	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
 							convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 							a.TE028,a.TE031, '生產效率' as da0052, g.da015, a.TE015						
-						from SFCTE	as a
-							left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+						from SFCTEM	as a
+							left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 							left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 							left join CMSMV as d on a.TE004=d.MV001
 							left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4532,14 +4599,14 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						}
 
 						//總浇注重量
-						// $sqlpo = " SELECT sum(convert(float,da006)*convert(float,TE047)) as po FROM SFCTE 
-						// 			left join SFCTD on TD001=TE001 and TD002=TE002
+						// $sqlpo = " SELECT sum(convert(float,da006)*convert(float,TE047)) as po FROM SFCTEM 
+						// 			left join SFCTDM on TD001=TE001 and TD002=TE002
 						// 			left join molda on TE017=da001 and TE009=da013 and TE029=da014
 						// 			WHERE TE001 like 'D%01' and TD008='$val->TD008' 
 						// 			";
 						$sqlpo = " SELECT da014,TE032,da007,TE047,da006 
-										FROM SFCTE 
-									left join SFCTD on TD001=TE001 and TD002=TE002
+										FROM SFCTEM 
+									left join SFCTDM on TD001=TE001 and TD002=TE002
 									left join molda on TE017=da001 and TE009=da013 and TE029=da014
 									WHERE TE001 like 'D%01' and TD008='$val->TD008'
 									";
@@ -4736,8 +4803,8 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						//生產效率------------------------
 						$sql83 = " SELECT TE002,TD003,TE005,TE022,TE023,TE024,TE025,TE026,TE027,
 											SUM( ROUND( CONVERT(float,TE011)/ CONVERT(float,ISNULL(da004,1))/((LEN(a.TE030) - LEN(REPLACE(a.TE030,';',''))) / LEN(';')+1)/60,2)   ) as te111
-									FROM SFCTE	as a
-								left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002
+									FROM SFCTEM	as a
+								left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002
 								left join molda as g on a.TE017=g.da001 and a.TE009=g.da013 and a.TE029=g.da014
 							WHERE b.TD008>='$seq1' and b.TD008<='$seq2' and a.TE001='$seq3'
 							GROUP by TE002,TD003,TE005,TE022,TE023,TE024,TE025,TE026,TE027
@@ -4883,12 +4950,12 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 						SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 						as TE013, '生產衝次' as TE0131,'產能85%' as da0051, a.TE011, '累積衝次' as TE0132, 
-						(select sum(TE011) FROM SFCTE	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TE002 <=a.TE002) as TA011dis, c.TA015, 
+						(select sum(TE011) FROM SFCTEM	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TE002 <=a.TE002) as TA011dis, c.TA015, 
 						convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 						a.TE028,a.TE031, '生產效率' as da0052, g.da015, a.TE015
 					
-					from SFCTE	as a
-						left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+					from SFCTEM	as a
+						left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 						left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 						left join CMSMV as d on a.TE004=d.MV001
 						left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4913,12 +4980,12 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 								b.TD008, '' as kk1, e.MX003 as TE005disp,a.TE041, a.TE049,
 								 '' as kk2,a.TE017, a.TE018,
 								a.TE019,'' as kk3,'' as kk4,  
-									(select sum(convert(int,TE040)) FROM SFCTE	
-											left join SFCTD on TE001=TD001 and TE002=TD002
+									(select sum(convert(int,TE040)) FROM SFCTEM	
+											left join SFCTDM on TE001=TD001 and TE002=TD002
 										WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 and TD008 <=b.TD008) as TA011dis,
 									a.TE033,a.TE039					
-								from SFCTE as a
-									left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+								from SFCTEM as a
+									left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 									left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 									
 									left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -4932,7 +4999,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 		$result = $query->result();
 		//1140319
 		return $query->result_array();*/
-		$sqla = "DELETE FROM SFCI03GP WHERE 1=1 ";
+		$sqla = "DELETE FROM sfci03mGP WHERE 1=1 ";
     $this->db->query($sqla);	
 					$vday='20250101';
 	$da0051='產能85%';
@@ -4940,7 +5007,7 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 	$da0051=iconv("utf-8", "BIG5//IGNORE", '產能85%');
 	$da0052=iconv("utf-8", "BIG5//IGNORE", '生產效率');
 	
-$sql = "	INSERT INTO SFCI03GP
+$sql = "	INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -4967,7 +5034,7 @@ SELECT
         ELSE 0
     END AS TA015,
     CASE
-        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
+        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
         ELSE 0
     END AS TA011,
     CASE
@@ -4986,7 +5053,10 @@ SELECT
         WHEN ISNUMERIC(a.TE031) = 1 THEN CONVERT(DECIMAL(16, 0), a.TE031)
         ELSE 0
     END AS TE031,
-    g.da005,
+    CASE
+        WHEN ISNUMERIC(g.da005) = 1 THEN CONVERT(DECIMAL(16, 0), g.da005)
+        ELSE 0
+    END AS da005,
     CASE
         WHEN ISNUMERIC(g.da004) = 1 THEN CONVERT(DECIMAL(16, 2), g.da004)
         ELSE 0
@@ -5006,8 +5076,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -5024,7 +5094,7 @@ ORDER BY
 		$this->db->query($sql);
 		$sql = "select TD008,MX001,TE005disp,TE004disp,TE030disp,TE030dispN, TE017,TE018,TE019,MW001,TE009disp,
 		TE040 AS TE0312,da0052,MD013m
-		,TE029,TE013,da004,TE001,da005,da015,da010,TE011,TE040 from SFCI03GP ";
+		,TE029,TE013,da004,TE001,da005,da015,da010,TE011,TE040 from sfci03mGP ";
 					$query = $this->db->query($sql);
 		//$result = $query->result();
 		$ret['data'] = $query->result();
@@ -5104,8 +5174,8 @@ ORDER BY
 
 				$sql = " SELECT b.TD008,a.TE017, h.MB002, h.MB003, a.TE046, a.TE047, a.TE032, 'aaaa' as TE0461, g.da006, g.da008, a.TE048, 'bbbb' as TE0471, 'cccc' as TE0472,
 									'dddd' as TE0473, 'eeee' as TE0474,	'ffff' as TE0475, a.TE029, g.da005, g.da014, g.da007
-								from SFCTE as a
-									left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+								from SFCTEM as a
+									left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 									left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 									
 									left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -5121,8 +5191,8 @@ ORDER BY
 							'' as kk1,a.TE017, a.TE018, a.TE019, g.da002,f.MW003 as TE009disp,
 							a.TE011,convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 							g.da004						
-						from SFCTE	as a
-							left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+						from SFCTEM	as a
+							left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 							left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 							left join CMSMV as d on a.TE004=d.MV001
 							left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -5132,7 +5202,7 @@ ORDER BY
 						where b.TD008>='$seq1' and b.TD008<='$seq2' and (a.TE001='D407' or a.TE001='D507' )  and (b.TD001='D407' or b.TD001='D507')
 						order by b.TD008,e.MX001
 					";*/
-	$sqla = "DELETE FROM SFCI03GP WHERE 1=1 ";
+	$sqla = "DELETE FROM sfci03mGP WHERE 1=1 ";
     $this->db->query($sqla);	
 					$vday='20250101';
 	$da0051='產能85%';
@@ -5140,7 +5210,7 @@ ORDER BY
 	$da0051=iconv("utf-8", "BIG5//IGNORE", '產能85%');
 	$da0052=iconv("utf-8", "BIG5//IGNORE", '生產效率');
 	
-$sql = "	INSERT INTO SFCI03GP
+$sql = "	INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -5167,7 +5237,7 @@ SELECT
         ELSE 0
     END AS TA015,
     CASE
-        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
+        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
         ELSE 0
     END AS TA011,
     CASE
@@ -5186,7 +5256,10 @@ SELECT
         WHEN ISNUMERIC(a.TE031) = 1 THEN CONVERT(DECIMAL(16, 0), a.TE031)
         ELSE 0
     END AS TE031,
-    g.da005,
+    CASE
+        WHEN ISNUMERIC(g.da005) = 1 THEN CONVERT(DECIMAL(16, 0), g.da005)
+        ELSE 0
+    END AS da005,
     CASE
         WHEN ISNUMERIC(g.da004) = 1 THEN CONVERT(DECIMAL(16, 2), g.da004)
         ELSE 0
@@ -5206,8 +5279,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -5223,7 +5296,7 @@ ORDER BY
 		// echo "<pre>";var_dump($sql);exit;
 		$this->db->query($sql);
 		$sql = "select TD008,MX001,TE005disp,TE004disp,TE030disp,TE030dispN, TE017,TE018,TE019,MW001,TE009disp,TE0312 AS KK, da0052,MD013m
-		,TE029,da015,TE013,da004,TE001,da005,TE029,TE011,TE040 from SFCI03GP ";
+		,TE029,da015,TE013,da004,TE001,da005,TE029,TE011,TE040 from sfci03mGP ";
 					$query = $this->db->query($sql);
 		//$result = $query->result();
 		$ret['data'] = $query->result();
@@ -5307,8 +5380,8 @@ ORDER BY
 											SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 											as TE013, a.TE011, '標準時間' as stime, '生產效率' as pt, a.TE015,
 											TE002,TE005,TE022,TE023,TE024,TE025,TE026,TE027, g.da004						
-										from SFCTE	as a
-											left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 
+										from SFCTEM	as a
+											left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 
 											left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 											left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
 											left join CMSMW as f on a.TE009=f.MW001 
@@ -5323,11 +5396,11 @@ ORDER BY
 							CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 							SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2)
 							as TE013, '生產衝次' as TE0131,'產能85%' as da0051, a.TE011, '累積衝次' as TE0132, 
-							(select sum(TE011) FROM SFCTE	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
+							(select sum(TE011) FROM SFCTEM	WHERE TE006 <> '' and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE002 <=a.TE002) as TA011dis, c.TA015, 
 							convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312, convert(int,a.TE028)+convert(int,a.TE031) as TE0311,
 							a.TE028,a.TE031, '生產效率' as da0052, g.da015, a.TE015						
-						from SFCTE	as a
-							left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+						from SFCTEM	as a
+							left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 							left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 							left join CMSMV as d on a.TE004=d.MV001
 							left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -5361,14 +5434,14 @@ ORDER BY
 						}
 
 						//總浇注重量
-						// $sqlpo = " SELECT sum(convert(float,da006)*convert(float,TE047)) as po FROM SFCTE 
-						// 			left join SFCTD on TD001=TE001 and TD002=TE002
+						// $sqlpo = " SELECT sum(convert(float,da006)*convert(float,TE047)) as po FROM SFCTEM 
+						// 			left join SFCTDM on TD001=TE001 and TD002=TE002
 						// 			left join molda on TE017=da001 and TE009=da013 and TE029=da014
 						// 			WHERE TE001 like 'D%01' and TD008='$val->TD008' 
 						// 			";
 						$sqlpo = " SELECT da014,TE032,da007,TE047,da006 
-										FROM SFCTE 
-									left join SFCTD on TD001=TE001 and TD002=TE002
+										FROM SFCTEM 
+									left join SFCTDM on TD001=TE001 and TD002=TE002
 									left join molda on TE017=da001 and TE009=da013 and TE029=da014
 									WHERE TE001 like 'D%01' and TD008='$val->TD008'
 									";
@@ -5565,8 +5638,8 @@ ORDER BY
 						//生產效率------------------------
 						$sql83 = " SELECT TE002,TD003,TE005,TE022,TE023,TE024,TE025,TE026,TE027,
 											SUM( ROUND( CONVERT(float,TE011)/ CONVERT(float,ISNULL(da004,1))/((LEN(a.TE030) - LEN(REPLACE(a.TE030,';',''))) / LEN(';')+1)/60,2)   ) as te111
-									FROM SFCTE	as a
-								left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002
+									FROM SFCTEM	as a
+								left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002
 								left join molda as g on a.TE017=g.da001 and a.TE009=g.da013 and a.TE029=g.da014
 							WHERE b.TD008>='$seq1' and b.TD008<='$seq2' and a.TE001='$seq3'
 							GROUP by TE002,TD003,TE005,TE022,TE023,TE024,TE025,TE026,TE027
@@ -5797,8 +5870,8 @@ ORDER BY
 							SUM(convert(int,TE063)) as TE063,
 							SUM(convert(int,TE064)) as TE064,
 							'' as isum
-						FROM SFCTE
-							left join SFCTD on TD001=TE001 and TD002=TE002
+						FROM SFCTEM
+							left join SFCTDM on TD001=TE001 and TD002=TE002
 							left join molda on da001=TE017 and da013=TE009 and da014=TE029
 						where TD008>='$TD008s' and TD008<='$TD008d' and TD001='D404'
 						GROUP by TE017,TE018,TE019,da016,da005,da006,da007
@@ -5921,8 +5994,8 @@ ORDER BY
 						--CASE when TE001='D404' or TE001='D504' then sum(convert(int,TE040)) else sum(TE011)-sum(convert(int,TE028))-sum(convert(int,TE031)) END as TE011dis,
 						CASE when TE001='D404' or TE001='D504' then sum(convert(int,TE040)) else  ( CASE when TE001='D401' then sum(convert(int,TE032)*convert(int,TE047)) else sum(TE011)-sum(convert(int,TE028))-sum(convert(int,TE031)) END )  END as TE011dis, 
 						( SELECT ISNULL(SUM(TG013),0)  from MOCTG as b WHERE b.TG014=TE006  and b.TG015=TE007 AND b.TG002 >='$sTG002' AND b.TG002 <='$eTG002' ) as TA011
-						FROM SFCTE 
-						left join SFCTD on TD001=TE001 and TD002=TE002
+						FROM SFCTEM 
+						left join SFCTDM on TD001=TE001 and TD002=TE002
 						left join MOCTA as a on a.TA001=TE006 and a.TA002=TE007 
 						left join CMSMW on MW001=TE009 
 						--left join SFCTA as b on b.TA001=TE006  and b.TA002=TE007
@@ -7114,8 +7187,8 @@ ORDER BY
 		$sql98 = "  SELECT a.*, TD003 , MX003, da010, (rtrim(a.TE022)+'~'+ COALESCE( CASE when a.TE027='' then null else rtrim(a.TE027) END ,
 							CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 							SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2) as TE013
-						FROM SFCTE as a
-							LEFT JOIN SFCTD ON TD001=TE001 AND TD002=TE002 
+						FROM SFCTEM as a
+							LEFT JOIN SFCTDM ON TD001=TE001 AND TD002=TE002 
 							LEFT JOIN CMSMX ON MX001=TE005
 							LEFT JOIN molda on TE017=da001 and TE009=da013 and TE029=da014
 					WHERE TE001 LIKE 'D%02' and TD004='CR004' and TD003>='$TD008s' and TD003<='$TD008d'
@@ -7365,8 +7438,8 @@ ORDER BY
 		$sql98 = "  SELECT a.*, TD003 , MX003, da010, (rtrim(a.TE022)+'~'+ COALESCE( CASE when a.TE027='' then null else rtrim(a.TE027) END ,
 							CASE when a.TE025='' then null else rtrim(a.TE025) END , rtrim(a.TE023) )) as TE012disp,
 							SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),1,2)+':'+SUBSTRING(Right('0000' + Cast(a.TE013 as varchar),4),3,2) as TE013
-						FROM SFCTE as a
-							LEFT JOIN SFCTD ON TD001=TE001 AND TD002=TE002 
+						FROM SFCTEM as a
+							LEFT JOIN SFCTDM ON TD001=TE001 AND TD002=TE002 
 							LEFT JOIN CMSMX ON MX001=TE005
 							LEFT JOIN molda on TE017=da001 and TE009=da013 and TE029=da014
 					WHERE TE001 LIKE 'D%02' and TD004='CR005' and TD003>='$TD008s' and TD003<='$TD008d'
@@ -7794,25 +7867,25 @@ ORDER BY
 
 
 
-		$sql = " SELECT TD003, TE017, MB002, MB003, (select sum(TE011) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA011,
-																		(select sum(convert(int,TE040)) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA040,
+		$sql = " SELECT TD003, TE017, MB002, MB003, (select sum(TE011) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA011,
+																		(select sum(convert(int,TE040)) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA040,
 																		'' as sTA035, '' as dTA040,
-																		(select sum(convert(int,ISNULL(TE052,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA052,
-																		(select sum(convert(int,ISNULL(TE053,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA053,
-																		(select sum(convert(int,ISNULL(TE054,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA054,
-																		(select sum(convert(int,ISNULL(TE055,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA055,
-																		(select sum(convert(int,ISNULL(TE056,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA056,
-																		(select sum(convert(int,ISNULL(TE057,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA057,
-																		(select sum(convert(int,ISNULL(TE058,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA058,
-																		(select sum(convert(int,ISNULL(TE059,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA059,
-																		(select sum(convert(int,ISNULL(TE060,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA060,
-																		(select sum(convert(int,ISNULL(TE061,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA061,
-																		(select sum(convert(int,ISNULL(TE062,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA062,
-																		(select sum(convert(int,ISNULL(TE063,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA063,
-																		(select sum(convert(int,ISNULL(TE064,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA064,
-																		(select sum(convert(int,ISNULL(TE065,0))) FROM SFCTE WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA065				
-					FROM SFCTE as a
-						LEFT JOIN SFCTD ON TE001=TD001 AND TE002=TD002 	
+																		(select sum(convert(int,ISNULL(TE052,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA052,
+																		(select sum(convert(int,ISNULL(TE053,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA053,
+																		(select sum(convert(int,ISNULL(TE054,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA054,
+																		(select sum(convert(int,ISNULL(TE055,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA055,
+																		(select sum(convert(int,ISNULL(TE056,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA056,
+																		(select sum(convert(int,ISNULL(TE057,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA057,
+																		(select sum(convert(int,ISNULL(TE058,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA058,
+																		(select sum(convert(int,ISNULL(TE059,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA059,
+																		(select sum(convert(int,ISNULL(TE060,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA060,
+																		(select sum(convert(int,ISNULL(TE061,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA061,
+																		(select sum(convert(int,ISNULL(TE062,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA062,
+																		(select sum(convert(int,ISNULL(TE063,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA063,
+																		(select sum(convert(int,ISNULL(TE064,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA064,
+																		(select sum(convert(int,ISNULL(TE065,0))) FROM SFCTEM WHERE TE001=a.TE001 and TE002=a.TE002 and TE017=a.TE017 ) as sTA065				
+					FROM SFCTEM as a
+						LEFT JOIN SFCTDM ON TE001=TD001 AND TE002=TD002 	
 						LEFT JOIN INVMB ON TE017=MB001
 					WHERE TE001 LIKE 'D%02' AND TD004='CR006' AND TD003>='$TD008s' AND TD003<='$TD008d'
 					GROUP by TD003,TE017, MB002, MB003,TE006,TE007,TE008,TE001,TE002
@@ -8028,8 +8101,8 @@ ORDER BY
 		//設置欄寛----------------end---------------------------------------
 
 		// TA011dis 以當日 合格數量 之班次累計 20230503
-		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTE	
-									left join SFCTD on TE001=TD001 and TE002=TD002
+		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTEM	
+									left join SFCTDM on TE001=TD001 and TE002=TD002
 								WHERE TE006 <> ''  and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 							
 								and TD008 <=b.TD008 
 								and (CASE when TE022>='0800'and TE022<'1600' then TD008+'1'
@@ -8043,8 +8116,8 @@ ORDER BY
 							(CASE when TE022>='0800'and TE022<'1600' then '1'
 								when TE022='0000' then '3'
 								when TE002>='1600' and TE022<'2000' then '2' else '3' END) as TE022disp
-					FROM dbo.SFCTE AS a
-						LEFT JOIN SFCTD as b ON TE001=TD001 AND TE002=TD002
+					FROM dbo.SFCTEM AS a
+						LEFT JOIN SFCTDM as b ON TE001=TD001 AND TE002=TD002
 						LEFT JOIN dbo.molda as c on TE017=da001 and TE009=da013 and TE029=da014
 						LEFT JOIN MOCTA as d on TA001=TE006 AND TA002=TE007
 						LEFT JOIN INVMB as e ON MB001=da016
@@ -8315,8 +8388,8 @@ ORDER BY
 		//設置欄寛----------------end---------------------------------------
 
 		// TA011dis 以當日 合格數量 之班次累計 加順序 20230503
-		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTE	
-									left join SFCTD on TE001=TD001 and TE002=TD002
+		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTEM	
+									left join SFCTDM on TE001=TD001 and TE002=TD002
 								WHERE TE006 <> ''  and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 							
 								and TD008 <=b.TD008 
 								and (CASE when TE022>='0800'and TE022<'1600' then TD008+TE003+'1'
@@ -8330,8 +8403,8 @@ ORDER BY
 							(CASE when TE022>='0800'and TE022<'1600' then '1'
 								when TE022='0000' then '3'
 								when TE002>='1600' and TE022<'2000' then '2' else '3' END) as TE022disp
-					FROM dbo.SFCTE AS a
-						LEFT JOIN SFCTD as b ON TE001=TD001 AND TE002=TD002
+					FROM dbo.SFCTEM AS a
+						LEFT JOIN SFCTDM as b ON TE001=TD001 AND TE002=TD002
 						LEFT JOIN dbo.molda as c on TE017=da001 and TE009=da013 and TE029=da014
 						LEFT JOIN MOCTA as d on TA001=TE006 AND TA002=TE007
 						LEFT JOIN INVMB as e ON MB001=da016
@@ -8602,8 +8675,8 @@ ORDER BY
 		//設置欄寛----------------end---------------------------------------
 
 		// TA011dis 以當日 合格數量 之班次累計 加順序 20230503
-		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTE	
-									left join SFCTD on TE001=TD001 and TE002=TD002
+		$sql98 = " SELECT * ,(select sum(convert(int,TE040)) FROM SFCTEM	
+									left join SFCTDM on TE001=TD001 and TE002=TD002
 								WHERE TE006 <> ''  and  TE006=a.TE006 and TE007=a.TE007 and TE008=a.TE008 and TE017=a.TE017 							
 								and TD008 <=b.TD008 
 								and (CASE when TE022>='0800'and TE022<'1600' then TD008+TE003+'1'
@@ -8617,8 +8690,8 @@ ORDER BY
 							(CASE when TE022>='0800'and TE022<'1600' then '1'
 								when TE022='0000' then '3'
 								when TE002>='1600' and TE022<'2000' then '2' else '3' END) as TE022disp
-					FROM dbo.SFCTE AS a
-						LEFT JOIN SFCTD as b ON TE001=TD001 AND TE002=TD002
+					FROM dbo.SFCTEM AS a
+						LEFT JOIN SFCTDM as b ON TE001=TD001 AND TE002=TD002
 						LEFT JOIN dbo.molda as c on TE017=da001 and TE009=da013 and TE029=da014
 						LEFT JOIN MOCTA as d on TA001=TE006 AND TA002=TE007
 						LEFT JOIN INVMB as e ON MB001=da016
@@ -8728,8 +8801,8 @@ ORDER BY
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, i.MD013 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -8746,8 +8819,8 @@ ORDER BY
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -8760,7 +8833,7 @@ ORDER BY
 				";
 		// echo "<pre>";var_dump($sql);exit;
 		//$this->db->query($sql);
-		//$sql = "select * from SFCI03GP ";
+		//$sql = "select * from sfci03mGP ";
 		//$query = $this->db->query($sql);
 		//有輸入單別時執行下列
 		if ($seq3) {
@@ -8788,8 +8861,8 @@ ORDER BY
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'aaaa' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, g.da004, a.TE040
 				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -8892,8 +8965,8 @@ ORDER BY
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, i.MD013 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -8911,8 +8984,8 @@ ORDER BY
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -8942,7 +9015,7 @@ ORDER BY
 				"; */
 		// echo "<pre>";var_dump($sql);exit;
 		//$this->db->query($sql);
-		//$sql = "select * from SFCI03GP ";
+		//$sql = "select * from sfci03mGP ";
 		//$query = $this->db->query($sql);
 		//有輸入單別時執行下列
 		//1140130
@@ -8971,8 +9044,8 @@ ORDER BY
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'aaaa' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, g.da004, a.TE040
 				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -9093,7 +9166,7 @@ ORDER BY b.TB003 DESC
 		select DISTINCT b.TB003, '' as MX001 , ''  as TE005disp,a.TC023 AS  TE004disp,TC013  AS TE030disp, TC005 AS TE030dispN,
 					a.TC047 AS TE017, a.TC048 AS TE018, a.TC049 AS TE019,h.TA004,h.TA024 as TE009disp,					
 					TC015  as TE0312,
-					TC036 as da0051, isnull(pk002,4.9) as MD013m,TB002
+					TC036 as da0051, isnull(pk002,0) as MD013m,TB002
  FROM SFCTC as a
 LEFT  JOIN  SFCTB as b ON  a.TC001=b.TB001 AND a.TC002=b.TB002
 LEFT JOIN MOCTA as c on a.TC004=c.TA001 and a.TC005=c.TA002 
@@ -9113,7 +9186,7 @@ ORDER BY b.TB003 DESC
 		select DISTINCT b.TB003, e.MX001, e.MX003 as TE005disp,a.TC023 AS  TE004disp,TC013  AS TE030disp,TC005 AS TE030dispN,
 					a.TC047 AS TE017, a.TC048 AS TE018, a.TC049 AS TE019,h.TA004,h.TA024 as TE009disp ,					
 					TC015  as TE0312,
-					TC036 as da0051, isnull(pk002,4.9) as MD013m	
+					TC036 as da0051, isnull(pk002,0) as MD013m	
  FROM SFCTC as a
 inner JOIN  SFCTB as b ON  a.TC001=b.TB001 AND a.TC002=b.TB002
 inner JOIN MOCTA as c on a.TC004=c.TA001 and a.TC005=c.TA002 
@@ -9175,8 +9248,8 @@ ORDER BY tc001 DESC
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, i.MD013 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -9194,8 +9267,8 @@ ORDER BY tc001 DESC
 					a.TE017, a.TE018, a.TE019,f.MW001,f.MW003 as TE009disp,					
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'產能85%' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, a.TE029, g.da004, a.TE040				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -9225,7 +9298,7 @@ ORDER BY tc001 DESC
 				"; */
 		// echo "<pre>";var_dump($sql);exit;
 		//$this->db->query($sql);
-		//$sql = "select * from SFCI03GP ";
+		//$sql = "select * from sfci03mGP ";
 		//$query = $this->db->query($sql);
 		//有輸入單別時執行下列
 		//1140130
@@ -9254,8 +9327,8 @@ ORDER BY tc001 DESC
 					convert(int,a.TE011)-convert(int,a.TE028)-convert(int,a.TE031) as TE0312,
 					'aaaa' as da0051, b.TD011 as MD013m, a.TE001, g.da005, g.da015,g.da010, g.da004, a.TE040
 				
-				from SFCTE	as a
-					left join SFCTD as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
+				from SFCTEM	as a
+					left join SFCTDM as b on a.TE001=b.TD001 and a.TE002=b.TD002 	
 					left JOIN MOCTA as c on a.TE006=c.TA001 and a.TE007=c.TA002 
 					left join CMSMV as d on a.TE004=d.MV001
 					left join CMSMX as e on a.TE005=e.MX001 and b.TD004=e.MX002
@@ -9323,7 +9396,7 @@ ORDER BY tc001 DESC
 	$da0051=iconv("utf-8", "BIG5//IGNORE", '產能85%');
 	$da0052=iconv("utf-8", "BIG5//IGNORE", '生產效率');
 	
-$sql = "	INSERT INTO SFCI03GP
+$sql = "	INSERT INTO sfci03mGP
 SELECT
     b.TD008,
     e.MX001,
@@ -9350,7 +9423,7 @@ SELECT
         ELSE 0
     END AS TA015,
     CASE
-        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTE WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
+        WHEN ISNUMERIC((SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002)) = 1 THEN CONVERT(DECIMAL(16, 3), (SELECT SUM(TE011) FROM SFCTEM WHERE TE006 = a.TE006 AND TE007 = a.TE007 AND TE008 = a.TE008 AND TE002 <= a.TE002))
         ELSE 0
     END AS TA011,
     CASE
@@ -9392,8 +9465,8 @@ SELECT
     a.TE029,
     a.TE040
 FROM
-    SFCTE AS a
-    LEFT JOIN SFCTD AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
+    SFCTEM AS a
+    LEFT JOIN SFCTDM AS b ON a.TE001 = b.TD001 AND a.TE002 = b.TD002
     LEFT JOIN MOCTA AS c ON a.TE006 = c.TA001 AND a.TE007 = c.TA002
     LEFT JOIN CMSMV AS d ON a.TE004 = d.MV001
     LEFT JOIN CMSMX AS e ON a.TE005 = e.MX001 AND b.TD004 = e.MX002
@@ -9409,10 +9482,10 @@ ORDER BY
 		// echo "<pre>";var_dump($sql);exit; and a.TE001 like '$vno' 1140210
 		//,da015,TE013,da005,da004,TE011,da010,TE029,TE001,MD013m,TA015 D404
 		$this->db->query($sql);
-		//$sql = "select * from SFCI03GP ";
+		//$sql = "select * from sfci03mGP ";
 		 $sql = "select  TD008,MX001,TE005disp,TE004disp,TE030disp,TE030dispN,TE017,
 	TE018,TE019,MW001,TE009disp,TE040,TE029,da015,TE013,da005,da004,TE011,da010,TE029,TE001,MD013m,TA015
-		 from SFCI03GP where TD008>='$seq1' AND TD008<='$seq2' AND TE001='D404' ORDER BY TD008; ";
+		 from sfci03mGP where TD008>='$seq1' AND TD008<='$seq2' AND TE001='D404' ORDER BY TD008; ";
 
 		$query = $this->db->query($sql);
 
@@ -9593,14 +9666,14 @@ ORDER BY
 		$seq3 = $this->input->post('td002o');
 		$seq4 = $this->input->post('td002c');
 		$sql = " SELECT a.td001,a.td002,a.td039,a.td004,c.ma002 as td004disp,b.te003,b.te004,b.te005,b.te006,b.te010,b.te008,b.te011,b.te012
-		  FROM sfctd as a,sfcte as b,copma as c
+		  FROM SFCTDM as a,SFCTEM as b,copma as c
 		  WHERE td001=te001 and td002=te002 and td004=ma001 and td001 >= '$seq1'  AND td001 <= '$seq2' AND td002 >= '$seq3'  AND td002 <= '$seq4'  ";
 		$query = $this->db->query($sql);
 		$ret['rows'] = $query->result();
 
 		$seq32 = "td001 >= '$seq1'  AND td001 <= '$seq2' AND td002 >= '$seq3'  AND td002 <= '$seq4'  ";
 		$query = $this->db->select('COUNT(*) as count', FALSE)  //筆數查詢,如果設為FALSE不會使用反引號保護你的字段或者表名
-			->from('sfctd')
+			->from('SFCTDM')
 			->where($seq32);
 		$num = $query->get()->result();
 		$ret['num_rows'] = $num[0]->count;
@@ -9614,8 +9687,8 @@ ORDER BY
 		  b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
 		  b.te006, b.te007, b.te011, b.te009, b.te017, b.te018, b.te012');
 
-		$this->db->from('sfctd as a');
-		$this->db->join('sfcte as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');
+		$this->db->from('SFCTDM as a');
+		$this->db->join('SFCTEM as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');
 		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="31" ', 'left');
 		$this->db->join('cmsme as d', 'a.td004 = d.me001 ', 'left');
 		$this->db->join('cmsmb as e', 'a.td010 = e.mb001 ', 'left');
@@ -9630,7 +9703,7 @@ ORDER BY
 		$seq2 = $this->uri->segment(5);
 		$this->db->where('te001', $this->uri->segment(4));
 		$this->db->where('te002', $this->uri->segment(5));
-		$query = $this->db->get('sfcte');
+		$query = $this->db->get('SFCTEM');
 		$num = $query->get()->result();
 		$ret['num_rows'] = $num[0]->count;
 		return $ret;
@@ -9643,8 +9716,8 @@ ORDER BY
 		//   ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
 		//   b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
 
-		// $this->db->from('sfctd as a');
-		// $this->db->join('sfcte as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
+		// $this->db->from('SFCTDM as a');
+		// $this->db->join('SFCTEM as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
 		// $this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ', 'left');  //單別
 		// $this->db->join('cmsmb as d', 'a.td007 = d.mb001 ', 'left');    //廠別
 		// $this->db->join('cmsmf as e', 'a.td008 = e.mf001 ', 'left');		//幣別
@@ -9710,8 +9783,8 @@ ORDER BY
 		  ,h.ma002 AS td004disp,b.company, b.creator, b.usr_group, b.create_date, b.modifier, b.modi_date, b.flag, b.te001, b.te002, b.te003, b.te004, b.te005,
 		  b.te006, b.te007, b.te008, b.te009, b.te010, b.te011, b.te012,b.te013, b.te014,b.te016,b.te020,b.te030,b.te031,i.mc002 as te007disp,j.me002 as td005disp');
 
-		$this->db->from('sfctd as a');
-		$this->db->join('sfcte as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
+		$this->db->from('SFCTDM as a');
+		$this->db->join('SFCTEM as b', 'a.td001 = b.te001  and a.td002=b.te002 ', 'left');	//單身	
 		$this->db->join('cmsmq as c', 'a.td001 = c.mq001 and c.mq003="22" ', 'left');  //單別
 		$this->db->join('cmsmb as d', 'a.td007 = d.mb001 ', 'left');    //廠別
 		$this->db->join('cmsmf as e', 'a.td008 = e.mf001 ', 'left');		//幣別
@@ -9755,20 +9828,24 @@ ORDER BY
 		$vtoday = date('Ymd');
 		$flag = $this->input->post('FLAG') + 1;
 		$TD004 = trim($this->input->post('TD004'));
-		$TD005 = trim($this->input->post('TD005'));
+	//	$TD005 = trim($this->input->post('TD005'));
 		$TD006 = trim($this->input->post('TD006'));
 		$TD006 = iconv("utf-8", "BIG5", $TD006);
 		$TD007 = trim($this->input->post('TD007'));
 
-		$TD009 = trim($this->input->post('TD009'));
-		$TD010 = trim($this->input->post('TD010'));
+		//$TD009 = trim($this->input->post('TD009'));
+		//$TD010 = trim($this->input->post('TD010'));
 
-		$sql96 = " update dbo.SFCTD 
+		/*$sql96 = " update dbo.SFCTDM 
 					set MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TD003='$TD003', TD004='$TD004', TD005='$TD005',
 					TD006='$TD006', TD007='$TD007', TD008='$TD008', TD009='$modifier', TD010='$TD010'
 					where TD001='$TD001' and TD002='$TD002'
+					"; */
+        $sql96 = " update dbo.SFCTDM 
+					set MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TD003='$TD003', TD004='$TD004', 
+					TD006='$TD006', TD007='$TD007', TD008='$TD008'
+					where TD001='$TD001' and TD002='$TD002'
 					";
-
 		$this->db->query($sql96);
 
 		if ($this->input->post()) {
@@ -9780,7 +9857,7 @@ ORDER BY
 			}
 		}
 
-		// $sql97 = " DELETE FROM dbo.SFCTE
+		// $sql97 = " DELETE FROM dbo.SFCTEM
 		// 			where TE001='$TD001' and TE002='$TD002'
 		// 		  ";
 		// $this->db->query($sql97);
@@ -9789,6 +9866,7 @@ ORDER BY
 			// $vte003 = '0010';   //流水號重新排序
 			foreach ($order_product as $key => $val) {
 				extract($val);
+			//	echo var_dump($TE041);exit;
 				// $TE018 = iconv("utf-8", "BIG5", $TE018);
 				// if ($TE019) {
 				// 	$TE019 = iconv("utf-8", "BIG5", $TE019);
@@ -9796,19 +9874,40 @@ ORDER BY
 				// $TE020 = iconv("utf-8", "BIG5", $TE020);
 				$TE015 = iconv("utf-8", "BIG5", $TE015);		//備註
 				$TD003 = date('Ymd', strtotime($TD003));         //日期處理
-
-
-
+                //1141101 hh mm  
+				$str12 = str_pad($TE012, 4, "0", STR_PAD_LEFT);
+				$str13 = str_pad($TE013, 4, "0", STR_PAD_LEFT);
+				//echo var_dump($str13);
+				//var_dump(SUBSTR(trim($str12),0,2));
+				//var_dump(SUBSTR(trim($str12),2,2));
+				//exit;
+				//$hour = intval(substr($timeStr, 0, 2));  // 取前2碼 小時
+               //  $min  = intval(substr($timeStr, 2, 2));  // 取後2碼 分鐘
+               //   $seconds = $hour * 3600 + $min * 60;     // 轉換成秒
+			//   $seconds = 4200;   // 1 小時 10 分鐘
+            //      $hour = floor($seconds / 3600);    // 轉回時、分
+            //   $min  = floor(($seconds % 3600) / 60);
+             //$timeStr = sprintf("%02d%02d", $hour, $min);   // 格式化成 4 碼字串，例如 0110
+         //   <input type="text" name="TE012" value="<PHP?= htmlspecialchars($timeStr)
+         //		 " maxlength="4">
+				
+                $TE012A=intval(SUBSTR($str12,0,2));
+                $TE012B=intval(SUBSTR($str12,2,2));
+				$TE012=($TE012A*3600)+($TE012B*60);
+				
+				$TE013A=intval(SUBSTR($str13,0,2));
+                $TE013B=intval(SUBSTR($str13,2,2));
+				$TE013=($TE013A*3600)+($TE013B*60);
 				// insert 、updata 有就修改，沒有就新增---------------------------------
-
-				$sql97 = " select * from SFCTE where TE001='$TD001' and TE002='$TD002' and TE003='$TE003' ";
+                $TE030 = $TE030 ?? '';
+				$sql97 = " select * from SFCTEM where TE001='$TD001' and TE002='$TD002' and TE003='$TE003' ";
 				$query = $this->db->query($sql97);
-
+ //1150127 TE014=TD005
 				if ($query->num_rows() > 0) {
 					if ($TD001 == 'D404' || $TD001 == 'D504') {
-						$sql98 = " UPDATE dbo.SFCTE 
+						$sql98 = " UPDATE dbo.SFCTEM 
 							SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
-								TE010='$TE010', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
+								TE010='$TE010', TE012='$TE012', TE013='$TE013', TE014='$TE014', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
 								TE025='$TE025', TE026='$TE026', TE027='$TE027', TE029='$TE029', TE030='$TE030', TE032='$TE032', TE033='$TE033', TE034='$TE034', TE035='$TE035', 
 								TE036='$TE036', TE037='$TE037', TE038='$TE038', TE039='$TE039', TE040='$TE040', TE041='$TE041', TE042='$TE042', TE043='$TE043', TE044='$TE044', TE045='$TE045', 
 								TE049='$TE049', TE052='$TE052',
@@ -9842,7 +9941,7 @@ ORDER BY
 						}
 						//invra 異動明細資料檔---------------------------end
 					} else if ($TD001 == 'D403') {	//橡膠
-						$sql98 = " UPDATE dbo.SFCTE 
+						$sql98 = " UPDATE dbo.SFCTEM 
 									SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
 										TE010='$TE010', TE011='$TE0333', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
 										TE025='$TE025', TE026='$TE026', TE027='$TE027', TE029='$TE029', TE030='$TE030', TE032='$TE032', TE035='$TE035', TE040='$TE040', TE041='$TE041', TE050='$TE050', 
@@ -9868,7 +9967,7 @@ ORDER BY
 						}
 						//invra 異動明細資料檔---------------------------end
 					} else if ($TD001 == 'D503') {	//萬馬力
-						$sql98 = " UPDATE dbo.SFCTE 
+						$sql98 = " UPDATE dbo.SFCTEM 
 									SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
 										TE010='$TE010', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
 										TE025='$TE025', TE026='$TE026', TE027='$TE027', TE029='$TE029', TE032='$TE032'
@@ -9891,14 +9990,16 @@ ORDER BY
 									";
 							$this->db->query($sql95);
 						}
-						//invra 異動明細資料檔---------------------------end
+						//invra 異動明細資料檔----1141025-----------------------end
 					} else if ($TD001 == 'D401' || $TD001 == 'D501') {
-						$sql98 = " UPDATE dbo.SFCTE 
-						SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
-							TE010='$TE010', TE014='$TD005', TE015='$TE015', TE017='$TE017',
-							TE029='$TE029', TE032='$TE032', TE046='$TE046', TE047='$TE047' 
+						$cmsi09d=TRIM($cmsi09d);
+						$sql98 = " UPDATE dbo.SFCTEM 
+						SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d',TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
+							TE010='$TE010',TE011='$TE011',TE012='$TE012',TE013='$TE013', TE014='Y', TE015='$TE015', TE017='$TE017',
+							TE022='$TE022',TE023='$TE023',TE024='$TE024',TE025='$TE025',TE026='$TE026',TE027='$TE027',
+							TE041='$TE041',TE028='$TE028',TE029='$TE029', TE031='$TE031', TE0311='$TE0311', TE0312='$TE0312' 
 					   where TE001='$TD001' and TE002='$TD002' and TE003='$TE003'
-					 ";
+					 "; 
 					} else if ($TD001 == 'D402' || $TD001 == 'D502') {
 
 						if ($TD004 == 'CR004') {
@@ -9916,38 +10017,38 @@ ORDER BY
 						}
 
 
-						// 	$sql98 = " UPDATE dbo.SFCTE 
+						// 	$sql98 = " UPDATE dbo.SFCTEM 
 						// 				SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
 						// 					TE010='$TE010', TE011='$TE011', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
 						// 					TE025='$TE025', TE026='$TE026', TE027='$TE027', TE028='$TE028', TE029='$TE029', TE030='$TE030', TE031='$TE031', TE040='$TE0312', TE041='$TE041', TE049='$TE049'
 						// 			where TE001='$TD001' and TE002='$TD002' and TE003='$TE003'
 						// 			";
 
-						$sql98 = " UPDATE dbo.SFCTE 
+						$sql98 = " UPDATE dbo.SFCTEM 
 										SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
-											TE010='$TE010', TE011='$TE011', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
+											TE010='$TE010', TE011='$TE011', TE012='$TE012', TE013='$TE013', TE014='Y', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
 											TE025='$TE025', TE026='$TE026', TE027='$TE027', TE028='$TE028', TE029='$TE029', TE030='$TE030', TE031='$TE031', TE040='$TE0312', TE049='$TE049', TE052='$TE052',
 											TE053='$TE053', TE054='$TE054', TE055='$TE055', TE056='$TE056', TE057='$TE057', TE058='$TE058', TE059='$TE059', TE060='$TE060', TE061='$TE061', TE062='$TE062',
-											TE063='$TE063', TE064='$TE064', TE065='$TE065', TE041='$TE041'
+											TE041='$TE041',TE063='$TE063', TE064='$TE064', TE065='$TE065', TE041='$TE041'
 									where TE001='$TD001' and TE002='$TD002' and TE003='$TE003'
 									";
 					} else {
-						$sql98 = " UPDATE dbo.SFCTE 
+						$sql98 = " UPDATE dbo.SFCTEM 
 						SET MODIFIER='$modifier', MODI_DATE='$vtoday', FLAG='$flag', TE004='$cmsi09d', TE005='$TE005', TE006='$TE006', TE007='$TE007', TE008='$TE008', TE009='$TE009',
-							TE010='$TE010', TE011='$TE011', TE012='$TE012', TE013='$TE013', TE014='$TD005', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
-							TE025='$TE025', TE026='$TE026', TE027='$TE027', TE028='$TE028', TE029='$TE029', TE030='$TE030', TE031='$TE031', TE040='$TE0312'
+							TE010='$TE010', TE011='$TE011', TE012='$TE012', TE013='$TE013', TE014='Y', TE015='$TE015', TE017='$TE017', TE022='$TE022', TE023='$TE023', TE024='$TE024',
+							TE041='$TE041',TE025='$TE025', TE026='$TE026', TE027='$TE027', TE028='$TE028', TE029='$TE029', TE030='$TE030', TE031='$TE031', TE040='$TE0312'
 					   where TE001='$TD001' and TE002='$TD002' and TE003='$TE003'
 					 ";
 					}
 				} else {
 					if ($TD001 == 'D404' || $TD001 == 'D504') {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 								(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 								TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE029, TE030,
 								TE032, TE033, TE034, TE035, TE036, TE037, TE038, TE039, TE040, TE041, TE042, TE043, TE044, TE045, TE049,
 								TE052, TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063, TE064)
 						VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '0', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-								'$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027',
+								'$TE012', '$TE013', 'Y', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027',
 								'$TE029', '$TE030', '$TE032', '$TE033', '$TE034', '$TE035', '$TE036', '$TE037', '$TE038', '$TE039', '$TE040', '$TE041',
 								'$TE042', '$TE043', '$TE044', '$TE045', '$TE049',
 								'$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061', '$TE062', '$TE063', '$TE064'); ";
@@ -9967,12 +10068,12 @@ ORDER BY
 						//invra 異動明細資料檔---------------------------end
 					} else if ($TD001 == 'D403') {	//橡膠
 
-						$sql98 = "  INSERT INTO dbo.SFCTE 
+						$sql98 = "  INSERT INTO dbo.SFCTEM 
 												(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 												TE011,TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, 
 												TE029, TE030, TE032, TE035, TE040, TE041, TE050, TE051)
 										VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '0', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-												'$TE0333','$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', 
+												'$TE0333','$TE012', '$TE013', 'Y', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', 
 												'$TE029', '$TE030', '$TE032', '$TE035', '$TE040', '$TE041', '$TE050', '$TE051');  ";
 						//invra 異動  配料  明細資料檔---------------------------
 
@@ -9984,12 +10085,12 @@ ORDER BY
 						//invra 異動明細資料檔---------------------------end
 					} else if ($TD001 == 'D503') {	//萬馬力
 
-						$sql98 = "  INSERT INTO dbo.SFCTE 
+						$sql98 = "  INSERT INTO dbo.SFCTEM 
 												(COMPANY, CREATOR, USR_GROUP, CREATE_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 												TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, 
 												TE029, TE032)
 										VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '0', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-												'$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', 
+												'$TE012', '$TE013', 'Y', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', 
 												'$TE029', '$TE032');  ";
 						//invra 異動  配料  明細資料檔---------------------------
 
@@ -9998,37 +10099,113 @@ ORDER BY
 									VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '0', '$TE017', '$TD003', '-1', '$TD001', '$TD002', '$TE003', 'A203', '3', '$TE015', 'D503'); 				
 									";
 						$this->db->query($sql95);
-						//invra 異動明細資料檔---------------------------end
+						//invra 異動明細資料檔---------1141117NEW-------, TE032, TE046, TE047-----------end
 
 					} else if ($TD001 == 'D401' || $TD001 == 'D501') {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+					/*	$sql98 = " INSERT INTO dbo.SFCTEM 
 						(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE005, TE006, TE007, TE008, TE009, TE010,
-						 TE014, TE015, TE017, TE018, TE019, TE020, TE029, TE032, TE046, TE047)
+						 TE011,TE012, TE013,TE014, TE015, TE017, TE018, TE019, TE020, TE029)
 				VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-						 '$TD005', '$TE015', '$TE017', '', '', '', '$TE029', '$TE032', '$TE046', '$TE047'); ";
+						 '$TE011', '$TE012','$TE013','$TD005', '$TE015', '$TE017', '', '', '', '$TE029'); "; , TE064, TE065*/
+						//1141118 add
+						//$TE014 ='Y';
+						$TE030 = $TE030 ?? '';
+						$TE016 = $TE016 ?? 0;     // 若 $te016 為 null → 給 0
+                        $TE021 = $TE021 ?? '';    // 若 $te017 為 null → 給空字串
+						$TE041 = $TE041 ?? '';
+						$TE058 = $TE058 ?? '';
+						$TE061 = $TE061 ?? '';
+						$TE062 = $TE062 ?? '';
+						$TE063 = $TE063 ?? '';
+						//1141204
+						$TE049 = $TE049 ?? '';
+						$TE052 = $TE052 ?? '';
+						$TE053 = $TE053 ?? '';
+						$TE054 = $TE054 ?? '';
+						$TE055 = $TE055 ?? '';
+						$TE056 = $TE056 ?? '';
+						$TE057 = $TE057 ?? '';
+						$TE059 = $TE059 ?? '';
+						$TE060 = $TE060 ?? '';
+				$str12 = str_pad($TE012, 4, "0", STR_PAD_LEFT);
+				$str13 = str_pad($TE013, 4, "0", STR_PAD_LEFT);
+                $TE012A=intval(SUBSTR($str12,0,2));
+                $TE012B=intval(SUBSTR($str12,2,2));
+				$TE012AB=($TE012A*3600)+($TE012B*60);
+				
+				$TE013A=intval(SUBSTR($str13,0,2));
+                $TE013B=intval(SUBSTR($str13,2,2));
+				$TE013AB=($TE013A*3600)+($TE013B*60);
+				//echo var_dump($str12);var_dump($TE012);exit;
+						$sql98 = " INSERT INTO dbo.SFCTEM 
+								(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
+								TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049,
+								TE052, TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063)
+							VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
+								'$TE011', '$TE012AB', '$TE013AB', '$TE014', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
+								'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041',  '$TE049', 
+								'$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061', '$TE062', '$TE063'); "; 
 					} else if ($TD001 == 'D402' || $TD001 == 'D502') {
-						// 		$sql98 = " INSERT INTO dbo.SFCTE 
+						// 		$sql98 = " INSERT INTO dbo.SFCTEM 
 						// 		(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 						// 		 TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049)
 						// VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
 						// 		 '$TE011', '$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
 						// 		  '$TE029', '$TE030', '$TE031', '$TE0312', '$TE041', '$TE049'); ";
 
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						$sql98 = " INSERT INTO dbo.SFCTEM 
 								(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 								TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049,
 								TE052, TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063, TE064, TE065)
 							VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
-								'$TE011', '$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
+								'$TE011', '$TE012', '$TE013', '$TE014', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
 								'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041',  '$TE049', 
 								'$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061', '$TE062', '$TE063', '$TE064', '$TE065'); ";
 					} else {
-						$sql98 = " INSERT INTO dbo.SFCTE 
+						//1141117 new 
+						
+						/*$sql98 = " INSERT INTO dbo.SFCTEM 
 						(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
 						 TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040)
 				VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
 						 '$TE011', '$TE012', '$TE013', '$TD005', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
-						  '$TE029', '$TE030', '$TE031', '$TE0312'); ";
+						  '$TE029', '$TE030', '$TE031', '$TE0312'); ";*/
+					   	$TD005 ='Y';
+						//$TE014 ='Y';
+						$TE016 = $TE016 ?? 0;     // 若 $te016 為 null → 給 0
+                        $TE021 = $TE021 ?? '';    // 若 $te017 為 null → 給空字串
+						$TE041 = $TE041 ?? '';
+						$TE058 = $TE058 ?? '';
+						$TE061 = $TE061 ?? '';
+						$TE062 = $TE062 ?? '';
+						$TE063 = $TE063 ?? '';
+						//1141204
+						$TE049 = $TE049 ?? '';
+						$TE052 = $TE052 ?? '';
+						$TE053 = $TE053 ?? '';
+						$TE054 = $TE054 ?? '';
+						$TE055 = $TE055 ?? '';
+						$TE056 = $TE056 ?? '';
+						$TE057 = $TE057 ?? '';
+						$TE059 = $TE059 ?? '';
+						$TE060 = $TE060 ?? '';
+				$str12 = str_pad($TE012, 4, "0", STR_PAD_LEFT);
+				$str13 = str_pad($TE013, 4, "0", STR_PAD_LEFT);
+                $TE012A=intval(SUBSTR($str12,0,2));
+                $TE012B=intval(SUBSTR($str12,2,2));
+				$TE012AB=($TE012A*3600)+($TE012B*60);
+				
+				$TE013A=intval(SUBSTR($str13,0,2));
+                $TE013B=intval(SUBSTR($str13,2,2));
+				$TE013AB=($TE013A*3600)+($TE013B*60);
+					   $sql98 = " INSERT INTO dbo.SFCTEM 
+								(COMPANY, MODIFIER, USR_GROUP, MODI_DATE, FLAG, TE001, TE002, TE003, TE004, TE005, TE006, TE007, TE008, TE009, TE010,
+								TE011, TE012, TE013, TE014, TE015, TE017, TE018, TE019, TE020, TE022, TE023, TE024, TE025, TE026, TE027, TE028, TE029, TE030, TE031, TE040, TE041, TE049,
+								TE052, TE053, TE054, TE055, TE056, TE057, TE058, TE059, TE060, TE061, TE062, TE063, TE064, TE065)
+							VALUES ('$company', '$modifier', '$usr_group', '$vtoday', '$flag', '$TD001', '$TD002', '$TE003', '$cmsi09d', '$TE005', '$TE006', '$TE007', '$TE008', '$TE009', '$TE010', 
+								'$TE011', '$TE012AB', '$TE013AB', '$TE014', '$TE015', '$TE017', '', '', '', '$TE022', '$TE023', '$TE024', '$TE025', '$TE026', '$TE027', '$TE028',
+								'$TE029', '$TE030', '$TE031', '$TE0312', '$TE041',  '$TE049', 
+								'$TE052', '$TE053', '$TE054', '$TE055', '$TE056', '$TE057', '$TE058', '$TE059', '$TE060', '$TE061', '$TE062', '$TE063', '$TE064', '$TE065'); ";
 					}
 				}
 
@@ -10036,9 +10213,9 @@ ORDER BY
 				$this->db->query($sql98);
 				// insert 、updata 有就修改，沒有就新增-----END----------------------------
 
-				$sql99 = " UPDATE  SFCTE
-									SET  SFCTE.TE018 = t.MB002,SFCTE.TE019 = t.MB003,SFCTE.TE020 = t.MB004
-								FROM SFCTE c 
+				$sql99 = " UPDATE  SFCTEM
+									SET  SFCTEM.TE018 = t.MB002,SFCTEM.TE019 = t.MB003,SFCTEM.TE020 = t.MB004
+								FROM SFCTEM c 
 									INNER JOIN INVMB t
 										ON c.TE017=t.MB001
 								WHERE c.TE001 ='$TD001' and c.TE002='$TD002' and c.TE003='$TE003'				
@@ -10055,7 +10232,7 @@ ORDER BY
 		$this->db->where('te001', $seg1);
 		$this->db->where('te002', $seg2);
 		$this->db->where('te003', $seg3);
-		$query = $this->db->get('sfcte');
+		$query = $this->db->get('SFCTEM');
 		return $query->num_rows();
 	}
 
@@ -10064,10 +10241,10 @@ ORDER BY
 	{
 		$this->db->where('td001', $this->uri->segment(4));
 		$this->db->where('td002', $this->uri->segment(5));
-		$this->db->delete('sfctd');
+		$this->db->delete('SFCTDM');
 		$this->db->where('te001', $this->uri->segment(4));
 		$this->db->where('te002', $this->uri->segment(5));
-		$this->db->delete('sfcte');
+		$this->db->delete('SFCTEM');
 		if ($this->db->affected_rows() > 0) {
 			return TRUE;
 		}
@@ -10080,7 +10257,7 @@ ORDER BY
 		// $this->db->where('te001', $seg1);
 		// $this->db->where('te002', $seg2);
 		// $this->db->where('te003', $seg3);
-		// $this->db->delete('sfcte');
+		// $this->db->delete('SFCTEM');
 		// if ($this->db->affected_rows() > 0) {
 		// 	return TRUE;
 		// }
@@ -10093,7 +10270,7 @@ ORDER BY
 		$this->db->query($sql95);
 		//INVLA 異動明細資料檔---------------------------end
 
-		$sql97 = " DELETE FROM dbo.SFCTE
+		$sql97 = " DELETE FROM dbo.SFCTEM
 					where TE001='$seg1' and TE002='$seg2' and TE003='$seg3'
 				  ";
 
@@ -10115,12 +10292,12 @@ ORDER BY
 				$seq1;
 				$seq2;
 				//只要有一筆Y就不能刪除
-				// $query6c = $this->db->query("SELECT UPPER(te016) as te0161 FROM sfcte WHERE te001='$seq1' AND te002='$seq2' AND ( UPPER(te016)='Y' or te009>0 ) ");
-				$querydelTE = $this->db->query(" DELETE FROM SFCTE WHERE TE001='$seq1' AND TE002='$seq2' ");
-				$querydelTD = $this->db->query(" DELETE FROM SFCTD WHERE TD001='$seq1' AND TD002='$seq2' ");
+				// $query6c = $this->db->query("SELECT UPPER(te016) as te0161 FROM SFCTEM WHERE te001='$seq1' AND te002='$seq2' AND ( UPPER(te016)='Y' or te009>0 ) ");
+				$querydelTE = $this->db->query(" DELETE FROM SFCTEM WHERE TE001='$seq1' AND TE002='$seq2' ");
+				$querydelTD = $this->db->query(" DELETE FROM SFCTDM WHERE TD001='$seq1' AND TD002='$seq2' ");
 
-				//INVLA 異動  配料  明細資料檔---------------------------	
-				$this->db->query(" DELETE FROM dbo.invra WHERE ra006='$seq1' AND ra007='$seq2' ");
+				//INVLA 異動  配料  明細資料檔-1141106 del--------------------------	
+				//$this->db->query(" DELETE FROM dbo.invra WHERE ra006='$seq1' AND ra007='$seq2' ");
 				//INVLA 異動明細資料檔---------------------------end
 
 				// foreach ($query6c->result() as $row) {
@@ -10136,10 +10313,10 @@ ORDER BY
 				// if ($vte0161 != 'Y') {
 				// 	$this->db->where('td001', $seq1);
 				// 	$this->db->where('td002', $seq2);
-				// 	$this->db->delete('sfctd');
+				// 	$this->db->delete('SFCTDM');
 				// 	$this->db->where('te001', $seq1);
 				// 	$this->db->where('te002', $seq2);
-				// 	$this->db->delete('sfcte');
+				// 	$this->db->delete('SFCTEM');
 				// 	$this->session->set_userdata('msg1', "未出貨已刪除");
 				// } else {
 				// 	$this->session->set_userdata('msg1', "已出貨不可刪除");
@@ -10159,7 +10336,7 @@ ORDER BY
 		$this->db->where('te001', $_POST['del_md001']);
 		$this->db->where('te002', $_POST['del_md002']);
 		$this->db->where('te003', $_POST['del_md003']);
-		$this->db->delete('sfcte');
+		$this->db->delete('SFCTEM');
 	}
 
 	/*==以下AJAX處理區域==*/
@@ -10195,12 +10372,12 @@ ORDER BY
 		preg_match_all('/\d/S', $td008, $matches);  //處理日期字串
 		$td008 = implode('', $matches[0]);
 		// $this->db->select('MAX(td002) as max_no')
-		// 	->from('sfctd')
+		// 	->from('SFCTDM')
 		// 	->where('td001', $sfci01)
 		// 	->like('td008', $td008, "after");
 
 		// $query = $this->db->get();
-		$sql98 = " select MAX(TD002) as max_no from SFCTD where TD001='$sfci01' AND TD002 LIKE '$td008%' ";
+		$sql98 = " select MAX(TD002) as max_no from SFCTDM where TD001='$sfci01' AND TD002 LIKE '$td008%' ";
 		$query = $this->db->query($sql98);
 
 		$result = $query->result();

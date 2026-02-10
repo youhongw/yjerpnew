@@ -374,218 +374,59 @@ class Admr01_model extends CI_Model {
 	     return $query->result_array();
         }
 		
-	//印明細表	1150117 NEW
-	function printfd($seq1,$seq2,$seq3)  {  
-	   
-  $sql9= " UPDATE SFCTA
-SET TA010 = 0,
-    TA011 = 0,
-    TA012 = 0
-FROM SFCTA A
-LEFT JOIN MOCTA B
-    ON A.TA001 = B.TA001
-   AND A.TA002 = B.TA002
-WHERE B.TA001 = '$seq3'
-  AND B.TA012 IS NOT NULL
-  AND B.TA011 >= '1'
-  AND B.TA013 = 'Y'
-  AND A.TA002 >= '$seq1' ";
- 
+	//印明細表	
+	function printfd($seq1)  {  
+	    // preg_match_all('/\d/S',$seq1, $matches);  //處理日期字串
+		//	 $seq1 = implode('',$matches[0]);
+			
+			 $seq2 =$seq1.'01';
+			 $seq3 =$seq1.'31';
+		// ini_set('max_execution_time', 120);
+		 $sql9= " DELETE  from CSTMB WHERE MB002>='$seq2' AND MB002<='$seq3' ";
 		 $this->db->query($sql9);
-		
-	   
-$sql8 = " SELECT A.TA001,A.TA002,A.TA003,A.TA004,A.TA006,A.TA010,A.TA011,A.TA012,
-       C.TC001,C.TC002,C.TC003,C.TC004,C.TC005,C.TC006,C.TC007,C.TC008,C.TC009,C.TC013,C.TC014,C.TC016,C.TC022,C.TC031,C.TC036,C.TC037,C.TC038,C.TC039,C.TC047
-FROM SFCTA A
-LEFT JOIN MOCTA B ON A.TA001=B.TA001 AND A.TA002=B.TA002
-LEFT JOIN SFCTC C ON A.TA001=C.TC004 AND A.TA002=C.TC005 AND (A.TA004=C.TC007 OR A.TA004=C.TC009) 
-WHERE  B.TA012>='$seq1' AND B.TA012 IS NOT NULL AND B.TA011>='1' AND B.TA013='Y' 
-       AND A.TA001='$seq3' AND TC001>='D1' AND TC001<='D3'  ";
- $query1 = $this->db->query($sql8);
- //1141028 製令已生產數量,報廢數量歸0
-  foreach ($query1->result() as $row) {
-	      $TC004=$row->TC004;
-		  $TC005=$row->TC005;
-         $sql901 = " UPDATE  MOCTA
-										SET  TA017 = 0, TA018 = 0
-									WHERE TA001 ='$TC004' and TA002='$TC005'				
-							";
-		$this->db->query($sql901);
-		//修改製令狀態碼---1141028----------------------------
-								//1.未生產、2.已發料、3.生產中、Y.已完工、y.指定完工
-								$sql891 = " UPDATE  MOCTA
-										SET  TA011 = 'Y'
-									WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 >= TA015				
-							";
-								$this->db->query($sql891);
+		// ECHO VAR_DUMP($seq1,$seq2);EXIT;
+	   /*  $sql8 = " select TA001,TA002,TA006,TA015,TA017,td003,td004,te006,te007,te011,
+		 round(te012/100,0) as vte012,round(te013/100,0) as vte013 
+		 from sfcte as a
+left join  sfctd as b on td001=te001 and td002=te002
+left join  MOCTA as c on te006=TA001 and te007=TA002  
+where  td003>='$seq2' and td003<='$seq3' and  TA014>='$seq2' and TA014<='$seq3'  and te007>''
+ORDER BY TA001,TA002
+		 "; */
+		$sql8 = " select TA001,TA002,TA006,td004,TA014 as kk,
+		 sum(round(te012/100,0)) as vte012,sum(round(te013/100,0)) as vte013 
+		 from MOCTA as a
+left join  sfcte as c on te006=TA001 and te007=TA002  
+left join sfctd as d on te001=td001 and te002=td002
+where  substring(te002,1,6)='202506'  and  TA014>='20250601' and TA014<='20250631'  and te007>'' and TA001>''
+group by TA001,TA002,TA006,td004,TA014
+ORDER BY TA001,TA002  ";
 
-								$sql881 = " UPDATE  MOCTA
-										SET  TA011 = '2'
-									WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 < TA015				
-							";
-								$this->db->query($sql881);
-
-								$sql871 = " UPDATE  MOCTA
-													SET  TA011 = '1'
-												WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 =0				
-											";
-								$this->db->query($sql871);
-  }
-		//製令製程開始1141028						
+/*$sql8 = "  select TA001,TA002,TA006,td004,TA003,
+		 sum(round(te012/100,0)) as vte012,sum(round(te013/100,0)) as vte013 
+		 from MOCTA as a
+left join  sfcte as c on te006=TA001 and te007=TA002  
+left join sfctd as d on te001=td001 and te002=td002
+where  substring(te002,1,6)='202506'  and  TA014>='20250601' and TA014<='20250631'  and te007>'' and TA001>'0'
+group by TA001,TA002,TA006,td004,TA003 
+ORDER BY TA001,TA002  ";*/
          $query = $this->db->query($sql8);
+		// echo var_dump($query->result());exit;
 		
 		 foreach ($query->result() as $row) {
-			 $TA001=$row->TA001;
-			 $TA002=$row->TA002;
-			 $TA003=$row->TA003;
-			 $TA004=$row->TA004;
-			 $TA006=$row->TA006;
-			 $TA010=$row->TA010;
-			 $TA011=$row->TA011;
-			 $TA012=$row->TA012;
-			 $TB001=$row->TC001;
-			 $TB002=$row->TC002;
-			 $TB013='Y';
-			 
-			 $TC001=$row->TC001;
-			 $TC002=$row->TC002;
-			 $TC003=$row->TC003;
-			 $TC004=$row->TC004;
-			 $TC005=$row->TC005;
-			 $TC006=$row->TC006;
-			 $TC007=$row->TC007;
-			 $TC008=$row->TC008;
-			 $TC009=$row->TC009;
-			 $TC013=$row->TC013;
-			 $TC014=$row->TC014;
-			 $TC016=$row->TC016;
-			 $TC031=$row->TC031;
-			 $TC036=$row->TC036;
-			 $TC037=$row->TC037;
-			 $TC038=$row->TC038;
-			 $TC039=$row->TC039;
-			 $TC047=$row->TC047;
-
-             // 跨日計算 20251211
-             // 原判斷是否跨日 拆成兩筆, 目前開會討論, 改日期不變 時間須計算出如下: (時分)
-             if ($TC036 != '' && $TC037 != '') {
-                $start_h = intval(substr($TC036, 0, 2));
-                $start_m = intval(substr($TC036, 2, 2));
-                $end_h = intval(substr($TC037, 0, 2));
-                $end_m = intval(substr($TC037, 2, 2));
-                
-                $start_mins = $start_h * 60 + $start_m;
-                $end_mins = $end_h * 60 + $end_m;
-                
-                // 若結束時間小於開始時間，視為跨日，加 24 小時 (1440 分鐘)
-                if ($end_mins < $start_mins) {
-                    $end_mins += 24 * 60;
-                }
-                
-                $diff_mins = $end_mins - $start_mins;
-                $hours = floor($diff_mins / 60);
-                $minutes = $diff_mins % 60;
-                
-                // 格式化為 HHMM (例如 0330 代表 3小時30分)
-                $TC014 = sprintf("%02d%02d", $hours, $minutes);
-                $TC016 = $TC014; // 同步更新機器工時
-             }
-
-             if (substr($TB001, 0, 2) == 'D1') {
-                        $TC013 = '6';								//型態6投入TA010可投入多次
-						if ($TB013 == 'Y') {
-							$sql96 = " UPDATE  SFCTA
-										SET  TA010 = TA010 + '$TC014'
-									WHERE TA001 ='$TC004' and TA002='$TC005' and TA003='$TC008'				
-							";
-							$this->db->query($sql96);
-						}
-					} else if (substr($TB001, 0, 2) == 'D2') {
-						if ($TB013 == 'Y') {
-							$sql95 = " UPDATE  SFCTA
-										SET  TA011 = TA011 + '$TC014', TA012 = TA012 + '$TC016'
-									WHERE TA001 ='$TC004' and TA002='$TC005' and TA003='$TC006'				
-							";
-							$this->db->query($sql95);
-
-
-							$sql96 = " UPDATE  SFCTA
-										SET  TA010 = TA010 + '$TC014'
-									WHERE TA001 ='$TC004' and TA002='$TC005' and TA003='$TC008'				
-							";
-							$this->db->query($sql96);
-						}
-					} else if (substr(TRIM($TB001), 0, 2) == 'D3' || substr(TRIM($TB001), 0, 2) == '58' ) {
-						if ($TB013 == 'Y') {
-							$sql95 = " UPDATE  SFCTA
-										SET  TA011 = TA011 + '$TC014', TA012 = TA012 + '$TC016'
-									WHERE TA001 ='$TC004' and TA002='$TC005' and TA003='$TC006'				
-							";
-							$this->db->query($sql95);
-                            // $TB004 == '1' &&  $TB007 == '3' && 1141104 DEL 
-							if (  ($TC013 == '1' || $TC013 == '2') && $TC036 != '0') {
-								$insert_TG = 'Y';
-
-								$sql90 = " UPDATE  MOCTA
-										SET  TA017 = TA017 + '$TC014', TA018 = TA018 + '$TC016'
-									WHERE TA001 ='$TC004' and TA002='$TC005'				
-							";
-								$this->db->query($sql90);
-
-								//修改製令狀態碼---1141028----------------------------
-								//1.未生產、2.已發料、3.生產中、Y.已完工、y.指定完工
-								$sql89 = " UPDATE  MOCTA
-										SET  TA011 = 'Y'
-									WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 >= TA015				
-							";
-								$this->db->query($sql89);
-
-								$sql88 = " UPDATE  MOCTA
-										SET  TA011 = '2'
-									WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 < TA015				
-							";
-								$this->db->query($sql88);
-
-								$sql87 = " UPDATE  MOCTA
-													SET  TA011 = '1'
-												WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 =0				
-											";
-								$this->db->query($sql87);
-								//修改製令狀態碼-------------------------------END
-							}
-
-							//更新製令開工日期 1141104 DEL ----------------------------------------
-							/*preg_match_all('/\d/S', $this->input->post('TB003'), $matches);  //處理日期字串
-							$TB003 = implode('', $matches[0]);												//單據日期
-							$SQL96 = " UPDATE  MOCTA 
-											SET TA012='$TB003'
-										WHERE TA001 ='$TC004' and TA002='$TC005' AND TA012=''
-										";
-							$this->db->query($SQL96); */
-							//更新製令開工日期-------------END---------------------------
-
-							//更新製令完工日期--1141104--------------------------------------
-
-							/*$SQL97 = " UPDATE  MOCTA 
-											SET TA014='$TB003'
-										WHERE TA001 ='$TC004' and TA002='$TC005' AND TA017 >= TA015
-										";
-							$this->db->query($SQL97);*/
-							//更新製令完工日期-------------END---------------------------
-						}
-					}
-//1141026 SFCTC 移轉單
-					
-					$sql99 = " UPDATE  SFCTC
-								SET  SFCTC.TC048 = t.MB002,SFCTC.TC049 = t.MB003,SFCTC.TC010 = t.MB004
-							FROM SFCTC c 
-								INNER JOIN INVMB t
-									ON c.TC047=t.MB001
-							WHERE c.TC001 ='$TB001' and c.TC002='$TB002' and c.TC003='$TC003'				
-							";
-					$this->db->query($sql99);
+			 $MB001=$row->td004;
+		     $MB002=TRIM($row->kk);
+             $MB003=$row->TA001;
+			 $MB004=$row->TA002;
+		     $MB005=$row->vte012;
+             $MB006=$row->vte013;
+			 $MB007=$row->TA006;
+             $sql2= "INSERT INTO CSTMB(MB001,MB002,MB003,MB004,MB005,MB006,MB007) 
+			 VALUES ('$MB001','$MB002','$MB003','$MB004','$MB005','$MB006','$MB007') ";
+			 $this->db->query($sql2);			 
+		 }
 				 
-		 }	
+		 	
 	     return true;
         }
 		
@@ -703,3 +544,4 @@ WHERE  B.TA012>='$seq1' AND B.TA012 IS NOT NULL AND B.TA011>='1' AND B.TA013='Y'
 }
 /* End of file model.php */
 /* Location: ./application/model/model.php */
+?>

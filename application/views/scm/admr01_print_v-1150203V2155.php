@@ -26,7 +26,7 @@
 	  if(!isset($datec1)) { $datec1=date("Y/m/d"); }
 	  $tg009p='1';
 	  $vdate=date("Ymd");
-	  $dateo='202601';
+	  $dateo='202506';
 	?>
           <div class="box">
             <div class="box-header">

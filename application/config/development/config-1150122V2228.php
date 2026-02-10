@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |https://dev.aibooks.tw/G01_a25_1/ci3110/http://59.126.106.202/yjerp/
 */
-$config['base_url'] = 'http://114.33.164.158/yjerpnew/';
+$config['base_url'] = 'http://114.33.164.158/yjerp/';
 
 /*
 |--------------------------------------------------------------------------

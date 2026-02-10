@@ -218,7 +218,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
       public function printdetail()    {
 	   $data['username'] = $this->session->userdata('manager');
 	   $data['message'] = '';
-	   $data['systitle'] ='製令工時產生';
+	   $data['systitle'] ='即時業續查詢-明細表';
 	 //  $data['menu_v'] = 'main_menuno_v';
 	 //  $data['content_v'] = 'scm/admr01_print_v';
 	  // $data['foot_v'] ='main_foot_v';
@@ -234,14 +234,13 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		$seq2=$this->input->post('datec');
 		$data['dateo']=$this->input->post('dateo');
 		$data['datec']=$this->input->post('datec');
-		$seq3=$seq2;
 		$data['message'] = '產生工時成功!';
       ////  if($this->input->post('action')=="excel"){
 		//   $this->write();
 		//  }	
 			//   echo var_dump($seq1);var_dump('test');exit;
        $this->load->model('scm/admr01_model','',TRUE);
-       $this->admr01_model->printfd($seq1,$seq2,$seq3);
+       $this->admr01_model->printfd($seq1);
 	   //echo var_dump($seq1);exit;
 	  // $data['results'] = $result['rows'];
 	  // $data['num_results'] = $result['num_rows'];

@@ -34,11 +34,7 @@
 					$mf0061 = $this->input->post('mf0061');
 
 					$mf007 = $this->input->post('mf007');
-                    $mf748 = 'N';
-            $mf749 = 'N';
-            $mf750 = 'N';
-            $mf751 = 'N';
-            $mf752 = 'N';
+
 
 					$mf611 = 'N';
 					$mf612 = 'N';
@@ -153,37 +149,13 @@
   										<input type="checkbox" name="mf611" id="mf611" <?php if ($mf611 == 'Y') echo 'checked'; ?> <?php if ($mf611 !== 'Y') echo 'check'; ?> value="Y" />　
   										<span>0.工票單列印</span>
   									</div>
-                                     <div>
-                    <input type="hidden" name="mf748" class="mf748" value="N" />
-                    <input type="checkbox" name="mf748" id="mf748" <?php if ($mf748 == 'Y') echo 'checked'; ?> <?php if ($mf748 !== 'Y') echo 'check'; ?> value="Y" />　
-                    <span>48.製令製程展開作業(new)</span>
-                  </div>
-				  <div>
-                    <input type="hidden" name="mf749" class="mf749" value="N" />
-                    <input type="checkbox" name="mf749" id="mf749" <?php if ($mf749 == 'Y') echo 'checked'; ?> <?php if ($mf749 !== 'Y') echo 'check'; ?> value="Y" />　
-                    <span>49.移轉單建立(投料,移轉,入庫)作業(new)</span>
-                  </div>
-				  <div>
-                    <input type="hidden" name="mf750" class="mf750" value="N" />
-                    <input type="checkbox" name="mf750" id="mf750" <?php if ($mf750 == 'Y') echo 'checked'; ?> <?php if ($mf750 !== 'Y') echo 'check'; ?> value="Y" />　
-                    <span>50.報工單建立作業(new)</span>
-                  </div>
-				  <div>
-                    <input type="hidden" name="mf751" class="mf751" value="N" />
-                    <input type="checkbox" name="mf751" id="mf751" <?php if ($mf751 == 'Y') echo 'checked'; ?> <?php if ($mf751 !== 'Y') echo 'check'; ?> value="Y" />　
-                    <span>51.報工單批次日結作業(new)23:00自動執行</span>
-                  </div>
-				  <div>
-                    <input type="hidden" name="mf752" class="mf752" value="N" />
-                    <input type="checkbox" name="mf752" id="mf752" <?php if ($mf752 == 'Y') echo 'checked'; ?> <?php if ($mf752 !== 'Y') echo 'check'; ?> value="Y" />　
-                    <span>52.報工日結單查詢作業(new)</span>
-                  </div>
+
   									<div>
   										<input type="hidden" name="mf612" class="mf612" value="N" />
   										<input type="checkbox" name="mf612" id="mf612" <?php if ($mf612 == 'Y') echo 'checked'; ?> <?php if ($mf612 !== 'Y') echo 'check'; ?> value="Y" />　
   										<span>1.模具建立作業</span>
   									</div>
-                                     
+
   									<div>
   										<input type="hidden" name="mf613" class="mf613" value="N" />
   										<input type="checkbox" name="mf613" id="mf613" <?php if ($mf613 == 'Y') echo 'checked'; ?> <?php if ($mf613 !== 'Y') echo 'check'; ?> value="Y" />　

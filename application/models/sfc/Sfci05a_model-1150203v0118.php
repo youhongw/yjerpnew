@@ -150,7 +150,7 @@ class sfci05a_model extends CI_Model
 
 		$vday = date('Ymd', strtotime(' -180 day')); //處理當日前6個月的資料
 
-		/*$sql = " SELECT a.*,c.MQ002 
+		$sql = " SELECT a.*,c.MQ002 
 						FROM SFCTB as a 
 								left join CMSMQ as c on a.TB001 = c.MQ001
 							WHERE  $where and a.TB003 >='$vday' and TB002 IN 
@@ -158,17 +158,9 @@ class sfci05a_model extends CI_Model
 						(SELECT TOP $offset  TB002 FROM SFCTB WHERE $where and a.TB003 >='$vday' ORDER BY $order)
 					ORDER BY $order)
 				ORDER BY $order 
-				"; */
-		$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE  $where and a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
 				";
 		if ($where == "") {
-			/*$sql = " SELECT a.*,c.MQ002 
+			$sql = " SELECT a.*,c.MQ002 
 							FROM SFCTB as a 
 							left join  CMSMQ as c on a.TB001 = c.MQ001
 							WHERE a.TB003 >='$vday' and TB002 IN 
@@ -178,20 +170,12 @@ class sfci05a_model extends CI_Model
 						ORDER BY $order)
 					ORDER BY $order)
 				ORDER BY $order
-				"; */
-				$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE   a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
 				";
 		}
 
 
 		if ($this->uri->segment(3) == "display_search" && ($seq1)) {
-			/*$sql = " SELECT a.*,c.MQ002 
+			$sql = " SELECT a.*,c.MQ002 
 						FROM SFCTB as a 
 								left join CMSMQ as c on a.TB001 = c.MQ001
 							WHERE $seq1 and $where and a.TB003 >='$vday' and TB002 IN 
@@ -199,17 +183,9 @@ class sfci05a_model extends CI_Model
 						(SELECT TOP $offset  TB002 FROM SFCTB WHERE $seq1 and $where and a.TB003 >='$vday' ORDER BY $order)
 					ORDER BY $order)
 				ORDER BY $order 
-				"; */
-			$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE  $where and a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
 				";
 			if ($where == "") {
-				/*$sql = " SELECT a.*,c.MQ002 
+				$sql = " SELECT a.*,c.MQ002 
 							FROM SFCTB as a 
 							left join  CMSMQ as c on a.TB001 = c.MQ001
 							WHERE $seq1 and a.TB003 >='$vday' and TB002 IN 
@@ -219,14 +195,6 @@ class sfci05a_model extends CI_Model
 						ORDER BY $order)
 					ORDER BY $order)
 				ORDER BY $order
-				";*/
-				$sql = " SELECT a.*,c.MQ002 
-						FROM SFCTB as a 
-								left join CMSMQ as c on a.TB001 = c.MQ001
-							WHERE   a.TB003 >='$vday' 				
-				            ORDER BY $order 
-							OFFSET $offset ROWS
-							fetch next $limit ROWS only
 				";
 			}
 		}

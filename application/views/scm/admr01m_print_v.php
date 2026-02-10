@@ -24,9 +24,14 @@
 	  if(!isset($datec)) { $datec=date("Y/m/d"); }
 	  if(!isset($dateo1)) { $dateo1=date("Y/m/d"); }
 	  if(!isset($datec1)) { $datec1=date("Y/m/d"); }
+	  $mc001='5101';
 	  $tg009p='1';
 	  $vdate=date("Ymd");
-	  $dateo='202601';
+	  
+	  $dateo=date("Ymd");
+	  $datec=date("Ymd");
+	  $dateo='20260101';
+	  $datec='20260131';
 	?>
           <div class="box">
             <div class="box-header">
@@ -34,25 +39,50 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-               <form action="<?php echo base_url()?>index.php/scm/admr01/printa" class="form-horizontal"  id="form-edit_group" method="post" accept-charset="utf-8">
+               <form action="<?php echo base_url()?>index.php/scm/admr01m/printa" class="form-horizontal"  id="form-edit_group" method="post" accept-charset="utf-8">
   
- 	  
- <div class="form-group form-inline"><label for="dateo" class="col-sm-1 control-label">報工年月</label>
+<!-- <div class="form-group form-inline"><label for="mc001" class="col-sm-1 control-label">製令單別</label>
+								<div class="col-sm-11">
+									<input type="text" tabIndex="2" style="width: 100px"  onkeyup="this.value=this.value.replace(/[^0-9]/gi,'');" maxlength='11' onKeyPress="keyFunction()" name="mc001" value="<?php echo $mc001; ?>" id="mc001" class="form-control" required />
+									
+								</div>
+							</div>	-->  
+ <!--<div class="form-group form-inline"><label for="dateo" class="col-sm-1 control-label">起實際開工日</label>
  <div class="col-sm-11"><input type="text" style="width: 250px" onKeyPress="keyFunction()" name="dateo" placeholder="" value="<?php echo $dateo; ?>"  id="dateo"  
     ondblclick="scwShow(this,event);" onchange="dateformat_ym(this);" class="form-control"  />
  <a href="javascript:;">
           <img  onclick="scwShow(dateo,event);" src="" class="btn btn-primary glyphicon glyphicon-search" /> 
         </a>
+ </div></div>-->
+ <div class="form-group form-inline"><label for="dateo" class="col-sm-1 control-label">起報工單日</label>
+ <div class="col-sm-11"><input type="text" style="width: 250px" onKeyPress="keyFunction()" onfocus="this.select()" name="dateo" placeholder="" value="<?php echo $dateo; ?>"  id="dateo"  
+     class="form-control"  />
+ <!--<a href="javascript:;">
+          <img  onclick="scwShow(dateo,event);" src="" class="btn btn-primary glyphicon glyphicon-search" /> 
+        </a>-->
  </div></div>
- 
+ <div class="form-group form-inline"><label for="datec" class="col-sm-1 control-label">迄報工單日</label>
+ <div class="col-sm-11"><input type="text" style="width: 250px" onKeyPress="keyFunction()" onfocus="this.select()" name="datec" placeholder="" value="<?php echo $datec; ?>"  id="datec"  
+     class="form-control"  />
+  <!--<a href="javascript:;">
+          <img  onclick="scwShow(datec,event);" src="" class="btn btn-primary glyphicon glyphicon-search" /> 
+        </a>-->
+ </div></div>
+ <!--<div class="form-group form-inline"><label for="datec" class="col-sm-1 control-label">迄實際完工日</label>
+ <div class="col-sm-11"><input type="text" style="width: 250px" onKeyPress="keyFunction()" name="datec" placeholder="" value="<?php echo $datec; ?>"  id="datec"  
+     class="form-control"  />
+ <!--<a href="javascript:;">
+          <img  onclick="scwShow(datec,event);" src="" class="btn btn-primary glyphicon glyphicon-search" /> 
+        </a>-->
+<!-- </div></div> -->
 
 
 <!-- test -->
   
  <div class="form-group"><div class="col-sm-offset-2 col-sm-11"><div class="btn-group">
  
- <button type="submit" class="btn btn-primary btn-flat" >產生工時</button>
- <!-- <button  class="btn btn-warning btn-flat" onclick="javascript:location.href='../scm/admr01/display'>瀏覽</button> -->
+ <button type="submit" class="btn btn-primary btn-flat" >計算</button>
+ <!-- <button  class="btn btn-warning btn-flat" onclick="javascript:location.href='../scm/admr01m/display'>瀏覽</button> -->
  
  <a href="<?php echo base_url()?>index.php/main" class="btn btn-default btn-flat">返回</a>
  
@@ -72,7 +102,7 @@
     <!-- /.content -->
   </div>  
 
-    <?php include_once("./application/views/scm/admr01_foot_v.php");?>
+    <?php include_once("./application/views/scm/admr01m_foot_v.php");?>
    <?php // include_once("./application/views/funnew/erp_funjs_v.php"); ?>      <!-- 共用函數 -->
    <!-- 不更新網頁 自動提示方框資料google 提示前置小工具 --> 
 <script type="text/javascript"><!--       

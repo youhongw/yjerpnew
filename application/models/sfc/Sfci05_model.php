@@ -175,10 +175,12 @@ class sfci05_model extends CI_Model
 										left join  CMSMQ as c on a.TB001 = c.MQ001 
 										where a.TB003 >='$vday'
 										order by a.TB002 DESC,a.TB001 DESC 
+										OFFSET $offset ROWS
+										fetch next $limit ROWS only
 										");
 		$ret['data'] = $query->result();
 
-
+         
 		//建構暫存view 1060614 上一頁,下一頁使用
 		// $this->construct_view($ret['data']);
 

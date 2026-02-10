@@ -177,13 +177,13 @@ class sfci03y_model extends CI_Model {
 		if($where){
 			$query->where($where);
 		}*/
-		$vday = date('Ymd', strtotime(' -1180 day')); //處理當日前6個月的資料
+		$vday = date('Ymd', strtotime(' -180 day')); //處理當日前6個月的資料
 		//$vday ='20250101';
 		/*$query = $this->db->query(" select a.*,b.MD002,ISNULL(c.MQ002,'') as td004disp from sfctd as a
 left join CMSMD  b on a.td004 = b.MD001 left join  CMSMQ  c  on a.td001 = c.MQ001 
 where a.td003 >='$vday' order by a.td002 DESC
 										"); */
-	/*$query = $this->db->query("	SELECT TOP $limit 
+	$query = $this->db->query("	SELECT TOP $limit 
   a.*, 
   b.MD002, 
   ISNULL(c.MQ002, '') AS td004disp
@@ -198,21 +198,7 @@ WHERE
     WHERE td003 >= '$vday'
     ORDER BY td002 DESC, td001 DESC
   )
-ORDER BY a.td002 DESC, td001 DESC	 ");*/	
-$query = $this->db->query("	SELECT 
-    a.*, 
-    b.MD002, 
-    ISNULL(c.MQ002, '') AS td004disp
-FROM sfctd AS a
-LEFT JOIN CMSMD b ON a.td004 = b.MD001
-LEFT JOIN CMSMQ c ON a.td001 = c.MQ001
-WHERE 
-    a.td003 >= '$vday'
-ORDER BY $order 
-OFFSET $offset ROWS 
-FETCH NEXT $limit ROWS ONLY;	 ");
-
-						
+ORDER BY a.td002 DESC, td001 DESC	 ");							
 										
 		$ret['data'] = $query->result();
 		//建構暫存view 1060614 上一頁,下一頁使用
@@ -224,19 +210,23 @@ where a.td003 >='$vday' order by a.td002 DESC
 		OFFSET $offset ROWS 
                     fetch next $limit ROWS only								");*/
 		if($where){
-			$query = $this->db->query("	SELECT 
-    a.*, 
-    b.MD002, 
-    ISNULL(c.MQ002, '') AS td004disp
+			$query = $this->db->query("	SELECT TOP $limit 
+  a.*, 
+  b.MD002, 
+  ISNULL(c.MQ002, '') AS td004disp
 FROM sfctd AS a
 LEFT JOIN CMSMD b ON a.td004 = b.MD001
 LEFT JOIN CMSMQ c ON a.td001 = c.MQ001
 WHERE 
-    a.td003 >= '$vday'
-ORDER BY $order 
-OFFSET $offset ROWS 
-FETCH NEXT $limit ROWS ONLY;	 ");
-			
+  a.td003 >= '$vday' and $where
+  AND a.td002 NOT IN (
+    SELECT TOP $offset td002
+    FROM sfctd
+    WHERE td003 >= '$vday' and $where
+    ORDER BY td002 DESC, td001 DESC
+  )
+ORDER BY a.td002 DESC , td001 DESC	 ");
+			//$query->where($where);
 		}
 		$ret['data'] = $query->result();
 		//儲存sql 語法回傳查詢字串

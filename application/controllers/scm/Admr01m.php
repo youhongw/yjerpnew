@@ -1,6 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admr01 extends CI_Controller {           //擴展類必须註明由母類擴展而來 (自訂類使用 ci 框架)
+class admr01m extends CI_Controller {           //擴展類必须註明由母類擴展而來 (自訂類使用 ci 框架)
 	
 	  public function __construct()       //在類中使用構造函數,必须在構造函數中顯式繼承母類構造函數
 	    {
@@ -23,7 +23,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		 // 設定 $_SESSION["a"][0][50]像這個樣子。 然後可以用變數$a[0][50]的方式來取得。 
 		 if (session_status() == PHP_SESSION_NONE) {
 				session_start();
-				unset($_SESSION['admr01']['search']);
+				unset($_SESSION['admr01m']['search']);
 			}
 		  $this->display_search();
 	    } 
@@ -35,7 +35,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 			session_start();
 		}
 		if($this->input->post('submit')){	//如果是由find_v送過來的，reset session
-			unset($_SESSION['admr01']['search']);
+			unset($_SESSION['admr01m']['search']);
 		}
 		$limit = 15;    //每頁筆數
 		$this->load->model('scm/Admi01_model');// 加載TABLE model 模型
@@ -44,7 +44,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		$data['num_results'] = $result['num'];
 		$data['numrow'] = $result['num'];// 總筆數 
 		$data['page'] = $result['num']/$limit; // 總頁數
-		//$data['sql'] = $_SESSION['admr01']['search']['sql'];
+		//$data['sql'] = $_SESSION['admr01m']['search']['sql'];
 		// $data['message'] = '資料瀏覽成功!<br>查詢條件:'.$data['sql']."<br>";
 		$data['message'] = '資料瀏覽成功!';
 		$data['sort_order'] = "desc";
@@ -62,7 +62,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		$config['cur_tag_open'] = ' <a class="current">'; // 當前頁開始樣式
 		$config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
 		$config['cur_page'] = $this->uri->segment(4,0);   //當前頁 結合分頁url路徑 +1
-		$config['base_url'] = site_url("scm/admr01/display_search");   //設定分頁url路徑
+		$config['base_url'] = site_url("scm/admr01m/display_search");   //設定分頁url路徑
 		/* 網址去除".html" 字串進行切割 陣列,  */
 		$temp_url = explode(".html",$config['base_url']);
 		$config['base_url'] = "";
@@ -78,18 +78,18 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		$data['limit'] = $limit ;    //每頁筆數
 		$data['systitle'] ='進貨入庫建立作業';		  
 		$data['menu_v'] = 'main_menu_v';
-		//$data['content_v'] = 'scm/admr01_brow_v';		
+		//$data['content_v'] = 'scm/admr01m_brow_v';		
 		//$data['foot_v'] ='main_foot_v';
 		$this->load->vars($data);
 		//$this->load->view('main_headbrow_v');	
-        $this->load->view('scm/admr01_brow_v');			
+        $this->load->view('scm/admr01m_brow_v');			
 	  }
 	  
 	  //暫時沒使用
 	/*  public function construct_sql($offset = 0,$func = ""){
 		$limit = 15;
-		$this->load->model('scm/admr01_model');// 加載TABLE model 模型
-		$this->admr01_model->construct_sql($limit, $offset ,$func);
+		$this->load->model('scm/admr01m_model');// 加載TABLE model 模型
+		$this->admr01m_model->construct_sql($limit, $offset ,$func);
 	  } */
 	 
 		//進階查詢輸入資料
@@ -99,7 +99,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 	      $data['message'] = '';
 	      $data['systitle'] ='進貨入庫-進階查詢';
 	      $data['menu_v'] = 'main_menuno_v';
-	      $data['content_v'] = 'scm/admr01_find_v';
+	      $data['content_v'] = 'scm/admr01m_find_v';
 	      $data['foot_v'] ='main_foot_v';
 	      $this->load->vars($data);
 	      $this->load->view('main_head_v');
@@ -112,20 +112,20 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 			session_start();
 		}
 		  if(@$_POST['find005']){
-			$_SESSION['admr01_sql_term'] = $_POST['find005'];
+			$_SESSION['admr01m_sql_term'] = $_POST['find005'];
 		  }
-		  else {$_SESSION['admr01_sql_term'] = '(mf001="") ';}
+		  else {$_SESSION['admr01m_sql_term'] = '(mf001="") ';}
 		  
 		  if(@$_POST['find007']){
-			$_SESSION['admr01_sql_sort'] = $_POST['find007'];
+			$_SESSION['admr01m_sql_sort'] = $_POST['find007'];
 		   }
-		  else {$_SESSION['admr01_sql_sort'] = 'mf001';}
+		  else {$_SESSION['admr01m_sql_sort'] = 'mf001';}
 	      $limit = 15;    //每頁筆數
 	      $data['message'] = '資料流覽成功!';
 	      $data['sort_by'] = $sort_by;
 	      $data['sort_order'] = $sort_order;
-	      $this->load->model('scm/admr01_model');// 加載TABLE model 模型		
-	      $result= $this->admr01_model->findf($limit, $offset , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,mf001,desc
+	      $this->load->model('scm/admr01m_model');// 加載TABLE model 模型		
+	      $result= $this->admr01m_model->findf($limit, $offset , $sort_by  , $sort_order ); //至model 取 mysql 資料 預設 15,0,mf001,desc
 	      $data['results'] = $result['rows'];
 	      $data['num_results'] = $result['num_rows'];
 	      $this->load->library('pagination');
@@ -145,7 +145,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
           $config['cur_tag_close'] = '</a>'; // 當前頁结束樣式
 	      $config['cur_page'] = $this->uri->segment(6,0);   //當前頁 結合分頁url路徑 +1
 	      $this->pagination->initialize($config);    //分頁初始化 display 3
-	      $config['base_url'] = site_url("scm/admr01/findsql/$sort_by/$sort_order");   //設定分頁url路徑
+	      $config['base_url'] = site_url("scm/admr01m/findsql/$sort_by/$sort_order");   //設定分頁url路徑
 	      $config['total_rows'] = $result['num_rows']; // 總筆數
 	      $config['per_page'] = $limit;                //每頁筆數
 	      $config['uri_segment'] = 6;       //當前頁
@@ -156,7 +156,7 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 	      $data['limit'] = $limit ;    //每頁筆數
 	      $data['systitle'] ='請假單 - 建立申請';
 	      $data['menu_v'] = 'main_menu_v';
-	      $data['content_v'] = 'scm/admr01_brow_v';		
+	      $data['content_v'] = 'scm/admr01m_brow_v';		
 	      $data['foot_v'] ='main_foot_v';
 	      $this->load->vars($data);
 	      $this->load->view('main_headbrow_v');		
@@ -165,8 +165,8 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		//清除條件
 	/*    public function clear_sql_term(){  
 		session_start();
-		  if(@$_SESSION["admr01_sql_term"]) {unset($_SESSION["admr01_sql_term"]);}
-		  if(@$_SESSION["admr01_sql_sort"]) {unset($_SESSION["admr01_sql_sort"]);}
+		  if(@$_SESSION["admr01m_sql_term"]) {unset($_SESSION["admr01m_sql_term"]);}
+		  if(@$_SESSION["admr01m_sql_sort"]) {unset($_SESSION["admr01m_sql_sort"]);}
 		  $this->display();
 	    }  */
 		
@@ -178,39 +178,39 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 	   $data['username'] = $this->session->userdata('manager');
 	   $data['systitle'] ='進貨入庫-新增';
 	  // $data['menu_v'] = 'main_menuno_v';
-	  // $data['content_v'] = 'scm/admr01_add_v';
+	  // $data['content_v'] = 'scm/admr01m_add_v';
 	  // $data['foot_v'] ='main_foot_v';
 	   $this->load->vars($data);
 	  // $this->load->view('main_head_v');
-	     $this->load->view('scm/admr01_add_v');
+	     $this->load->view('scm/admr01m_add_v');
         }
 		
 	  //新增存檔
       public function addsave()  { 
 	   $data['username'] = $this->session->userdata('manager');
        $data['message'] = '新增成功!';
-       $this->load->model('scm/admr01_model','',TRUE);
-	   $action = $this->admr01_model->insertf();
+       $this->load->model('scm/admr01m_model','',TRUE);
+	   $action = $this->admr01m_model->insertf();
 	   if ($action === 'exist')
 	      {
 	        $data['message'] = '資料重複!';		    
 	      }
 	   $data['systitle'] ='進貨入庫-新增';
 	 //  $data['menu_v'] = 'main_menuno_v';
-	 //  $data['content_v'] = 'scm/admr01_add_v';
+	 //  $data['content_v'] = 'scm/admr01m_add_v';
 	 //  $data['foot_v'] ='main_foot_v';
 	   $this->load->vars($data);
 	 //  $this->load->view('main_head_v');
-	  $this->load->view('scm/admr01_add_v');
+	  $this->load->view('scm/admr01m_add_v');
        }
       
       //轉excel 部份資料由 print_v call
       public function write()  { 
 	     $data['message'] = '轉檔excel成功!';
 	     $data['username'] = $this->session->userdata('manager');
-         $this->load->model('scm/admr01_model','',TRUE);
+         $this->load->model('scm/admr01m_model','',TRUE);
 	     $title = array('進貨入庫代號','進貨入庫名稱','進貨入庫密碼','群組代號','超級進貨入庫','部門代號','建立日期');  //excel 表頭
-         $result1 = $this->admr01_model->excelnewf();	
+         $result1 = $this->admr01m_model->excelnewf();	
          $this->excel->writer($title,$result1);    //讀取excel  
        }
 	   
@@ -218,39 +218,44 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
       public function printdetail()    {
 	   $data['username'] = $this->session->userdata('manager');
 	   $data['message'] = '';
-	   $data['systitle'] ='製令工時產生';
+	   $data['systitle'] ='製令報工單自動日結';
 	 //  $data['menu_v'] = 'main_menuno_v';
-	 //  $data['content_v'] = 'scm/admr01_print_v';
+	 //  $data['content_v'] = 'scm/admr01m_print_v';
 	  // $data['foot_v'] ='main_foot_v';
 	   $this->load->vars($data);
 	  // $this->load->view('main_head_v');
-	    $this->load->view('scm/admr01_print_v');
+	    $this->load->view('scm/admr01m_print_v');
       }
 	  
-	  //印明細
+	  //印明細 1141208-v2 1150117
       public function printa()   {
 		$data['paper9']=$this->input->post('tg009p');
+		
 		$seq1=$this->input->post('dateo');
 		$seq2=$this->input->post('datec');
+	//	$seq3=$this->input->post('mc001');
 		$data['dateo']=$this->input->post('dateo');
 		$data['datec']=$this->input->post('datec');
-		$seq3=$seq2;
-		$data['message'] = '產生工時成功!';
+		$data['message'] = '報工單自動日結成功!';
       ////  if($this->input->post('action')=="excel"){
 		//   $this->write();
 		//  }	
 			//   echo var_dump($seq1);var_dump('test');exit;
-       $this->load->model('scm/admr01_model','',TRUE);
-       $this->admr01_model->printfd($seq1,$seq2,$seq3);
+			preg_match_all('/\d/S',$seq1, $matches);  //處理日期字串
+			 $seq1 = implode('',$matches[0]);
+			 preg_match_all('/\d/S',$seq2, $matches);  //處理日期字串
+			 $seq2 = implode('',$matches[0]);
+       $this->load->model('scm/admr01m_model','',TRUE);
+       $this->admr01m_model->printfd($seq1,$seq2);
 	   //echo var_dump($seq1);exit;
 	  // $data['results'] = $result['rows'];
 	  // $data['num_results'] = $result['num_rows'];
 	 //  $data['numrow']=$result['num_rows'];// 總筆數 
 	   $data['username'] = $this->session->userdata('manager');
-	   $data['systitle'] ='產生工時';
-	  // $data['content_v'] = 'scm/admr01_printa_v';
+	   $data['systitle'] ='重新計算';
+	  // $data['content_v'] = 'scm/admr01m_printa_v';
 	   $this->load->vars($data);
-	   $this->load->view('scm/admr01_print_v'); 
+	   $this->load->view('scm/admr01m_print_v'); 
       }
       
 	  //修改存檔	
@@ -261,18 +266,18 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 			if (session_status() == PHP_SESSION_NONE) {
 				session_start();
 			}
-			if(isset($_SESSION['admr01']['search'])){
-				$current_index = $_SESSION['admr01']['search']['view'][$seq1];
+			if(isset($_SESSION['admr01m']['search'])){
+				$current_index = $_SESSION['admr01m']['search']['view'][$seq1];
 				if($current_index!=0){
-					$data['prev'] = $_SESSION['admr01']['search']['index'][$current_index-1];
+					$data['prev'] = $_SESSION['admr01m']['search']['index'][$current_index-1];
 				}
-				if(isset($_SESSION['admr01']['search']['index'][$current_index+1])){
-					$data['next'] = $_SESSION['admr01']['search']['index'][$current_index+1];
+				if(isset($_SESSION['admr01m']['search']['index'][$current_index+1])){
+					$data['next'] = $_SESSION['admr01m']['search']['index'][$current_index+1];
 				}
 				$offset = floor($current_index/15)*15;
-				$this->session->set_userdata('admr01_search',"display_search/".$offset);
+				$this->session->set_userdata('admr01m_search',"display_search/".$offset);
 				if($this->uri->segment(3)=="display" || $this->uri->segment(3)=="display_leave"){
-					$this->session->set_userdata('admr01_search',$this->uri->segment(3)."/".$this->uri->segment(4)."/".$this->uri->segment(5)."/".$offset);
+					$this->session->set_userdata('admr01m_search',$this->uri->segment(3)."/".$this->uri->segment(4)."/".$this->uri->segment(5)."/".$offset);
 				}
 			} 
 		 
@@ -280,19 +285,19 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
          
 	       $data['username'] = $this->session->userdata('manager');
 	       $data['message'] = '修改資料成功!';
-           $this->load->model('scm/admr01_model','',TRUE);
+           $this->load->model('scm/admr01m_model','',TRUE);
 	       $this->load->vars($data);
-	       $this->admr01_model->updatef();
-	       $this->load->model('scm/admr01_model');
-	       $data['results'] = $this->admr01_model->selone($this->uri->segment(4));
+	       $this->admr01m_model->updatef();
+	       $this->load->model('scm/admr01m_model');
+	       $data['results'] = $this->admr01m_model->selone($this->uri->segment(4));
 	       $data['username'] = $this->session->userdata('manager');
 	       $data['systitle'] ='進貨入庫-修改';
 	     //  $data['menu_v'] = 'main_menuno_v';
-	     //  $data['content_v'] = 'scm/admr01_upd_v';
+	     //  $data['content_v'] = 'scm/admr01m_upd_v';
 	      // $data['foot_v'] ='main_foot_v';
 	       $this->load->vars($data);
 	      // $this->load->view('main_head_v');
-	       $this->load->view('scm/admr01_upd_v');
+	       $this->load->view('scm/admr01m_upd_v');
         }
 		
 	  //修改輸入資料
@@ -303,35 +308,35 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 			if (session_status() == PHP_SESSION_NONE) {
 				session_start();
 			}
-			if(isset($_SESSION['admr01']['search'])){
-				$current_index = $_SESSION['admr01']['search']['view'][$seq1];
+			if(isset($_SESSION['admr01m']['search'])){
+				$current_index = $_SESSION['admr01m']['search']['view'][$seq1];
 				if($current_index!=0){
-					$data['prev'] = $_SESSION['admr01']['search']['index'][$current_index-1];
+					$data['prev'] = $_SESSION['admr01m']['search']['index'][$current_index-1];
 				}
-				if(isset($_SESSION['admr01']['search']['index'][$current_index+1])){
-					$data['next'] = $_SESSION['admr01']['search']['index'][$current_index+1];
+				if(isset($_SESSION['admr01m']['search']['index'][$current_index+1])){
+					$data['next'] = $_SESSION['admr01m']['search']['index'][$current_index+1];
 				}
 				$offset = floor($current_index/15)*15;
-				$temp_ident = explode('/',$this->session->userdata('admr01_search'));
-				$this->session->set_userdata('admr01_search',"display_search/".$offset);
+				$temp_ident = explode('/',$this->session->userdata('admr01m_search'));
+				$this->session->set_userdata('admr01m_search',"display_search/".$offset);
 				if($temp_ident[0]=="display"){
-					$this->session->set_userdata('admr01_search',"display/mf001/asc/".$offset);
+					$this->session->set_userdata('admr01m_search',"display/mf001/asc/".$offset);
 				}
 				if($temp_ident[0]=="display_leave"){
-					$this->session->set_userdata('admr01_search',"display_leave/mf001/asc/".$offset);
+					$this->session->set_userdata('admr01m_search',"display_leave/mf001/asc/".$offset);
 				}
 			}
 	    $data['message'] = '查詢一筆修改資料!';
-	    $this->load->model('scm/admr01_model');
-	    $data['results'] = $this->admr01_model->selone($seq1);
+	    $this->load->model('scm/admr01m_model');
+	    $data['results'] = $this->admr01m_model->selone($seq1);
 	    $data['username'] = $this->session->userdata('manager');
 	    $data['systitle'] ='進貨入庫-修改';
 	 //   $data['menu_v'] = 'main_menuno_v';
-	  //  $data['content_v'] = 'scm/admr01_upd_v';
+	  //  $data['content_v'] = 'scm/admr01m_upd_v';
 	 //   $data['foot_v'] ='main_foot_v';
 	    $this->load->vars($data);
 	  //  $this->load->view('main_head_v');
-		$this->load->view('scm/admr01_upd_v');
+		$this->load->view('scm/admr01m_upd_v');
       }
 	  
 	   //看資料
@@ -341,51 +346,51 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 			if (session_status() == PHP_SESSION_NONE) {
 				session_start();
 			}
-			if(isset($_SESSION['admr01']['search'])){
-				$current_index = $_SESSION['admr01']['search']['view'][$seq1];
+			if(isset($_SESSION['admr01m']['search'])){
+				$current_index = $_SESSION['admr01m']['search']['view'][$seq1];
 				if($current_index!=0){
-					$data['prev'] = $_SESSION['admr01']['search']['index'][$current_index-1];
+					$data['prev'] = $_SESSION['admr01m']['search']['index'][$current_index-1];
 				}
-				if(isset($_SESSION['admr01']['search']['index'][$current_index+1])){
-					$data['next'] = $_SESSION['admr01']['search']['index'][$current_index+1];
+				if(isset($_SESSION['admr01m']['search']['index'][$current_index+1])){
+					$data['next'] = $_SESSION['admr01m']['search']['index'][$current_index+1];
 				}
 				$offset = floor($current_index/15)*15;
-				$temp_ident = explode('/',$this->session->userdata('admr01_search'));
-				$this->session->set_userdata('admr01_search',"display_search/".$offset);
+				$temp_ident = explode('/',$this->session->userdata('admr01m_search'));
+				$this->session->set_userdata('admr01m_search',"display_search/".$offset);
 				if($temp_ident[0]=="display"){
-					$this->session->set_userdata('admr01_search',"display/mf001/asc/".$offset);
+					$this->session->set_userdata('admr01m_search',"display/mf001/asc/".$offset);
 				}
 				if($temp_ident[0]=="display_leave"){
-					$this->session->set_userdata('admr01_search',"display_leave/mf001/asc/".$offset);
+					$this->session->set_userdata('admr01m_search',"display_leave/mf001/asc/".$offset);
 				}
 			}
 	    $data['message'] = '查看一筆資料!';
-	    $this->load->model('scm/admr01_model');
-	    $data['result'] = $this->admr01_model->selone($seq1);
+	    $this->load->model('scm/admr01m_model');
+	    $data['result'] = $this->admr01m_model->selone($seq1);
 	    $data['username'] = $this->session->userdata('manager');
 	    $data['systitle'] ='進貨入庫-查看資料';
 	  //  $data['menu_v'] = 'main_menuno_v';
-	  //  $data['content_v'] = 'scm/admr01_see_v';
+	  //  $data['content_v'] = 'scm/admr01m_see_v';
 	  //  $data['foot_v'] ='main_foot_v';
 	    $this->load->vars($data);
 	  //  $this->load->view('main_head_v');
-		$this->load->view('scm/admr01_upd_v');
+		$this->load->view('scm/admr01m_upd_v');
       }
 	  
 	  //刪除單筆 暫存
       public function del()   { 
        	$seg1=$this->uri->segment(4);
 	    $data['message'] = '刪除資料成功!';
-	    $this->load->model('scm/admr01_model','',TRUE);
-	    $this->admr01_model->deletef($seg1);
+	    $this->load->model('scm/admr01m_model','',TRUE);
+	    $this->admr01m_model->deletef($seg1);
 	    $this->display();
       }
 	  
       //刪除選取
       public function delete() {  
 	    $data['message'] = '刪除資料成功!';
-	    $this->load->model('scm/admr01_model','',TRUE);
-	    $this->admr01_model->delmutif();
+	    $this->load->model('scm/admr01m_model','',TRUE);
+	    $this->admr01m_model->delmutif();
 	    $this->display();
       }
 	  //清除查詢條件
@@ -393,8 +398,8 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 		  if (session_status() == PHP_SESSION_NONE) {
 			session_start();
 		   }
-		  if(@$_SESSION["admr01_sql_term"]) {unset($_SESSION["admr01_sql_term"]);}
-		  if(@$_SESSION["admr01_sql_sort"]) {unset($_SESSION["admr01_sql_sort"]);}
+		  if(@$_SESSION["admr01m_sql_term"]) {unset($_SESSION["admr01m_sql_term"]);}
+		  if(@$_SESSION["admr01m_sql_sort"]) {unset($_SESSION["admr01m_sql_sort"]);}
 		  $this->display();
 	  }
 	  
@@ -402,8 +407,8 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 	  //提示改輸入資料重複 進貨入庫代號  mf001
 	   public function check_key()  {
 	     extract($this->input->get());
-		$this->load->model('scm/admr01_model','',TRUE);
-		$data = $this->admr01_model->check_key($mf001);
+		$this->load->model('scm/admr01m_model','',TRUE);
+		$data = $this->admr01m_model->check_key($mf001);
 		//echo "<pre>";var_dump($data);exit;
 		echo $data;
         }
@@ -412,12 +417,12 @@ class Admr01 extends CI_Controller {           //擴展類必须註明由母類�
 	  public function check_title_no(){
 		  $seq1 = $this->uri->segment(4);
 		extract($this->input->get());
-		$this->load->model('scm/admr01_model','',TRUE);
-		$data = $this->admr01_model->check_title_no($seq1);
+		$this->load->model('scm/admr01m_model','',TRUE);
+		$data = $this->admr01m_model->check_title_no($seq1);
 		//echo "<pre>";var_dump($data);exit;
 		echo $data;
 	  }
 }
 
-/* End of file admr01.php */
-/* Location: ./application/controllers/admr01.php */
+/* End of file admr01m.php */
+/* Location: ./application/controllers/admr01m.php */

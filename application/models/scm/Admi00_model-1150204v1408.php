@@ -414,9 +414,7 @@ class Admi00_model extends CI_Model
 			. $this->input->post('mf641') . $this->input->post('mf642') . $this->input->post('mf643') . $this->input->post('mf644') . $this->input->post('mf645')
 			. $this->input->post('mf646') . $this->input->post('mf647') . $this->input->post('mf648') . $this->input->post('mf649') . $this->input->post('mf650')
 			. $this->input->post('mf651') . $this->input->post('mf652') . $this->input->post('mf653') . $this->input->post('mf654') . $this->input->post('mf655')
-			. $this->input->post('mf656') . $this->input->post('mf657') . $this->input->post('mf658')
-			. $this->input->post('mf748') . $this->input->post('mf749') . $this->input->post('mf750')
-			. $this->input->post('mf751') . $this->input->post('mf752');
+			. $this->input->post('mf656') . $this->input->post('mf657') . $this->input->post('mf658');
 
 
 		$vmf007 = trim($this->input->post('cmsi05'));	//部門
@@ -478,9 +476,7 @@ class Admi00_model extends CI_Model
 			. $this->input->post('mf641') . $this->input->post('mf642') . $this->input->post('mf643') . $this->input->post('mf644') . $this->input->post('mf645')
 			. $this->input->post('mf646') . $this->input->post('mf647') . $this->input->post('mf648') . $this->input->post('mf649') . $this->input->post('mf650')
 			. $this->input->post('mf651') . $this->input->post('mf652') . $this->input->post('mf653') . $this->input->post('mf654') . $this->input->post('mf655')
-			. $this->input->post('mf656') . $this->input->post('mf657') . $this->input->post('mf658')
-			. $this->input->post('mf748') . $this->input->post('mf749') . $this->input->post('mf750')
-			. $this->input->post('mf751') . $this->input->post('mf752');
+			. $this->input->post('mf656') . $this->input->post('mf657') . $this->input->post('mf658');
 
 
 		$vmf007 = trim($this->input->post('cmsi05'));

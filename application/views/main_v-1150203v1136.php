@@ -132,26 +132,10 @@
               <?php if ($super == 'Y' or  substr($rms, 7, 1) == 'Y') { ?>
                 <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/scm/admi04/display'">群組建立作業</button>
               <?php } ?>
-              <!-- 1150203 合併 -->
-              <?php if ($super == 'Y' or  substr($rms, 48, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci04/display'">製令製程展開作業(new)</button>
+
+              <?php if ($super == 'Y' or  substr($rms, 8, 1) == 'Y') { ?>
+                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci03y/display'">報工單建立作業</button>
               <?php } ?>
-			  <?php if ($super == 'Y' or  substr($rms, 49, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci05a/display'">移轉單建立(投料,移轉,入庫)作業(new)</button>
-              <?php } ?>
-			  
-			   <?php if ($super == 'Y' or  substr($rms, 50, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci03m/display'">報工單建立作業(new)</button>
-              <?php } ?>
-			  <?php if ($super == 'Y' or  substr($rms, 51, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/scm/admr01m/printdetail'">報工單批次日結作業(new)23:00自動執行</button>
-              <?php } ?>
-			  <?php if ($super == 'Y' or  substr($rms, 52, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci03n/display'">報工日結單查詢作業(new)</button>
-              <?php } ?>
-			 <!-- <?php if ($super == 'Y' or  substr($rms, 8, 1) == 'Y') { ?>
-                <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/sfc/sfci03y/display'">報工單建立作業old</button>
-              <?php } ?>-->
 			  <?php if ($super == 'Y' or  substr($rms, 8, 1) == 'Y') { ?>
                 <button type="button" class="btn btn-block btn-success btn-lg" onclick="javascript:location.href='<?php echo base_url() ?>index.php/scm/admr01/printdetail'">製令工時產生作業</button>
               <?php } ?>

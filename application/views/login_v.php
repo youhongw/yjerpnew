@@ -38,11 +38,11 @@
   ?>
   <div class="login-box">
     <div class="login-logo">
-      <a href=""><b style="color:#3C8DBC">陽 江 ERP 外 掛 程 式<b></a>
+      <a href=""><b style="color:#3C8DBC">陽江製令製程外掛程式<b></a>
     </div>
     <!-- /.login-logo -->
     <div class="login-box-body">
-      <p class="login-box-msg" style="font-size:22px">陽 江 ERP 外 掛 程 式</p>
+      <p class="login-box-msg" style="font-size:22px">陽江製令製程GP4外掛程式</p>
 
       <form method="post" action="<?php echo site_url('login/check_login'); ?>" enctype="multipart/form-data" id="form">
         <div class="form-group has-feedback">

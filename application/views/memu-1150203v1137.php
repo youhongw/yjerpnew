@@ -40,64 +40,12 @@
       </a>
     </li>
   <?php } ?>
-  <!-- 1150204 -->
-  <?php if ($super == 'Y' or  substr($rms, 48, 1) == 'Y') { ?>
-    <li>
-      <a href="<?php echo base_url() ?>index.php/sfc/sfci04/display">
-        <i class="fa fa-th"></i> <span>製令製程展開作業(new)</span>
-        <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
-        </span>
-      </a>
-    </li>
-  <?php } ?>
-  <?php if ($super == 'Y' or  substr($rms, 49, 1) == 'Y') { ?>
-    <li>
-      <a href="<?php echo base_url() ?>index.php/sfc/sfci05a/display">
-        <i class="fa fa-th"></i> <span>移轉單建立(投料,移轉,入庫)作業(new)</span>
-        <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
-        </span>
-      </a>
-    </li>
-  <?php } ?>
-  <?php if ($super == 'Y' or  substr($rms, 50, 1) == 'Y') { ?>
-    <li>
-      <a href="<?php echo base_url() ?>index.php/sfc/sfci03m/display">
-        <i class="fa fa-th"></i> <span>報工單建立作業(new)</span>
-        <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
-        </span>
-      </a>
-    </li>
-  <?php } ?>
-  <?php if ($super == 'Y' or  substr($rms, 51, 1) == 'Y') { ?>
-    <li>
-      <a href="<?php echo base_url() ?>index.php/scm/admr01m/printdetail">
-        <i class="fa fa-th"></i> <span>報工單批次日結作業(new)23:00自動執行</span>
-        <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
-        </span>
-      </a>
-    </li>
-  <?php } ?>
-  <?php if ($super == 'Y' or  substr($rms, 52, 1) == 'Y') { ?>
-    <li>
-      <a href="<?php echo base_url() ?>index.php/sfc/sfci03n/display">
-        <i class="fa fa-th"></i> <span>報工日結單查詢作業(new)</span>
-        <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
-        </span>
-      </a>
-    </li>
-  <?php } ?>
-  
   <?php if ($super == 'Y' or  substr($rms, 22, 1) == 'Y') { ?>
     <li>
       <a href="<?php echo base_url() ?>index.php/sfc/sfci03y/display">
         <i class="fa fa-th"></i> <span>報工單建立作業</span>
         <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
+          <small class="label pull-right bg-green">new</small>
         </span>
       </a>
     </li>
@@ -107,7 +55,7 @@
       <a href="<?php echo base_url() ?>index.php/scm/admr01/printdetail">
         <i class="fa fa-th"></i> <span>製令工時產生作業</span>
         <span class="pull-right-container">
-          <small class="label pull-right bg-green"></small>
+          <small class="label pull-right bg-green">new</small>
         </span>
       </a>
     </li>

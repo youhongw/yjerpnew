@@ -21,7 +21,7 @@
         <?php
         foreach ($result as $row) {
           $pk001 = trim($row->pk001);
-          $pk002 = round($row->pk002, 3);
+          $pk002 = round($row->pk002, 2);
 
           $pk003 = round($row->pk003, 3);
           $pk006 = $row->pk006;
