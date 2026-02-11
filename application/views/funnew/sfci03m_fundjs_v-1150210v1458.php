@@ -1686,7 +1686,7 @@ $('#commentForm').on('submit', function(e){
 	function PrefixInteger(num, length) {
 		return (Array(length).join('0') + num).slice(-length);
 	}
-//1141208-v3 1150210
+//1141208-v3
 function count_time(row_obj) {
     if ($.isNumeric(row_obj)) {
         row = row_obj;
