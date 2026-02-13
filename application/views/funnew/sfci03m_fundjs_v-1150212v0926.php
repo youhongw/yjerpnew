@@ -1734,7 +1734,7 @@ function count_time(row_obj) {
     }
 
     // ==========================================
-    // 只在「結束時間欄位」觸發時才檢查 1150212
+    // 只在「結束時間欄位」觸發時才檢查
     // ==========================================
 
     // 1. 檢查時段1訖 (TE023) - 只在輸入 TE023 時檢查
@@ -1771,14 +1771,12 @@ function count_time(row_obj) {
 		//if (parseInt(time_start2) <= end1_value) {
 			//if (parseInt(time_start2) < end1_value and end1_value<>'2400' ) {
            // alert("輸入錯誤！\n時段2起始(" + time_start2 + ") 必須大於 時段1結束(" + end1_value + ")");
-        if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {  
-        if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {  		
+        if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {               
 		   $('#message').text("輸入錯誤！\n時段2起始(" + time_start2 + ") 必須大於 時段1結束(" + end1_value + ")");           
 		   $('#order_product\\[' + row + '\\]\\[TE024\\]').val('');
             $('#order_product\\[' + row + '\\]\\[TE024\\]').focus();
             return;
         }
-		}
 		//}
     }
 
