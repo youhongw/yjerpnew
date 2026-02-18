@@ -1771,15 +1771,15 @@ function count_time(row_obj) {
 		//if (parseInt(time_start2) <= end1_value) {
 			//if (parseInt(time_start2) < end1_value and end1_value<>'2400' ) {
            // alert("輸入錯誤！\n時段2起始(" + time_start2 + ") 必須大於 時段1結束(" + end1_value + ")");
-       // if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {  
-        if ( time_end1.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_start2.toString().padStart(4, '0') < time_end1.toString().padStart(4, '0') )  {  	
-			  $('#message').text("輸入錯誤！\n時段2起始(" + time_start2 + ") 必須大於 時段1結束(" + end1_value + ")");           
+        if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {  
+        if ( time_start2.toString().padStart(4, '0') > time_start1.toString().padStart(4, '0') && time_end1.toString().padStart(4, '0') == "2400"  )  {  		
+		   $('#message').text("輸入錯誤！\n時段2起始(" + time_start2 + ") 必須大於 時段1結束(" + end1_value + ")");           
 		   $('#order_product\\[' + row + '\\]\\[TE024\\]').val('');
             $('#order_product\\[' + row + '\\]\\[TE024\\]').focus();
             return;
-        } else {$('#message').text("");}
+        }
+		}
 		//}
-		
     }
 
     // 3. 檢查時段2訖 (TE025) - 只在輸入 TE025 時檢查
@@ -1819,14 +1819,15 @@ function count_time(row_obj) {
         //1150121 mark 
 		//if (parseInt(time_start3) <= end2_value) {
           //  alert("輸入錯誤！\n時段3起始(" + time_start3 + ") 必須大於 時段2結束(" + end2_value + ")");
-		 // if ( time_start3.toString().padStart(4, '0') > time_end2.toString().padStart(4, '0') && time_end2.toString().padStart(4, '0') == "2400"  )  {  	
+		  if ( time_start3.toString().padStart(4, '0') > time_end2.toString().padStart(4, '0') && time_end2.toString().padStart(4, '0') == "2400"  )  {  	
 		  if ( time_end2.toString().padStart(4, '0') > time_start2.toString().padStart(4, '0') && time_start3.toString().padStart(4, '0') > time_start2.toString().padStart(4, '0') && time_start3.toString().padStart(4, '0') < time_end2.toString().padStart(4, '0') )  {  	
 				
 			$('#message').text("輸入錯誤！\n時段3起始(" + time_start3 + ") 必須大於 時段2結束(" + end2_value + ")");
             $('#order_product\\[' + row + '\\]\\[TE026\\]').val('');
             $('#order_product\\[' + row + '\\]\\[TE026\\]').focus();
             return;
-        }  else {$('#message').text("");}
+        }
+		}
     }
 
     // 5. 檢查時段3訖 (TE027) - 只在輸入 TE027 時檢查
