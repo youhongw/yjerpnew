@@ -92,7 +92,7 @@
     </li>
   <?php } ?>
   
- <!-- <?php if ($super == 'Y' or  substr($rms, 22, 1) == 'Y') { ?>
+  <?php if ($super == 'Y' or  substr($rms, 22, 1) == 'Y') { ?>
     <li>
       <a href="<?php echo base_url() ?>index.php/sfc/sfci03y/display">
         <i class="fa fa-th"></i> <span>報工單建立作業</span>
@@ -100,7 +100,7 @@
           <small class="label pull-right bg-green"></small>
         </span>
       </a>
-    </li>-->
+    </li>
   <?php } ?>
    <?php if ($super == 'Y' or  substr($rms, 8, 1) == 'Y') { ?>
     <li>

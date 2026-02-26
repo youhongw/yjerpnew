@@ -452,8 +452,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi19d(this);",
 					'ondblclick' => "search_cmsi19new_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE009disp' => array(
 					'name' => "製程名稱",
@@ -487,8 +487,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					'onchange' => "count_pcs(this);"
-					//'required' => "required"
+					'onchange' => "count_pcs(this);",
+					'required' => "required"
 				),
 				'TE028' => array(
 					'name' => "可返修數量",
@@ -498,8 +498,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE031' => array(
 					'name' => "報廢品數量",
@@ -509,8 +509,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE0311' => array(
 					'name' => "不良品數量",
@@ -539,8 +539,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE023' => array(
 					'name' => "時段1訖",
@@ -552,8 +552,8 @@ class Sfci03m extends CI_Controller
 					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);check_hhmm(this);",
 					//'onchange' => "check_hhmm(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE024' => array(
 					'name' => "時段2起",
@@ -685,7 +685,7 @@ class Sfci03m extends CI_Controller
 					'ondblclick' => ""
 				)
 			);
-        //115023
+         
 		$this->detail_col_b =
 			array(
 				'TE003' => array(
@@ -754,8 +754,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_sfcta(this);",
-					//'onchange' => "check_sfcta(this);",
-					'ondblclick' => "search_sfci03a_window(this);",
+					'onchange' => "check_sfcta(this);",
+					'ondblclick' => "search_sfci03ma_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'value' => "5101",
 					'required' => "required"
@@ -768,8 +768,7 @@ class Sfci03m extends CI_Controller
 					'size' => "12",
 					'maxlength' => "11",
 					'style' => "background-color:#FFFFE4",
-					'onchange' => "check_cmsi19d7(this);",
-					'ondblclick' => "search_sfci03_window(this);",
+					'ondblclick' => "search_sfci03m_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -831,8 +830,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					'onchange' => "count_pcs(this);"
-					//'required' => "required"
+					'onchange' => "count_pcs(this);",
+					'required' => "required"
 				),
 				'TE028' => array(
 					'name' => "可返修數量",
@@ -842,8 +841,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE031' => array(
 					'name' => "報廢品數量",
@@ -853,8 +852,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE0311' => array(
 					'name' => "不良品數量",
@@ -881,10 +880,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE023' => array(
 					'name' => "時段1訖",
@@ -893,10 +891,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onblur' => "count_time(this);",
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE024' => array(
 					'name' => "時段2起",
@@ -905,7 +902,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -916,8 +912,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE026' => array(
@@ -927,7 +922,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -938,8 +932,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE049' => array(
@@ -976,11 +969,11 @@ class Sfci03m extends CI_Controller
 					'size' => "18",
 					'value' => "",
 					'onblur' => "check_invi02(this);",
-					//'ondblclick' => "search_invi02_window(this);",
+					'ondblclick' => "search_invi02_window(this);",
 					'style' => "background-color:#F0F0F0",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE018' => array(
 					'name' => "產品品名",
@@ -989,8 +982,8 @@ class Sfci03m extends CI_Controller
 					'size' => "50",
 					'value' => "",
 					'style' => "background-color:#F0F0F0",
-					'readonly' => "value"
-					//'required' => "required"
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE019' => array(
 					'name' => "產品規格",
@@ -1152,7 +1145,7 @@ class Sfci03m extends CI_Controller
 					'ondblclick' => ""
 				)
 			);
-        //1150223
+
 		$this->detail_col_c =
 			array(
 				'TE003' => array(
@@ -1174,8 +1167,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi09d(this);",
 					'ondblclick' => "search_cmsi09d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'cmsi09ddisp' => array(
 					'name' => "員工姓名",
@@ -1199,8 +1192,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi03d(this);",
 					'ondblclick' => "search_cmsi03d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE005disp' => array(
 					'name' => "機台名稱",
@@ -1221,8 +1214,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_sfcta(this);",
-					//'onchange' => "check_sfcta(this);",
-					'ondblclick' => "search_sfci03a_window(this);",
+					'onchange' => "check_sfcta(this);",
+					'ondblclick' => "search_sfci03ma_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'value' => "5103",
 					'required' => "required"
@@ -1235,8 +1228,7 @@ class Sfci03m extends CI_Controller
 					'size' => "12",
 					'maxlength' => "11",
 					'style' => "background-color:#FFFFE4",
-					'onchange' => "check_cmsi19d7(this);",
-					'ondblclick' => "search_sfci03_window(this);",
+					'ondblclick' => "search_sfci03m_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -1262,8 +1254,8 @@ class Sfci03m extends CI_Controller
 					'onblur' => "check_cmsi19(this);",
 					'ondblclick' => "search_cmsi19_window(this);",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE009disp' => array(
 					'name' => "製程名稱",
@@ -1272,8 +1264,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'style' => "background-color:#F0F0F0",
-					'readonly' => "value"
-					//'required' => "required"
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE010' => array(
 					'name' => "型態",
@@ -1299,8 +1291,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'maxlength' => "5",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE050' => array(
 					'name' => "加硫時間(秒/模)",
@@ -1328,8 +1320,8 @@ class Sfci03m extends CI_Controller
 					'onchange' => "sumQ(this);",
 					// 'style' => "background-color:#F0F0F0",
 					// 'readonly' => "value",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 				'TE035' => array(
 					'name' => "不良總數",
@@ -1339,8 +1331,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "sumQ(this);",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 				'TE0333' => array(
 					'name' => "生產數量",
@@ -1360,10 +1352,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE023' => array(
 					'name' => "時段1訖",
@@ -1372,11 +1363,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onblur' => "count_time(this);",
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE024' => array(
 					'name' => "時段2起",
@@ -1385,7 +1374,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -1396,9 +1384,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE026' => array(
@@ -1408,7 +1394,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -1419,9 +1404,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
@@ -1449,11 +1432,11 @@ class Sfci03m extends CI_Controller
 					'size' => "18",
 					'value' => "",
 					'onblur' => "check_invi02(this);",
-					//'ondblclick' => "search_invi02_window(this);",
+					'ondblclick' => "search_invi02_window(this);",
 					'style' => "background-color:#F0F0F0",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE018' => array(
 					'name' => "產品品名",
@@ -1462,8 +1445,8 @@ class Sfci03m extends CI_Controller
 					'size' => "50",
 					'value' => "",
 					'style' => "background-color:#F0F0F0",
-					'readonly' => "value"
-					//'required' => "required"
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE019' => array(
 					'name' => "產品規格",
@@ -1513,7 +1496,7 @@ class Sfci03m extends CI_Controller
 					'ondblclick' => ""
 				)
 			);
-        //1150223
+
 		$this->detail_col_c1 =
 			array(
 				'TE003' => array(
@@ -1535,8 +1518,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi09d(this);",
 					'ondblclick' => "search_cmsi09d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'cmsi09ddisp' => array(
 					'name' => "員工姓名",
@@ -1546,8 +1529,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'style' => "background-color:#F0F0F0",
-					'disabled' => "disabled"
-					//'readonly' => "value"
+					'disabled' => "disabled",
+					'readonly' => "value"
 				),
 				'TE005' => array(
 					'name' => "機台代號",
@@ -1560,8 +1543,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi03d(this);",
 					'ondblclick' => "search_cmsi03d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE005disp' => array(
 					'name' => "機台名稱",
@@ -1570,8 +1553,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'disabled' => "disabled",
 					'size' => "48",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE006' => array(
 					'name' => "製令單別",
@@ -1582,8 +1565,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_sfcta(this);",
-					//'onchange' => "check_sfcta(this);",
-					'ondblclick' => "search_sfci03a_window(this);",
+					'onchange' => "check_sfcta(this);",
+					'ondblclick' => "search_sfci03ma_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'value' => "5103",
 					'required' => "required"
@@ -1596,8 +1579,7 @@ class Sfci03m extends CI_Controller
 					'size' => "12",
 					'maxlength' => "11",
 					'style' => "background-color:#FFFFE4",
-					'onchange' => "check_cmsi19d7(this);",
-					'ondblclick' => "search_sfci03_window(this);",
+					'ondblclick' => "search_sfci03m_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -1620,11 +1602,11 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "4",
 					'style' => "background-color:#F0F0F0",
-					'onblur' => "check_cmsi19d(this);",
-					'ondblclick' => "search_cmsi19new_window(this);",
+					'onblur' => "check_cmsi19(this);",
+					'ondblclick' => "search_cmsi19_window(this);",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE009disp' => array(
 					'name' => "製程名稱",
@@ -1633,8 +1615,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'style' => "background-color:#F0F0F0",
-					'readonly' => "value"
-					//'required' => "required"
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE010' => array(
 					'name' => "型態",
@@ -1671,7 +1653,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
@@ -1683,8 +1664,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -1695,7 +1675,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -1706,9 +1685,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE026' => array(
@@ -1718,7 +1695,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -1729,9 +1705,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
@@ -1740,8 +1714,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "10",
 					'value' => "0",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE013' => array(
 					'name' => "使用機時",
@@ -1749,8 +1723,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "10",
 					'value' => "0",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value",
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value",
 				),
 				'TE017' => array(
 					'name' => "產品品號",
@@ -1759,11 +1733,11 @@ class Sfci03m extends CI_Controller
 					'size' => "18",
 					'value' => "",
 					'onblur' => "check_invi02(this);",
-					//'ondblclick' => "search_invi02_window(this);",
+					'ondblclick' => "search_invi02_window(this);",
 					'style' => "background-color:#F0F0F0",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE018' => array(
 					'name' => "產品品名",
@@ -1772,8 +1746,8 @@ class Sfci03m extends CI_Controller
 					'size' => "50",
 					'value' => "",
 					'style' => "background-color:#F0F0F0",
-					'readonly' => "value"
-					//'required' => "required"
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE019' => array(
 					'name' => "產品規格",
@@ -1781,8 +1755,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "40",
 					'value' => "",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE020' => array(
 					'name' => "單位",
@@ -1790,8 +1764,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "4",
 					'value' => "",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE015' => array(
 					'name' => "備註",
@@ -1802,7 +1776,7 @@ class Sfci03m extends CI_Controller
 					'ondblclick' => ""
 				)
 			);
-        //1150223
+
 		$this->detail_col_d =
 			array(
 				'TE003' => array(
@@ -1824,8 +1798,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi09d(this);",
 					'ondblclick' => "search_cmsi09d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'cmsi09ddisp' => array(
 					'name' => "員工姓名",
@@ -1849,8 +1823,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi03d(this);",
 					'ondblclick' => "search_cmsi03d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE005disp' => array(
 					'name' => "機台名稱",
@@ -1871,8 +1845,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_sfcta(this);",
-					//'onchange' => "check_sfcta(this);",
-					'ondblclick' => "search_sfci03a_window(this);",
+					'onchange' => "check_sfcta(this);",
+					'ondblclick' => "search_sfci03ma_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'value' => "5104",
 					'required' => "required"
@@ -1885,8 +1859,7 @@ class Sfci03m extends CI_Controller
 					'size' => "12",
 					'maxlength' => "11",
 					'style' => "background-color:#FFFFE4",
-					'onchange' => "check_cmsi19d7(this);",
-					'ondblclick' => "search_sfci03_window(this);",
+					'ondblclick' => "search_sfci03m_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -1909,8 +1882,9 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "4",
 					'style' => "background-color:#F0F0F0",
-					'onblur' => "check_cmsi19d(this);",
-					'ondblclick' => "search_cmsi19new_window(this);",
+					'onblur' => "check_cmsi19(this);",
+					'ondblclick' => "search_cmsi19_window(this);",
+					'readonly' => "value",
 					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
 					'required' => "required"
 				),
@@ -1920,9 +1894,9 @@ class Sfci03m extends CI_Controller
 					'data_class' => "center",
 					'type' => "text",
 					'size' => "8",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
-					//'required' => "required"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value",
+					'required' => "required"
 				),
 				'TE010' => array(
 					'name' => "型態",
@@ -1959,8 +1933,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "5",
 					'onchange' => "Qcount(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE033' => array(
 					'name' => "起始模數",
@@ -1969,8 +1943,8 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'maxlength' => "10",
 					'onchange' => "Qcount(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE034' => array(
 					'name' => "結束模數",
@@ -1979,8 +1953,8 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'maxlength' => "10",
 					'onchange' => "Qcount(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE0111' => array(
 					'name' => "模次數",
@@ -1989,8 +1963,8 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					// 'maxlength' => "8",
 					// 'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE040' => array(
 					'name' => "合格數量",
@@ -2002,8 +1976,8 @@ class Sfci03m extends CI_Controller
 					'onchange' => "sumQ(this);",
 					// 'style' => "background-color:#F0F0F0",
 					// 'readonly' => "value",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 				'TE035' => array(
 					'name' => "不良總數",
@@ -2013,8 +1987,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'onchange' => "sumQ(this);",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 				'TE0333' => array(
 					'name' => "生產數量",
@@ -2023,8 +1997,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					// 'maxlength' => "8",
 					// 'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					'style' => "background-color:#F0F0F0"
-					//'readonly' => "value"
+					'style' => "background-color:#F0F0F0",
+					'readonly' => "value"
 				),
 				'TE036' => array(
 					'name' => "可粉碎量",
@@ -2034,8 +2008,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
 					// 'onchange' => "Qcount(this);",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 				'TE037' => array(
 					'name' => "待粉碎量",
@@ -2044,8 +2018,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
 					// 'onchange' => "Qcount(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE038' => array(
 					'name' => "不可粉碎",
@@ -2054,8 +2028,8 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
 					// 'onchange' => "Qcount(this);",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE039' => array(
 					'name' => "水口數量(KG)",
@@ -2063,8 +2037,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
-					'value' => ""
-					//'required' => "required"
+					'value' => "",
+					'required' => "required"
 				),
 
 				'TE042' => array(
@@ -2073,8 +2047,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE043' => array(
 					'name' => "過管料可回收已粉碎(KG)",
@@ -2082,8 +2056,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE044' => array(
 					'name' => "過管料可回收未粉碎(KG)",
@@ -2091,8 +2065,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,1})?).*$/g, '$1');",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE045' => array(
 					'name' => "過管料不可回收數量(KG)",
@@ -2100,8 +2074,8 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'onkeyup' => "value=value.replace(/^\D*(\d*(?:\.\d{0,3})?).*$/g, '$1');",
-					'value' => "0"
-					//'required' => "required"
+					'value' => "0",
+					'required' => "required"
 				),
 
 				'TE022' => array(
@@ -2111,7 +2085,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
@@ -2123,9 +2096,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -2136,7 +2107,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -2147,9 +2117,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE026' => array(
@@ -2159,7 +2127,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -2170,9 +2137,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
@@ -2200,11 +2165,11 @@ class Sfci03m extends CI_Controller
 					'size' => "18",
 					'value' => "",
 					'onblur' => "check_invi02(this);",
-					//'ondblclick' => "search_invi02_window(this);",
+					'ondblclick' => "search_invi02_window(this);",
 					'style' => "background-color:#F0F0F0",
 					'readonly' => "value",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE018' => array(
 					'name' => "產品品名",
@@ -2368,7 +2333,7 @@ class Sfci03m extends CI_Controller
 					'ondblclick' => ""
 				)
 			);
-         //1150223
+
 		$this->detail_col_l =
 			array(
 				'TE003' => array(
@@ -2390,8 +2355,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi09d(this);",
 					'ondblclick' => "search_cmsi09d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'cmsi09ddisp' => array(
 					'name' => "員工姓名",
@@ -2415,8 +2380,8 @@ class Sfci03m extends CI_Controller
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_cmsi03d(this);",
 					'ondblclick' => "search_cmsi03d_window(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE005disp' => array(
 					'name' => "機台名稱",
@@ -2437,8 +2402,8 @@ class Sfci03m extends CI_Controller
 					'maxlength' => "4",
 					'style' => "background-color:#FFFFE4",
 					'onblur' => "check_sfcta(this);",
-					//'onchange' => "check_sfcta(this);",
-					'ondblclick' => "search_sfci03a_window(this);",
+					'onchange' => "check_sfcta(this);",
+					'ondblclick' => "search_sfci03ma_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'value' => "5103",
 					'required' => "required"
@@ -2451,8 +2416,7 @@ class Sfci03m extends CI_Controller
 					'size' => "12",
 					'maxlength' => "11",
 					'style' => "background-color:#FFFFE4",
-					'onchange' => "check_cmsi19d7(this);",
-					'ondblclick' => "search_sfci03_window(this);",
+					'ondblclick' => "search_sfci03m_window(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
 					'required' => "required"
 				),
@@ -2475,8 +2439,9 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "4",
 					'style' => "background-color:#F0F0F0",
-					'onblur' => "check_cmsi19d(this);",
-					'ondblclick' => "search_cmsi19new_window(this);",
+					'onblur' => "check_cmsi19(this);",
+					'ondblclick' => "search_cmsi19_window(this);",
+					'readonly' => "value",
 					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
 					'required' => "required"
 				),
@@ -2512,9 +2477,9 @@ class Sfci03m extends CI_Controller
 					'type' => "text",
 					'size' => "8",
 					'maxlength' => "8",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'onchange' => "count_pcs(this);",
-				//	'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'onchange' => "count_pcs(this);",
+					'required' => "required"
 				),
 				'TE028' => array(
 					'name' => "可返修數量",
@@ -2523,9 +2488,9 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					//'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'onchange' => "count_pcs(this);",
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE031' => array(
 					'name' => "報廢品數量",
@@ -2534,9 +2499,9 @@ class Sfci03m extends CI_Controller
 					'size' => "8",
 					'maxlength' => "8",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
-					//'onchange' => "count_pcs(this);",
-					'value' => "0"
-					//'required' => "required"
+					'onchange' => "count_pcs(this);",
+					'value' => "0",
+					'required' => "required"
 				),
 				'TE0311' => array(
 					'name' => "不良品數量",
@@ -2563,10 +2528,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE023' => array(
 					'name' => "時段1訖",
@@ -2575,11 +2539,9 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
-					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
-					//'required' => "required"
+					'onblur' => "count_time(this);",
+					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');",
+					'required' => "required"
 				),
 				'TE024' => array(
 					'name' => "時段2起",
@@ -2588,7 +2550,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -2599,9 +2560,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE026' => array(
@@ -2611,7 +2570,6 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
 					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
@@ -2622,9 +2580,7 @@ class Sfci03m extends CI_Controller
 					'size' => "10",
 					'placeholder' => "HHmm",
 					'maxlength' => "4",
-					'onfocus' => 'this.select();',
-					'onblur' => "count_time(this);check_hhmm(this);",
-					//'onchange' => "check_hhmm(this);",
+					'onblur' => "count_time(this);",
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
@@ -2652,10 +2608,11 @@ class Sfci03m extends CI_Controller
 					'size' => "18",
 					'value' => "",
 					'onblur' => "check_invi02(this);",
-					//'ondblclick' => "search_invi02_window(this);",
+					'ondblclick' => "search_invi02_window(this);",
 					'style' => "background-color:#F0F0F0",
-					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();"
-					//'required' => "required"
+					'readonly' => "value",
+					'onkeyup' => "this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();",
+					'required' => "required"
 				),
 				'TE018' => array(
 					'name' => "產品品名",

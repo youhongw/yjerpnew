@@ -2018,7 +2018,7 @@ class sfci03m_model extends CI_Model
 										left join  CMSMD as b on a.TD004 = b.MD001
 										left join  CMSMQ as c on a.TD001 = c.MQ001 
 										where a.TD003 >='$vday' and (a.TD001='D412' or a.TD001='D512')
-										order by a.TD002 DESC,a.TD003 DESC
+										order by a.TD002 DESC 
 										");
 		$ret['data'] = $query->result();
 
@@ -4105,26 +4105,6 @@ VALUES ('$company', '$creator', '$usr_group', '$vtoday', '0', '$td001', '$TD002'
 						$TE057 = $TE057 ?? '';
 						$TE059 = $TE059 ?? '';
 						$TE060 = $TE060 ?? '';
-						//1150223
-						$TE011 = $TE011 ?? 0;
-						$TE028 = $TE028 ?? 0;
-						$TE031 = $TE31 ?? 0;
-						$TE032 = $TE32 ?? 0;
-						$TE034 = $TE34 ?? 0;
-						$TE035 = $TE35 ?? 0;
-						$TE036 = $TE36 ?? 0;
-						$TE037 = $TE37 ?? 0;
-						$TE038 = $TE38 ?? 0;
-						$TE039 = $TE39 ?? 0;
-						$TE040 = $TE40 ?? 0;
-						$TE042 = $TE42 ?? 0;
-						$TE043 = $TE43 ?? 0;
-						$TE044 = $TE44 ?? 0;
-						$TE045 = $TE45 ?? 0;
-						$TE0111 = $TE0111 ?? 0;
-						$TE0311 = $TE311 ?? 0;
-						$TE0312 = $TE312 ?? 0;
-						$TE0333 = $TE333 ?? 0;
                         $flag=0;
 						$modifier='a001';
 					if ($td001 == 'D404' || $td001 == 'D504') {
@@ -9918,49 +9898,8 @@ ORDER BY
 				$TE013A=intval(SUBSTR($str13,0,2));
                 $TE013B=intval(SUBSTR($str13,2,2));
 				$TE013=($TE013A*3600)+($TE013B*60);
-				// insert 、updata 有就修改，沒有就新增1150223---------------------------------
+				// insert 、updata 有就修改，沒有就新增---------------------------------
                 $TE030 = $TE030 ?? '';
-				$TE014 ='Y';
-				        $TE008 = $TE008 ?? '0090';
-						$TE030 = $TE030 ?? '';
-						$TE016 = $TE016 ?? 0;     // 若 $te016 為 null → 給 0
-                        $TE021 = $TE021 ?? '';    // 若 $te017 為 null → 給空字串
-						$TE041 = $TE041 ?? '';
-						$TE058 = $TE058 ?? '';
-						$TE061 = $TE061 ?? '';
-						$TE062 = $TE062 ?? '';
-						$TE063 = $TE063 ?? '';
-						//1141204
-						$TE049 = $TE049 ?? '';
-						$TE052 = $TE052 ?? '';
-						$TE053 = $TE053 ?? '';
-						$TE054 = $TE054 ?? '';
-						$TE055 = $TE055 ?? '';
-						$TE056 = $TE056 ?? '';
-						$TE057 = $TE057 ?? '';
-						$TE059 = $TE059 ?? '';
-						$TE060 = $TE060 ?? '';
-						//1150223
-						$TE011 = $TE011 ?? 0;
-						$TE028 = $TE028 ?? 0;
-						$TE031 = $TE31 ?? 0;
-						$TE032 = $TE32 ?? 0;
-						$TE034 = $TE34 ?? 0;
-						$TE035 = $TE35 ?? 0;
-						$TE036 = $TE36 ?? 0;
-						$TE037 = $TE37 ?? 0;
-						$TE038 = $TE38 ?? 0;
-						$TE039 = $TE39 ?? 0;
-						$TE040 = $TE40 ?? 0;
-						$TE042 = $TE42 ?? 0;
-						$TE043 = $TE43 ?? 0;
-						$TE044 = $TE44 ?? 0;
-						$TE045 = $TE45 ?? 0;
-						$TE0111 = $TE0111 ?? 0;
-						$TE0311 = $TE311 ?? 0;
-						$TE0312 = $TE312 ?? 0;
-						$TE0333 = $TE333 ?? 0;
-                        $flag=0;
 				$sql97 = " select * from SFCTEM where TE001='$TD001' and TE002='$TD002' and TE003='$TE003' ";
 				$query = $this->db->query($sql97);
  //1150127 TE014=TD005
