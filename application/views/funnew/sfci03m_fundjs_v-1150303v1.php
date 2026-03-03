@@ -637,7 +637,7 @@ $('#commentForm').on('submit', function(e){
 		if (confirm("確定刪除細項:" + tc001 + "-" + tc002 + "-" + tc003 + "?")) {
 			$.ajax({
 					method: "POST",
-					url: "<?php echo base_url() ?>index.php/sfc/sfci03m/del_detail_ajax",
+					url: "<?php echo base_url() ?>index.php/sfc/sfci03/del_detail_ajax",
 					data: {
 						tc001: tc001,
 						tc002: tc002,

@@ -102,7 +102,6 @@
 									<input type="text" tabIndex="4" onKeyPress="keyFunction()" onkeyup="this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();" id="cmsi04" onfocus="check_title_no();" onblur="check_cmsi04(this);check_title_no();clear_row(this);" name="td004" value="<?php echo  $td004; ?>" size="12" required />
 									<a href="javascript:;"><img id="Showcmsi04disp" src="<?php echo base_url() ?>assets/image/png/linedo.png" alt="" align="top" /></a>
 									<span id="cmsi04disp"> <?php echo $td004disp; ?> </span>
-									<input type="hidden"  tabIndex="4" id="td005" onKeyPress="keyFunction()" readonly="value" name="td005" value="<?php echo trim($td005); ?>" size="12"   />
 								</td>
 							<!--	<td class="normal14">備註：確認者：</td>
 								<td class="normal14"><input type="text" tabIndex="5" onKeyPress="keyFunction()" id="td006" name="td006" value="<?php echo $td006; ?>" size="30" /></td>

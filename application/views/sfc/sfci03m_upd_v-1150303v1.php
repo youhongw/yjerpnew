@@ -78,8 +78,7 @@ echo "</pre>";*/
  										<input type="text" tabIndex="4" onKeyPress="keyFunction()" onkeyup="this.value=this.value.replace(/[^A-Z0-9]/gi,'');this.value=this.value.toLocaleUpperCase();" id="cmsi04" onblur="check_cmsi04(this);check_title_no();clear_row(this);" name="TD004" value="<?php echo  trim($TD004); ?>" size="12" required />
  										<a href="javascript:;"><img id="Showcmsi04disp" src="<?php echo base_url() ?>assets/image/png/linedo.png" alt="" align="top" /></a>
  										<span id="cmsi04disp"> <?php echo mb_convert_encoding(trim($TD004disp), 'utf-8', 'big-5'); ?> </span>
- 									    <input type="hidden"  tabIndex="4" id="TD005" onKeyPress="keyFunction()" readonly="value" name="TD005" value="<?php echo trim($TD005); ?>" size="12"   />
-									</td>
+ 									</td>
 									<!--<td class="normal14a">生產日期：</td>
  									<td class="normal14"><input type="text" tabIndex="7" onKeyPress="keyFunction()" id="TD003" name="TD003" value="<?php echo $TD003; ?>" readonly="readonly" style="background-color:#F0F0F0" /></td>
 									-->
