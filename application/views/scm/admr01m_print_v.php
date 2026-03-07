@@ -30,8 +30,8 @@
 	  
 	  $dateo=date("Ymd");
 	  $datec=date("Ymd");
-	  $dateo='20260101';
-	  $datec='20260131';
+	  $dateo='20260201';
+	  $datec='20260228';
 	?>
           <div class="box">
             <div class="box-header">

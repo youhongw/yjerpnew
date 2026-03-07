@@ -3100,16 +3100,16 @@ function process_sfctem_to_sfctem3() {
     $NO = 1;                  // UDF09 序號
     
     foreach ($query1->result() as $row) {
-        //1150306
+        
         // 組合 KEY：UDF03 + UDF05 + UDF01 + UDF02
         $current_key = $row->UDF05 . '-' . $row->UDF03 . '-' . $row->UDF01 . '-' . $row->UDF02;
-        $vte001=$row->TE001;
+        
         // 判斷是否換組（KEY 改變）
         if ($current_key !== $prev_key) {
             
             // 如果不是第一筆，先回寫上一組的單頭
             if ($prev_key !== '' && $current_te002 !== '') {
-                $this->update_header($current_te002, $vte022, $vte023, $vte012,$vte001);
+                $this->update_header($current_te002, $vte022, $vte023, $vte012);
                 echo "回寫單頭 {$current_te002}: TD013={$vte012}, TD014={$vte022}, TD015={$vte023}<br>";
             }
             
@@ -3142,9 +3142,8 @@ function process_sfctem_to_sfctem3() {
         $te003 = str_pad($te003_seq, 4, '0', STR_PAD_LEFT);
         
         // 準備插入資料
-		//1150306
-        //$te001 = 'D401';  // 固定值
-        $te001 =$vte001;
+        $te001 = 'D401';  // 固定值
+        
         echo "插入單身: {$te001}-{$current_te002}-{$te003}, ";
         echo "TE022={$row->TE022}, TE023={$row->TE023}, TE012={$row->TE012}<br>";
         
@@ -3235,9 +3234,9 @@ function process_sfctem_to_sfctem3() {
         $NO++;
     }
     
-    // 處理最後一組（迴圈結束後）1150306
+    // 處理最後一組（迴圈結束後）
     if ($current_te002 !== '') {
-        $this->update_header($current_te002, $vte022, $vte023, $vte012,$vte001);
+        $this->update_header($current_te002, $vte022, $vte023, $vte012);
         echo "<br>回寫最後一組單頭 {$current_te002}: TD013={$vte012}, TD014={$vte022}, TD015={$vte023}<br>";
     }
     
@@ -3250,9 +3249,9 @@ function process_sfctem_to_sfctem3() {
     return true;
 }
 // ============================================
-// 回寫單頭的函數1150306
+// 回寫單頭的函數
 // ============================================
-function update_header($te002, $vte022, $vte023, $vte012,$vte001) {
+function update_header($te002, $vte022, $vte023, $vte012) {
     $sql_update = "
     UPDATE SFCTDM3
     SET TD013 = ?,
