@@ -102,7 +102,7 @@ class sfci03n_model extends CI_Model
 		}
 
 		$default_where = ""; //在這裡塞入一些預設條件，如不顯示離職員工等等
-		$default_order = "TD002 DESC"; //在這裡塞入一些預設排序
+		$default_order = "a.TD001 ASC,TD002 DESC"; //在這裡塞入一些預設排序
 
 		/* where 處理區域 */
 		if ($default_where) {

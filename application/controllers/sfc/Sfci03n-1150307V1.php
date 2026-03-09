@@ -272,7 +272,7 @@ class sfci03n extends CI_Controller
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "人時(時分)",
 					'title_class' => "center",
 					'type' => "text",
 					'maxlength' => "10",
@@ -282,7 +282,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "機時(時分)",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -960,7 +960,7 @@ class sfci03n extends CI_Controller
 					'option' => array('1' => "沒換", '2' => "換30分鐘")
 				), 
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "使用人時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -969,7 +969,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "使用機時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -1425,7 +1425,7 @@ class sfci03n extends CI_Controller
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "使用人時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -1434,7 +1434,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "使用機時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -1726,7 +1726,7 @@ class sfci03n extends CI_Controller
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "使用人時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -1735,7 +1735,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "使用機時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -2158,7 +2158,7 @@ class sfci03n extends CI_Controller
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "使用人時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -2167,7 +2167,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "使用機時",
 					'title_class' => "center",
 					'type' => "type",
 					'size' => "10",
@@ -2608,7 +2608,7 @@ class sfci03n extends CI_Controller
 					'onkeyup' => "this.value=this.value.replace(/[^0-9]/gi,'');"
 				),
 				'TE012' => array(
-					'name' => "報工(時分)",
+					'name' => "使用人時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -2617,7 +2617,7 @@ class sfci03n extends CI_Controller
 					'readonly' => "value"
 				),
 				'TE013' => array(
-					'name' => "有效(時分)",
+					'name' => "使用機時",
 					'title_class' => "center",
 					'type' => "text",
 					'size' => "10",
@@ -2741,13 +2741,10 @@ class sfci03n extends CI_Controller
 
 		$result = $this->sfci03n_model->construct_sql($limit, $offset, $func); //至model 取 mysql 資料 預設 15,0,tf001,desc
 		$data['results'] = $result['data'];
-		//ECHO VAR_DUMP($data['results']);EXIT;
 		$data['num_results'] = $result['num'];
 		$data['numrow'] = $result['num']; // 總筆數 
 		$data['page'] = $result['num'] / $limit; // 總頁數
 		$data['sql'] = $_SESSION['sfci03n']['search']['sql'];  //顯示sql語法
-		//ECHO VAR_DUMP($data['sql']);EXIT;
-		
 		// $data['message'] = '資料瀏覽成功!<br>查詢條件:'.$data['sql']."<br>";
 		$data['message'] = '資料瀏覽成功!';
 		$data['sort_order'] = "desc";
@@ -2774,8 +2771,6 @@ class sfci03n extends CI_Controller
 		}
 
 		$config['total_rows'] = $result['num']; // 總筆數
-		//ECHO VAR_DUMP($config['total_rows']);EXIT;
-		
 		$config['per_page'] = $limit;                //每頁筆數
 		$config['uri_segment'] = 4;       //當前頁
 		$this->pagination->initialize($config);     //分頁初始化 display 3 + 2 + 1 = 6

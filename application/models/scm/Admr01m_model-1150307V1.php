@@ -2658,13 +2658,8 @@ FROM SFCTDM3 c
         ON c.TD001=t.TE001 AND  c.TD002=t.TE002 AND 
 		(c.UDF01 IS NULL OR c.UDF02 IS NULL) ; ";
 $this->db->query($sql989);
-//1150307
-$sql919= " UPDATE SFCTEM3 SET TE027=''
-WHERE TE002>='$seq11' 
-      AND TE002<='$seq21' AND TE027>'0' ; ";
-$this->db->query($sql919);
 	 }
-	//END 計算完成1150117 TD003 MODI 1150306
+	//END 計算完成1150117 TD003 MODI 
 	
 	//echo var_dump($seq11);var_dump($seq21);exit;
    // $this->db->query($sql_update, array($vte012, $vte022, $vte023, $vte012));
